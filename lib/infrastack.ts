@@ -27,7 +27,7 @@ export class InfrastructureStack extends Stack {
     this.secGroups = [vpcSG];
 
     _SETTINGS.containerIPs.forEach((range: string) => {
-      vpcSG.addIngressRule(Peer.ipv4(range), Port.tcp(5432), "Access from Containers"); // Access between containers and Database
+      vpcSG.addIngressRule(Peer.ipv4(range), Port.tcp(5432), "Access between containers and Database");
     });
   }
 }
