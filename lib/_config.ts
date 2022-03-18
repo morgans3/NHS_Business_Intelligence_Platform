@@ -10,3 +10,8 @@ export const _SETTINGS: iSettings = {
   //     password: "PASSWORD",
   //   },
 };
+
+// ACCESS LIST (ISO 3166)
+// This list will filter the access to the platform and external facing resources to IP addresses originating in specific countries.
+// Additional country codes can be found here: https://www.iso.org/obp/ui/#search and are added as comma-separated list, i.e. [ "GB", "CA" ]
+export const _AccessListCountries = ["GB"];
