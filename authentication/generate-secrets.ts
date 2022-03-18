@@ -24,3 +24,14 @@ checkSecretExists("jwt", (res: any) => {
     console.log("JWT secret exists.");
   }
 });
+
+checkSecretExists("postgres", (res: any) => {
+  if (res && res === false) {
+    const password = generatePassword(20, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~!@-#$");
+    generateSecrets("postgres", "POSTGRES_UN", "POSTGRES_PW", _SETTINGS.rds_config.username, password, (result: any) => {
+      console.log(result);
+    });
+  } else {
+    console.log("PostgreSQL secret exists.");
+  }
+});

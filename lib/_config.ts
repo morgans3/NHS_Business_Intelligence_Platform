@@ -1,3 +1,4 @@
+import { InstanceClass, InstanceSize, InstanceType } from "aws-cdk-lib/aws-ec2";
 import { iSettings } from "./types/interfaces";
 
 export const _AWSREGION = process.env.CDK_DEFAULT_REGION || "eu-west-2";
@@ -11,6 +12,11 @@ export const _SETTINGS: iSettings = {
   //     username: "USERNAME",
   //     password: "PASSWORD",
   //   },
+  rds_config: {
+    username: "Admin",
+    instanceType: InstanceType.of(InstanceClass.BURSTABLE3, InstanceSize.SMALL),
+    deletionProtection: false,
+  },
 };
 
 // ACCESS LIST (ISO 3166)
