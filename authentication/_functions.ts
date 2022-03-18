@@ -8,11 +8,19 @@ const credentials = new AWS.SharedIniFileCredentials({ profile: access });
 AWS.config.credentials = credentials;
 const secretsmanager = new AWS.SecretsManager();
 
+export const cleanseBucketName = function (original: string): string {
+  return original.split("_").join("-").split(".").join("-");
+};
+
 export const generateSecrets = function (name: string, keyA: string, keyB: string, valueA: string, valueB: string, callback: any) {
+  let secretstring = `{\"` + keyA + `\":\"` + valueA + `\"}`;
+  if (keyB.length > 0) {
+    secretstring = `{\"` + keyA + `\":\"` + valueA + `\",\"` + keyB + `\":\"` + valueB + `\"}`;
+  }
   const params = {
     Description: "Adding secrets for CDK deployment: " + name,
     Name: name,
-    SecretString: `{\"` + keyA + `\":\"` + valueA + `\",\"` + keyB + `\":\"` + valueB + `\"}`,
+    SecretString: secretstring,
   };
   secretsmanager.createSecret(params, (err: any, data: any) => {
     if (err) callback("FAILED: " + err.toString());
