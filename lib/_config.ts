@@ -17,6 +17,9 @@ export const _SETTINGS: iSettings = {
     instanceType: InstanceType.of(InstanceClass.BURSTABLE3, InstanceSize.SMALL),
     deletionProtection: false,
   },
+  github: {
+    oAuthToken: "TOKENHERE",
+  },
 };
 
 // ACCESS LIST (ISO 3166)

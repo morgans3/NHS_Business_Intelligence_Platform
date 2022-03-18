@@ -35,3 +35,15 @@ checkSecretExists("postgres", (res: any) => {
     console.log("PostgreSQL secret exists.");
   }
 });
+
+// github
+
+checkSecretExists("github", (res: any) => {
+  if (res && res === false) {
+    generateSecrets("github", "oauthToken", "", _SETTINGS.github.oAuthToken, "", (result: any) => {
+      console.log(result);
+    });
+  } else {
+    console.log("GitHub secret exists.");
+  }
+});
