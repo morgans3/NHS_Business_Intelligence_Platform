@@ -2,6 +2,7 @@ import { CfnOutput, Duration, Stack } from "aws-cdk-lib";
 import { SubnetType } from "aws-cdk-lib/aws-ec2";
 import { Credentials, DatabaseInstance, DatabaseInstanceEngine, PostgresEngineVersion, SubnetGroup } from "aws-cdk-lib/aws-rds";
 import { RDSStackProps } from "./types/interfaces";
+import { WAFStack } from "./wafstack";
 import { _SETTINGS } from "./_config";
 
 export class SQLStack extends Stack {
@@ -48,6 +49,8 @@ export class SQLStack extends Stack {
     // Create Lambda to manage Access Patterns
 
     // Create API Gateway with all endpoints and CORS (add WAFStack)
+
+    const waf = new WAFStack(this, "WAFStack", { env: props.env });
 
     if (_SETTINGS.manageDNS) {
       // Add Route 53 DNS records

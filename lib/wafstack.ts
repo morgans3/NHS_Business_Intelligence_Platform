@@ -4,7 +4,7 @@ import { RestApi } from "aws-cdk-lib/aws-apigateway";
 import { _AccessListCountries } from "./_config";
 
 export interface WAFProps extends StackProps {
-  apigateway: RestApi;
+  apigateway?: RestApi;
 }
 
 export class WAFStack extends Stack {
@@ -65,11 +65,14 @@ export class WAFStack extends Stack {
       ],
     });
     this.attrId = waf.attrArn;
-    let apiGwArn = this.getResourceARNForEndpoint(props.env!.region || "eu-west-2", props.apigateway.deploymentStage.restApi.restApiId, props.apigateway.deploymentStage.stageName);
-    new CfnWebACLAssociation(this, "mywebaclassoc", {
-      webAclArn: waf.attrArn,
-      resourceArn: apiGwArn,
-    });
+    if (props.apigateway) {
+      let apiGwArn = this.getResourceARNForEndpoint(props.env!.region || "eu-west-2", props.apigateway.deploymentStage.restApi.restApiId, props.apigateway.deploymentStage.stageName);
+      new CfnWebACLAssociation(this, "mywebaclassoc", {
+        webAclArn: waf.attrArn,
+        resourceArn: apiGwArn,
+      });
+    }
+
     this.attrId = waf.attrArn;
     new CfnOutput(this, "WAFArn", { value: this.attrId });
   }

@@ -70,7 +70,7 @@ export class AppStack extends Stack {
 
     // Route53 alias record for the CloudFront distribution
     if (_SETTINGS.manageDNS) {
-      new ARecord(this, "SiteAliasRecord", {
+      new ARecord(this, props.appname + "-SiteAliasRecord", {
         recordName: siteDomain,
         target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
         zone: zone!,
@@ -102,6 +102,7 @@ export class AppStack extends Stack {
       },
       timeout: Duration.minutes(10),
       projectName: props.application.name + "-Build",
+      role: props.codebuildRole,
     });
 
     // Deploy site contents to S3 bucket
@@ -134,6 +135,7 @@ export class AppStack extends Stack {
               project: build,
               input: sourceOutput,
               outputs: [buildOutput],
+              role: props.codebuildRole,
             }),
           ],
         },
@@ -144,6 +146,7 @@ export class AppStack extends Stack {
               actionName: "S3_Deploy",
               bucket: siteBucket,
               input: buildOutput,
+              role: props.codebuildRole,
             }),
           ],
         },

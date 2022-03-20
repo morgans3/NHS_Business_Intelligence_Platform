@@ -2,6 +2,10 @@ import { StackProps } from "aws-cdk-lib";
 import { AttributeType } from "aws-cdk-lib/aws-dynamodb";
 import { InfrastructureStack } from "../infrastack";
 import { InstanceType } from "aws-cdk-lib/aws-ec2";
+import { TokenAuthorizer } from "aws-cdk-lib/aws-apigateway";
+import { IRole } from "aws-cdk-lib/aws-iam";
+import { IBaseService } from "aws-cdk-lib/aws-ecs";
+import { ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 
 export interface iSettings {
   containerIPs: string[];
@@ -41,8 +45,16 @@ export interface StaticSiteProps extends StackProps {
   appname: string;
   domainName: string;
   siteSubDomain: string;
-  application: any;
+  application: iApplication;
   webACLId: string;
+  codebuildRole: IRole;
+}
+
+export interface iApplication {
+  repo: string;
+  name: string;
+  owner: string;
+  branch: string;
 }
 
 export interface LambdaInfo {
@@ -63,4 +75,15 @@ interface fields {
   name: string;
   type: string;
   required?: boolean;
+}
+
+export interface ApiStackProps extends StackProps {
+  apiname: string;
+  domainName: string;
+  siteSubDomain: string;
+  application: any;
+  codebuildRole: IRole;
+  buildArgs: string[];
+  service: IBaseService;
+  loadbalancer: ILoadBalancerV2;
 }

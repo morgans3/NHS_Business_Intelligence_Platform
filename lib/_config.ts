@@ -26,3 +26,15 @@ export const _SETTINGS: iSettings = {
 // This list will filter the access to the platform and external facing resources to IP addresses originating in specific countries.
 // Additional country codes can be found here: https://www.iso.org/obp/ui/#search and are added as comma-separated list, i.e. [ "GB", "CA" ]
 export const _AccessListCountries = ["GB"];
+
+// APPLICATION LIST AND DEFAULTS
+
+export const _MYDOMAIN = "example.com";
+
+export const _PLATFORMAPP = {
+  repo: "https://github.com/morgans3/NHS_Business_Intelligence_Platform_App",
+  name: "BI_Platform",
+  owner: "morgans3",
+  branch: "main",
+};
+export const AppList = [];

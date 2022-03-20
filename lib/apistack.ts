@@ -1,113 +1,142 @@
-import { Stack, StackProps } from "aws-cdk-lib";
-import { AuthorizationType, Authorizer, Cors, LambdaIntegration, RestApi, TokenAuthorizer } from "aws-cdk-lib/aws-apigateway";
-import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
-import { LambdaInfo } from "./types/interfaces";
-
-export interface ApiStackProps extends StackProps {
-  name: string;
-  api: LambdaInfo;
-  apigateway: any;
-  authorizer: { type: string; authorizer: TokenAuthorizer }[];
-  lambdarole: any;
-  addCors: boolean;
-}
+import { Duration, SecretValue, Stack } from "aws-cdk-lib";
+import { BuildSpec, ComputeType, LinuxBuildImage, PipelineProject } from "aws-cdk-lib/aws-codebuild";
+import { Artifact, Pipeline } from "aws-cdk-lib/aws-codepipeline";
+import { CodeBuildAction, EcsDeployAction, GitHubSourceAction, GitHubTrigger } from "aws-cdk-lib/aws-codepipeline-actions";
+import { Repository } from "aws-cdk-lib/aws-ecr";
+import { ArnPrincipal, Effect, PolicyStatement } from "aws-cdk-lib/aws-iam";
+import { LogGroup } from "aws-cdk-lib/aws-logs";
+import { ARecord, HostedZone, RecordTarget } from "aws-cdk-lib/aws-route53";
+import { LoadBalancerTarget } from "aws-cdk-lib/aws-route53-targets";
+import { ApiStackProps } from "./types/interfaces";
+import { _SETTINGS } from "./_config";
 
 export class ApiStack extends Stack {
   constructor(scope: any, id: string, props: ApiStackProps) {
     super(scope, id, props);
 
-    const api: RestApi = props.apigateway;
-    const authorizerArray = props.authorizer;
-    let authorizer: Authorizer = authorizerArray.find((x) => x.type === "standard")!.authorizer;
-    const baseendpoint = api.root.addResource(props.api.baseendpoint);
-    let splitLambdaNamesByAuthSoThatTheyRemainUnique = "";
-    if (props.api.customAuth) {
-      splitLambdaNamesByAuthSoThatTheyRemainUnique = "-" + props.api.customAuth;
-      switch (props.api.customAuth) {
-        case "public":
-          authorizer = authorizerArray.find((x) => x.type === "public")!.authorizer;
-          break;
-        default:
-          authorizer = authorizerArray.find((x) => x.type === "standard")!.authorizer;
-          break;
-      }
-    }
-
-    if (props.addCors) {
-      baseendpoint.addCorsPreflight({
-        allowOrigins: Cors.ALL_ORIGINS,
-        allowHeaders: ["Content-Type", "X-Amz-Date", "Authorization", "X-Api-Key", "X-Amz-Security-Token", "X-Amz-User-Agent", "access-control-allow-origin", "Cache-Control", "Pragma"],
-      });
-    }
-
-    props.api.functions.forEach((func: any) => {
-      const handlerfunction = selectFunction(func, props.api);
-      const indexinfo = findIndexInfo(func, props.api);
-
-      const handler = new Function(this, props.api.tablename + "-" + func + "-Handler", {
-        functionName: props.api.tablename + "-" + func + splitLambdaNamesByAuthSoThatTheyRemainUnique,
-        runtime: Runtime.NODEJS_14_X,
-        code: Code.fromAsset("./src/" + props.api.filename, {
-          exclude: ["cdk", "*.ts"],
-        }),
-        handler: props.api.filename + "." + handlerfunction,
-        environment: {
-          tablename: props.api.tablename,
-          primarykey: props.api.primarykey?.name || "",
-          secondarykey: props.api.secondarykey?.name || "",
-          indexinfo: indexinfo,
-          fields: JSON.stringify(props.api.fields),
-        },
-        role: props.lambdarole,
-      });
-
-      const thislambda = new LambdaIntegration(handler, {
-        requestTemplates: { "application/json": '{ "statusCode": "200" }' },
-      });
-      const methodtype = selectMethodType(func);
-      const thisendpoint = baseendpoint.addResource(func.split("-").join(""));
-      const method = thisendpoint.addMethod(methodtype, thislambda, { authorizationType: AuthorizationType.CUSTOM, authorizer: authorizer });
-      if (props.addCors) {
-        thisendpoint.addCorsPreflight({
-          allowOrigins: Cors.ALL_ORIGINS,
-          allowHeaders: ["Content-Type", "X-Amz-Date", "Authorization", "X-Api-Key", "X-Amz-Security-Token", "X-Amz-User-Agent", "access-control-allow-origin", "Cache-Control", "Pragma"],
-        });
-      }
+    const siteDomain = props.siteSubDomain + "." + props.domainName;
+    const repository = new Repository(this, "ECR-Repository-" + props.apiname, { repositoryName: props.apiname });
+    repository.addLifecycleRule({ tagPrefixList: ["main"], maxImageCount: 99 });
+    repository.addLifecycleRule({ maxImageAge: Duration.days(30) });
+    const statement = new PolicyStatement({
+      effect: Effect.ALLOW,
+      sid: "CDK Access",
+      principals: [new ArnPrincipal(props.codebuildRole.roleArn)],
+      actions: ["ecr:BatchCheckLayerAvailability", "ecr:BatchGetImage", "ecr:DescribeImages", "ecr:DescribeRepositories", "ecr:GetDownloadUrlForLayer", "ecr:GetLifecyclePolicy", "ecr:GetLifecyclePolicyPreview", "ecr:GetRepositoryPolicy", "ecr:InitiateLayerUpload", "ecr:ListImages"],
     });
+    repository.addToResourcePolicy(statement);
+
+    let commandlist = [];
+    if (_SETTINGS.dockerhub) {
+      commandlist.push("docker login -u $dockerhub_username -p $dockerhub_password");
+    }
+    commandlist.push("docker build " + getBuildArgs(props.buildArgs) + " -t " + props.apiname + ":main .");
+    const postbuildcommand = ["docker tag " + props.apiname + ":main " + props.env?.account + ".dkr.ecr.eu-west-2.amazonaws.com/" + props.apiname + ":main", "docker push " + props.env?.account + ".dkr.ecr.eu-west-2.amazonaws.com/" + props.apiname + ":main", `printf '[{"name":"` + props.apiname + `","imageUri":"" + props.env?.account + ".dkr.ecr.eu-west-2.amazonaws.com/` + props.apiname + `:main}]' > imagedefinitions.json`];
+
+    const buildSpecObject = {
+      version: "0.2",
+      env: { "git-credential-helper": "yes" },
+      phases: {
+        install: {
+          "runtime-versions": { docker: 18 },
+          commands: "npm install",
+        },
+        pre_build: {
+          commands: ["eval $(aws ecr get-login --no-include-email --region eu-west-2 --registry-ids " + props.env?.account + ")"],
+        },
+        build: {
+          commands: commandlist,
+        },
+        post_build: {
+          commands: postbuildcommand,
+        },
+      },
+      artifacts: {
+        files: "imagedefinitions.json",
+      },
+    };
+
+    const build = new PipelineProject(this, props.application.name + "-Build", {
+      role: props.codebuildRole,
+      buildSpec: BuildSpec.fromObject(buildSpecObject),
+      environment: {
+        buildImage: LinuxBuildImage.STANDARD_3_0,
+        privileged: true,
+        computeType: ComputeType.SMALL,
+      },
+      timeout: Duration.minutes(10),
+      projectName: props.application.name + "-Build",
+      logging: {
+        cloudWatch: {
+          enabled: true,
+          logGroup: new LogGroup(this, props.apiname + "-BuildLogGroup"),
+        },
+      },
+    });
+
+    const sourceOutput = new Artifact();
+    const buildOutput = new Artifact();
+    new Pipeline(this, "Pipeline", {
+      pipelineName: props.application.name + "-Pipeline",
+      stages: [
+        {
+          stageName: "Source",
+          actions: [
+            new GitHubSourceAction({
+              actionName: "CodeCommit_Source",
+              branch: props.application.branch,
+              output: sourceOutput,
+              repo: props.application.repo,
+              owner: props.application.owner,
+              oauthToken: SecretValue.secretsManager("github", {
+                jsonField: "oauthToken",
+              }),
+              trigger: GitHubTrigger.WEBHOOK,
+            }),
+          ],
+        },
+        {
+          stageName: "Build",
+          actions: [
+            new CodeBuildAction({
+              actionName: "Build",
+              project: build,
+              input: sourceOutput,
+              outputs: [buildOutput],
+              role: props.codebuildRole,
+            }),
+          ],
+        },
+        {
+          stageName: "Deploy",
+          actions: [
+            new EcsDeployAction({
+              actionName: "Deploy",
+              input: buildOutput,
+              service: props.service,
+              role: props.codebuildRole,
+            }),
+          ],
+        },
+      ],
+      restartExecutionOnUpdate: true,
+    });
+
+    if (_SETTINGS.manageDNS) {
+      const zone = HostedZone.fromLookup(this, props.apiname + "-Zone", { domainName: props.domainName });
+      new ARecord(this, props.apiname + "-SiteAliasRecord", {
+        recordName: siteDomain,
+        target: RecordTarget.fromAlias(new LoadBalancerTarget(props.loadbalancer)),
+        zone: zone!,
+      });
+    }
   }
 }
 
-function findIndexInfo(func: string, api: LambdaInfo) {
-  if (func.includes("getBy-")) {
-    const value = func.split("-")[1];
-    if (value) return func.split("-")[1];
-    return "";
-  }
-  if (func.includes("getAllByFilter-")) {
-    const value = func.split("-")[1];
-    if (value) return api.customfilters[value];
-    return "";
-  }
-  if (func.includes("getActive")) return api.customfilters["getActive"];
-  return "";
-}
-
-function selectFunction(func: string, api: LambdaInfo) {
-  if (func.includes("getBy-")) {
-    const value = func.split("-")[1];
-    if (value === api.primarykey?.name) return "getByID";
-    return "getByIndex";
-  }
-  if (func.includes("getAllByFilter-")) {
-    const value = func.split("-")[1];
-    return "getAllByFilter";
-  }
-  return func;
-}
-
-function selectMethodType(func: string) {
-  if (func.includes("get")) {
-    return "GET";
-  }
-  return "POST";
+function getBuildArgs(argArray: string[]) {
+  let str = "";
+  argArray.forEach((arg) => {
+    str += "--build-arg " + arg + "=$" + arg + " ";
+  });
+  return str;
 }
