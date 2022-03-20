@@ -36,8 +36,6 @@ checkSecretExists("postgres", (res: any) => {
   }
 });
 
-// github
-
 checkSecretExists("github", (res: any) => {
   if (res && res === false) {
     generateSecrets("github", "oauthToken", "", _SETTINGS.github.oAuthToken, "", (result: any) => {

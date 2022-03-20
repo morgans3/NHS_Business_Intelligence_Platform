@@ -1,6 +1,6 @@
 import { CfnOutput, Duration, RemovalPolicy, SecretValue, Stack } from "aws-cdk-lib";
 import { DnsValidatedCertificate } from "aws-cdk-lib/aws-certificatemanager";
-import { CloudFrontWebDistribution, OriginProtocolPolicy, SecurityPolicyProtocol, SSLMethod } from "aws-cdk-lib/aws-cloudfront";
+import { CloudFrontWebDistribution, OriginProtocolPolicy, SecurityPolicyProtocol, SSLMethod, ViewerCertificate } from "aws-cdk-lib/aws-cloudfront";
 import { BuildSpec, ComputeType, LinuxBuildImage, PipelineProject } from "aws-cdk-lib/aws-codebuild";
 import { Artifact, Pipeline } from "aws-cdk-lib/aws-codepipeline";
 import { CodeBuildAction, GitHubSourceAction, GitHubTrigger, S3DeployAction } from "aws-cdk-lib/aws-codepipeline-actions";
@@ -35,22 +35,20 @@ export class AppStack extends Stack {
     new CfnOutput(this, props.appname + "-Bucket", { value: siteBucket.bucketName });
 
     // TLS certificate
-    const certificateArn = new DnsValidatedCertificate(this, props.appname + "-SiteCertificate", {
+    const cert = new DnsValidatedCertificate(this, props.appname + "-SiteCertificate", {
       domainName: siteDomain,
       hostedZone: zone,
       region: "us-east-1", // Cloudfront only checks this region for certificates.
-    }).certificateArn;
-    new CfnOutput(this, props.appname + "-Certificate", { value: certificateArn });
+    });
+    new CfnOutput(this, props.appname + "-Certificate", { value: cert.certificateArn });
 
-    // TODO: update aliasConfiguration to new CDK v2 method
     // CloudFront distribution that provides HTTPS
     const distribution = new CloudFrontWebDistribution(this, props.appname + "-SiteDistribution", {
-      aliasConfiguration: {
-        acmCertRef: certificateArn,
-        names: [siteDomain],
+      viewerCertificate: ViewerCertificate.fromAcmCertificate(cert, {
+        aliases: [siteDomain],
+        securityPolicy: SecurityPolicyProtocol.SSL_V3,
         sslMethod: SSLMethod.SNI,
-        securityPolicy: SecurityPolicyProtocol.TLS_V1_1_2016,
-      },
+      }),
       originConfigs: [
         {
           customOriginSource: {
