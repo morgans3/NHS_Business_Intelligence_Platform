@@ -1,20 +1,20 @@
 import { CfnOutput, Duration, RemovalPolicy, SecretValue, Stack } from "aws-cdk-lib";
-import { DnsValidatedCertificate } from "aws-cdk-lib/aws-certificatemanager";
+import { Certificate, DnsValidatedCertificate } from "aws-cdk-lib/aws-certificatemanager";
 import { CloudFrontWebDistribution, OriginProtocolPolicy, SecurityPolicyProtocol, SSLMethod, ViewerCertificate } from "aws-cdk-lib/aws-cloudfront";
 import { BuildSpec, ComputeType, LinuxBuildImage, PipelineProject } from "aws-cdk-lib/aws-codebuild";
 import { Artifact, Pipeline } from "aws-cdk-lib/aws-codepipeline";
 import { CodeBuildAction, GitHubSourceAction, GitHubTrigger, S3DeployAction } from "aws-cdk-lib/aws-codepipeline-actions";
-import { ARecord, HostedZone, RecordTarget } from "aws-cdk-lib/aws-route53";
+import { ARecord, HostedZone, IHostedZone, RecordTarget } from "aws-cdk-lib/aws-route53";
 import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
 import { Bucket, HttpMethods } from "aws-cdk-lib/aws-s3";
 import { cleanseBucketName } from "../authentication/_functions";
 import { StaticSiteProps } from "./types/interfaces";
+import { _SETTINGS } from "./_config";
 
 export class AppStack extends Stack {
   constructor(scope: any, id: string, props: StaticSiteProps) {
     super(scope, id, props);
 
-    const zone = HostedZone.fromLookup(this, props.appname + "-Zone", { domainName: props.domainName });
     const siteDomain = props.siteSubDomain + "." + props.domainName;
     new CfnOutput(this, props.appname + "-Site", { value: "https://" + siteDomain });
 
@@ -34,13 +34,19 @@ export class AppStack extends Stack {
     });
     new CfnOutput(this, props.appname + "-Bucket", { value: siteBucket.bucketName });
 
-    // TLS certificate
-    const cert = new DnsValidatedCertificate(this, props.appname + "-SiteCertificate", {
-      domainName: siteDomain,
-      hostedZone: zone,
-      region: "us-east-1", // Cloudfront only checks this region for certificates.
-    });
-    new CfnOutput(this, props.appname + "-Certificate", { value: cert.certificateArn });
+    let cert, zone: IHostedZone;
+    if (_SETTINGS.manageDNS) {
+      zone = HostedZone.fromLookup(this, props.appname + "-Zone", { domainName: props.domainName });
+      // TLS certificate
+      cert = new DnsValidatedCertificate(this, props.appname + "-SiteCertificate", {
+        domainName: siteDomain,
+        hostedZone: zone,
+        region: "us-east-1", // Cloudfront only checks this region for certificates.
+      });
+      new CfnOutput(this, props.appname + "-Certificate", { value: cert.certificateArn });
+    } else {
+      cert = new Certificate(this, props.appname + "-SiteCertificate", { domainName: siteDomain });
+    }
 
     // CloudFront distribution that provides HTTPS
     const distribution = new CloudFrontWebDistribution(this, props.appname + "-SiteDistribution", {
@@ -58,15 +64,18 @@ export class AppStack extends Stack {
           behaviors: [{ isDefaultBehavior: true }],
         },
       ],
+      webACLId: props.webACLId,
     });
     new CfnOutput(this, props.appname + "-DistributionId", { value: distribution.distributionId });
 
     // Route53 alias record for the CloudFront distribution
-    new ARecord(this, "SiteAliasRecord", {
-      recordName: siteDomain,
-      target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
-      zone,
-    });
+    if (_SETTINGS.manageDNS) {
+      new ARecord(this, "SiteAliasRecord", {
+        recordName: siteDomain,
+        target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
+        zone: zone!,
+      });
+    }
 
     const buildSpecObject = {
       version: "0.2",

@@ -42,6 +42,7 @@ export interface StaticSiteProps extends StackProps {
   domainName: string;
   siteSubDomain: string;
   application: any;
+  webACLId: string;
 }
 
 export interface LambdaInfo {
