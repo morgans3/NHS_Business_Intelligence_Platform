@@ -1,0 +1,9 @@
+{
+  "name": "dynamodb-api-handlers",
+  "main": "handler.js",
+  "version": "1.0.0",
+  "scripts": {},
+  "dependencies": {
+    "diu-data-functions": "1.0.104"
+  }
+}

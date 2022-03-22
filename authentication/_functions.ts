@@ -48,3 +48,18 @@ export const generatePassword = function (length: number, wishlist: string) {
     .map((x: any) => wishlist[x % wishlist.length])
     .join("");
 };
+
+export async function getSecret(secretName: string, callback: (arg: any) => void) {
+  let client = new AWS.SecretsManager();
+  await client.getSecretValue({ SecretId: secretName }, (err: any, data: any) => {
+    if (err) {
+      callback(null);
+    } else {
+      if ("SecretString" in data) {
+        callback(data.SecretString);
+      } else {
+        callback(Buffer.from(data.SecretBinary, "base64").toString("ascii"));
+      }
+    }
+  });
+}

@@ -2,10 +2,11 @@ import { StackProps } from "aws-cdk-lib";
 import { AttributeType } from "aws-cdk-lib/aws-dynamodb";
 import { InfrastructureStack } from "../infrastack";
 import { InstanceType } from "aws-cdk-lib/aws-ec2";
-import { TokenAuthorizer } from "aws-cdk-lib/aws-apigateway";
-import { IRole } from "aws-cdk-lib/aws-iam";
+import { IRole, Role } from "aws-cdk-lib/aws-iam";
 import { IBaseService } from "aws-cdk-lib/aws-ecs";
 import { ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
+import { Function } from "aws-cdk-lib/aws-lambda";
+import { Authorizer, RestApi } from "aws-cdk-lib/aws-apigateway";
 
 export interface iSettings {
   containerIPs: string[];
@@ -21,24 +22,17 @@ export interface iSettings {
   };
 }
 
-export interface DynamoDBStackProps extends StackProps {
-  name: string;
-  tab: DynamoDBConfig;
-}
-
-export interface DynamoDBConfig {
-  name: string;
-  fields: dynamodbfield[];
-}
-
-interface dynamodbfield {
-  name: string;
-  type: AttributeType;
-  key: string;
-}
-
 export interface RDSStackProps extends StackProps {
   infrastructure: InfrastructureStack;
+  lambdarole: Role;
+  authLambda: Authorizer;
+  publicLambda: Authorizer;
+  apigateway: RestApi;
+  addCors: boolean;
+}
+
+export interface DynamodbLambdaProps extends StackProps {
+  lambdarole: any;
 }
 
 export interface StaticSiteProps extends StackProps {
@@ -55,6 +49,20 @@ export interface iApplication {
   name: string;
   owner: string;
   branch: string;
+}
+
+export interface DynamoDBStackProps extends StackProps {
+  lambdarole: Role;
+  authLambda: Authorizer;
+  publicLambda: Authorizer;
+  apigateway: RestApi;
+  addCors: boolean;
+}
+
+export interface DynamoDBTableStackProps extends StackProps {
+  primarykey: fields;
+  secondarykey?: fields;
+  tablename: string;
 }
 
 export interface LambdaInfo {
@@ -86,4 +94,13 @@ export interface ApiStackProps extends StackProps {
   buildArgs: string[];
   service: IBaseService;
   loadbalancer: ILoadBalancerV2;
+}
+
+export interface LambdaAuthorizersProps extends StackProps {
+  name: string;
+  JWTSECRET: string;
+}
+
+export interface ApiGatewayStackProps extends StackProps {
+  domainName: string;
 }

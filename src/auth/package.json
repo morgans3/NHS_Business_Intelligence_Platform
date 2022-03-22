@@ -1,0 +1,14 @@
+{
+  "name": "authhandler",
+  "version": "1.0.1",
+  "description": "Auth layer",
+  "main": "handler.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "author": "stewart.morgan@nhs.net",
+  "license": "ISC",
+  "dependencies": {
+    "jsonwebtoken": "^8.5.1"
+  }
+}

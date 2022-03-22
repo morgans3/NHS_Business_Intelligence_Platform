@@ -50,8 +50,6 @@ export class SQLStack extends Stack {
 
     // Create API Gateway with all endpoints and CORS (add WAFStack)
 
-    const waf = new WAFStack(this, "WAFStack", { env: props.env });
-
     if (_SETTINGS.manageDNS) {
       // Add Route 53 DNS records
     }
