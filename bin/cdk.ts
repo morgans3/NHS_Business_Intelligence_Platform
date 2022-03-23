@@ -60,9 +60,6 @@ getSecret("jwt", (data: any) => {
   });
   cdk.Tags.of(rdsStack).add("IAC.Module", "SQLStack");
 
-  const containerStack = new ContainerStack(app, "ContainerStack", { env });
-  cdk.Tags.of(containerStack).add("IAC.Module", "ContainerStack");
-
   const platformApp = new AppStack(app, "PlatformAppStack", {
     env,
     appname: "BI_Platform",
@@ -75,6 +72,8 @@ getSecret("jwt", (data: any) => {
   cdk.Tags.of(platformApp).add("IAC.Module", "AppStack");
 
   // TODO: add required apis to containerStack
+  const containerStack = new ContainerStack(app, "ContainerStack", { env });
+  cdk.Tags.of(containerStack).add("IAC.Module", "ContainerStack");
 
   // TODO: add selected optional apps & apis based on config
 

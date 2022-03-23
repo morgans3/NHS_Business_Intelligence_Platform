@@ -17,6 +17,7 @@ export class InfrastructureStack extends Stack {
         { name: "BIPlatformVPC-public-0", subnetType: SubnetType.PUBLIC },
         { name: "BIPlatformVPC-public-1", subnetType: SubnetType.PUBLIC },
       ],
+      maxAzs: 2,
     });
 
     const vpcSG = new SecurityGroup(this, "VPCSecGroup", {
