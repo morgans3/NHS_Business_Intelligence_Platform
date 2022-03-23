@@ -104,3 +104,25 @@ export interface LambdaAuthorizersProps extends StackProps {
 export interface ApiGatewayStackProps extends StackProps {
   domainName: string;
 }
+
+export interface LambdaPGInfo {
+  name: string;
+  filename: string;
+  functions: pgFunction[];
+  baseendpoint: string;
+  customAuth?: string;
+}
+
+export interface pgFunction {
+  method: string;
+  methodType: string;
+  queryString: string;
+  params: any;
+  handlermethod: string;
+  role?: string;
+  orderString?: string;
+}
+
+export interface PostgreSQLLambdaProps extends StackProps {
+  lambdarole: Role;
+}

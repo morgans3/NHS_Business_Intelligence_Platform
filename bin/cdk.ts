@@ -49,7 +49,15 @@ getSecret("jwt", (data: any) => {
   });
   cdk.Tags.of(dynamodbStack).add("IAC.Module", "DynamoDBStack");
 
-  const rdsStack = new SQLStack(app, "SQLStack", { env, infrastructure, authLambda: lambdaAuthorizers.authorizer, publicLambda: lambdaAuthorizers.publicAuthorizer, lambdarole: iams.databaseRole, apigateway: apigatewayStack.apigateway, addCors: true });
+  const rdsStack = new SQLStack(app, "SQLStack", {
+    env,
+    infrastructure,
+    authLambda: lambdaAuthorizers.authorizer,
+    publicLambda: lambdaAuthorizers.publicAuthorizer,
+    lambdarole: iams.databaseRole,
+    apigateway: apigatewayStack.apigateway,
+    addCors: true,
+  });
   cdk.Tags.of(rdsStack).add("IAC.Module", "SQLStack");
 
   const containerStack = new ContainerStack(app, "ContainerStack", { env });

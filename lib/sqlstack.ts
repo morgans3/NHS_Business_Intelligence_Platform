@@ -1,9 +1,11 @@
 import { CfnOutput, Duration, Stack } from "aws-cdk-lib";
+import { AuthorizationType, Cors, LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
 import { SubnetType } from "aws-cdk-lib/aws-ec2";
 import { Credentials, DatabaseInstance, DatabaseInstanceEngine, PostgresEngineVersion, SubnetGroup } from "aws-cdk-lib/aws-rds";
-import { RDSStackProps } from "./types/interfaces";
-import { WAFStack } from "./wafstack";
+import { PostgreSQLLambdaProps, RDSStackProps } from "./types/interfaces";
 import { _SETTINGS } from "./_config";
+import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
+import { _RequiredSQLTables } from "../datasets/postgresql/tables";
 
 export class SQLStack extends Stack {
   public dbInstance: DatabaseInstance;
@@ -46,12 +48,67 @@ export class SQLStack extends Stack {
 
     new CfnOutput(this, "dbEndpoint", { value: this.dbInstance.dbInstanceEndpointAddress });
 
-    // Create Lambda to manage Access Patterns
+    // TODO: Create Lambda to manage Access Patterns
+    const accessLambda = new PostgreSQLLambda(this, "PostgreSQLLambda", { lambdarole: props.lambdarole });
+    const authLambda = props.authLambda;
+    const publicAuthLambda = props.publicLambda;
+    const api: RestApi = props.apigateway;
 
-    // Create API Gateway with all endpoints and CORS (add WAFStack)
+    // TODO: Create API Gateway with all endpoints and CORS (add WAFStack)
+    _RequiredSQLTables.forEach((table) => {
+      const baseendpoint = api.root.addResource(table.baseendpoint);
+      let authorizer = authLambda;
+      let splitLambdaNamesByAuthSoThatTheyRemainUnique = "";
+      if (table.customAuth) {
+        splitLambdaNamesByAuthSoThatTheyRemainUnique = "-" + table.customAuth;
+        authorizer = publicAuthLambda;
+      }
+      if (props.addCors) {
+        baseendpoint.addCorsPreflight({
+          allowOrigins: Cors.ALL_ORIGINS,
+          allowHeaders: ["Content-Type", "X-Amz-Date", "Authorization", "X-Api-Key", "X-Amz-Security-Token", "X-Amz-User-Agent", "access-control-allow-origin", "Cache-Control", "Pragma"],
+        });
+      }
 
-    if (_SETTINGS.manageDNS) {
-      // Add Route 53 DNS records
-    }
+      table.functions.forEach((func: any) => {
+        const thislambda = new LambdaIntegration(accessLambda.lambda, {
+          requestTemplates: { "application/json": '{ "statusCode": "200" }' },
+        });
+        const methodtype = selectMethodType(func);
+        const thisendpoint = baseendpoint.addResource(func.split("-").join(""));
+        thisendpoint.addMethod(methodtype, thislambda, { authorizationType: AuthorizationType.CUSTOM, authorizer: authorizer });
+        if (props.addCors) {
+          thisendpoint.addCorsPreflight({
+            allowOrigins: Cors.ALL_ORIGINS,
+            allowHeaders: ["Content-Type", "X-Amz-Date", "Authorization", "X-Api-Key", "X-Amz-Security-Token", "X-Amz-User-Agent", "access-control-allow-origin", "Cache-Control", "Pragma"],
+          });
+        }
+      });
+    });
   }
+}
+
+export class PostgreSQLLambda extends Stack {
+  public readonly lambda: Function;
+  constructor(scope: any, id: string, props: PostgreSQLLambdaProps) {
+    super(scope, id, props);
+    this.lambda = new Function(this, "PostgreSQLLambda-Handler", {
+      functionName: "PostgreSQLLambda",
+      runtime: Runtime.NODEJS_14_X,
+      code: Code.fromAsset("./src/postgresql", {
+        exclude: ["cdk", "*.ts"],
+      }),
+      handler: "postgresql.decision",
+      environment: {},
+      role: props.lambdarole,
+      timeout: Duration.seconds(30),
+    });
+  }
+}
+
+function selectMethodType(func: string) {
+  if (func.includes("get")) {
+    return "GET";
+  }
+  return "POST";
 }

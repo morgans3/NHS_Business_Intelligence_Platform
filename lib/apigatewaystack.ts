@@ -1,7 +1,10 @@
 import { CfnOutput, Stack } from "aws-cdk-lib";
 import { Cors, RestApi, SecurityPolicy } from "aws-cdk-lib/aws-apigateway";
 import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
+import { ARecord, HostedZone, RecordTarget } from "aws-cdk-lib/aws-route53";
+import { ApiGatewayDomain } from "aws-cdk-lib/aws-route53-targets";
 import { ApiGatewayStackProps } from "./types/interfaces";
+import { _SETTINGS } from "./_config";
 
 export class ApiGatewayStack extends Stack {
   public apigateway: RestApi;
@@ -29,5 +32,14 @@ export class ApiGatewayStack extends Stack {
 
     new CfnOutput(this, "API-Gateway-RestAPIID", { value: this.apigateway.restApiId });
     new CfnOutput(this, "API-Gateway-restApiRootResourceId", { value: this.apigateway.restApiRootResourceId });
+
+    if (_SETTINGS.manageDNS) {
+      const zone = HostedZone.fromLookup(this, "ApiGateway-Zone", { domainName: props.domainName });
+      new ARecord(this, "ApiGateway-SiteAliasRecord", {
+        recordName: "api",
+        target: RecordTarget.fromAlias(new ApiGatewayDomain(this.apigateway.domainName!)),
+        zone: zone!,
+      });
+    }
   }
 }
