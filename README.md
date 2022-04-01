@@ -22,7 +22,7 @@ We will be actively maintaining these repositories, so if you identify an issue 
 ## Other Repositories included as part of deployment
 
 - Web Application: <https://github.com/morgans3/NHS_Business_Intelligence_Platform_App>
-- Non-serverless API: <https://github.com/morgans3/NHS_Business_Intelligence_Platform_Api>
+- API Server: <https://github.com/morgans3/NHS_Business_Intelligence_Platform_Api>
 - Open Trip Planner Server: <https://github.com/morgans3/NHS_Business_Intelligence_Platform_Otp>
 - Cross-Filter Server: <https://github.com/morgans3/NHS_Business_Intelligence_Platform_CF-Api>
 
