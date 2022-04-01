@@ -6,8 +6,8 @@ Cloud deployment of a Business Intelligence Application Suite, including modules
 
 The Digital Intelligence Unit @ NHS Blackpool CCG have created a cloud-deployed Business Intelligence application suite with a primary focus on Population Health Management. We have developed this as a small team and this is currently being utilised by Public Sector staff across Lancashire & South Cumbria. Information on our deployment of the platform can be found at the following links:
 
-- https://aws.amazon.com/blogs/publicsector/one-small-team-created-cloud-based-predictive-modeling-solution-improve-healthcare-services-uk/
-- https://www.nexusintelligencenw.nhs.uk (Login required)
+- <https://aws.amazon.com/blogs/publicsector/one-small-team-created-cloud-based-predictive-modeling-solution-improve-healthcare-services-uk/>
+- <https://www.nexusintelligencenw.nhs.uk> (Login required)
 
 We have built this platform entirely on open-source technology so there is absolutely no licence costs for using it, only running costs which vary depending on usage.
 
@@ -18,6 +18,13 @@ We will be actively maintaining these repositories, so if you identify an issue 
 ## Architecture
 
 ![Diagram](Platform_Design.png)
+
+## Other Repositories included as part of deployment
+
+- Web Application: <https://github.com/morgans3/NHS_Business_Intelligence_Platform_App>
+- Non-serverless API: <https://github.com/morgans3/NHS_Business_Intelligence_Platform_Api>
+- Open Trip Planner Server: <https://github.com/morgans3/NHS_Business_Intelligence_Platform_Otp>
+- Cross-Filter Server: <https://github.com/morgans3/NHS_Business_Intelligence_Platform_CF-Api>
 
 ## Pre-requisites
 
@@ -81,13 +88,13 @@ The platform operates using custom JWT authentication with a user database held 
 
 ### Notes on Testing
 
-Step six of the deployment carries out automated test scripts to ensure that your platform is online and fully usable. It will go through a series of tests including logging in, using all of the endpoints to create/update/delete data (where appropriate), and ensuring the role based access & security is working correctly. If there are no errors in the previous steps and there are failed tests please consult the `testing` folder for in-depth documentation.
+Step six of the deployment carries out automated test scripts to ensure that your platform is online and fully usable. It will go through a series of tests including logging in, using all of the endpoints to create/update/delete data (where appropriate), and ensuring the role based access & security is working correctly. If there are no errors in the previous steps and there are failed tests please consult the `cypress` folder for in-depth documentation.
 
 ## Terms of Use
 
 This project and all code within is © Crown copyright and available under the terms of the Open Government 3.0 licence.
 
-The code has been developed and is maintained by the NHS and where possible we will try to adhere to the NHS Open Source Policy (https://github.com/nhsx/open-source-policy/blob/main/open-source-policy.md).
+The code has been developed and is maintained by the NHS and where possible we will try to adhere to the NHS Open Source Policy (<https://github.com/nhsx/open-source-policy/blob/main/open-source-policy.md>).
 
 It shall remain free to the NHS and all UK public services.
 
