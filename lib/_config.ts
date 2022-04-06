@@ -9,6 +9,10 @@ export const _SETTINGS: iSettings = {
   containerIPs: ["10.1.0.0/19"], // Replace if you have a unique IP range, for example from HSCN to ensure it's unique across the network
   existingVPC: false, // Set to true if you have an existing VPC, set to false if you want to create a new VPC
   // existingVPCID: "vpc-0c9f9f9f9f9f9f9f9", // Set to the VPC ID if you have an existing VPC
+  // existingSubnetIDs: [
+  //   { ID: "subnet-0a9f9f9f9f9f9f9f9", AZ: "eu-west-2a" },
+  //   { ID: "subnet-0b9f9f9f9f9f9f9f9", AZ: "eu-west-2b" },
+  // ], // Set to the subnet IDs if you have an existing VPC and subnets to deploy into
   // ADD IF YOU WISH TO USE A DOCKERHUB ACCOUNT FOR IMPROVED IMAGE PULLS (See authentication/README.md)
   //   dockerhub: {
   //     username: "USERNAME",
@@ -21,6 +25,12 @@ export const _SETTINGS: iSettings = {
   },
   github: {
     oAuthToken: "TOKENHERE",
+  },
+  serversAlwaysOn: false, // Set to true if you want to keep the servers always on, set to false if you want to turn them off outside of working hours
+  ECSConfig: {
+    minCapacity: 1,
+    maxCapacity: 1,
+    desiredCapacity: 1,
   },
 };
 
@@ -49,6 +59,10 @@ export const _RequiredAppList: ApiProps[] = [
     domainName: _MYDOMAIN,
     siteSubDomain: "api",
     buildArgs: [],
+    port: 8080,
+    minCapacity: 1,
+    maxCapacity: 1,
+    desired: 1,
   },
   {
     apiname: "BI_Platform_CF-Api",
@@ -75,3 +89,5 @@ export const _RequiredAppList: ApiProps[] = [
     buildArgs: [],
   },
 ];
+
+// TODO: Add port, min, max and desired capacity for each API

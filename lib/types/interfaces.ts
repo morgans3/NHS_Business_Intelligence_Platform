@@ -1,11 +1,9 @@
 import { StackProps } from "aws-cdk-lib";
-import { AttributeType } from "aws-cdk-lib/aws-dynamodb";
 import { InfrastructureStack } from "../infrastack";
-import { InstanceType } from "aws-cdk-lib/aws-ec2";
+import { InstanceType, ISecurityGroup, IVpc, SecurityGroup } from "aws-cdk-lib/aws-ec2";
 import { IRole, Role } from "aws-cdk-lib/aws-iam";
-import { IBaseService } from "aws-cdk-lib/aws-ecs";
+import { IBaseService, ICluster } from "aws-cdk-lib/aws-ecs";
 import { ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
-import { Function } from "aws-cdk-lib/aws-lambda";
 import { Authorizer, RestApi } from "aws-cdk-lib/aws-apigateway";
 
 export interface iSettings {
@@ -14,6 +12,7 @@ export interface iSettings {
   manageDNS: boolean;
   existingVPC?: boolean;
   existingVPCID?: string;
+  existingSubnetIDs?: { ID: string; AZ: string }[];
   rds_config: {
     username: string;
     instanceType: InstanceType;
@@ -21,6 +20,14 @@ export interface iSettings {
   };
   github: {
     oAuthToken: string;
+  };
+  serversAlwaysOn: boolean;
+  startHour?: string;
+  stopHour?: string;
+  ECSConfig: {
+    minCapacity: number;
+    maxCapacity: number;
+    desiredCapacity: number;
   };
 }
 
@@ -104,6 +111,12 @@ export interface ApiProps {
   siteSubDomain: string;
   application: iApplication;
   buildArgs: string[];
+  port?: number;
+  minCapacity?: number;
+  maxCapacity?: number;
+  desired?: number;
+  cpu?: number;
+  memory?: number;
 }
 
 export interface LambdaAuthorizersProps extends StackProps {
@@ -135,4 +148,37 @@ export interface pgFunction {
 
 export interface PostgreSQLLambdaProps extends StackProps {
   lambdarole: Role;
+}
+
+export interface ContainerStackProps extends StackProps {
+  name: string;
+  clusterVPC: IVpc;
+  capacity: {
+    min: number;
+    max: number;
+    desired: number;
+  };
+  range: { ID: string; AZ: string }[];
+  domainName: string;
+}
+
+export interface LoadBalancerStackProps extends StackProps {
+  name: string;
+  vpc: IVpc;
+  secGroup: SecurityGroup;
+  cluster: ICluster;
+  domainName: string;
+}
+
+export interface ContainerProps extends StackProps {
+  name: string;
+  branch: string;
+  port: number;
+  memory: number;
+  cluster: ICluster;
+  secGroup: ISecurityGroup;
+  cpu: number;
+  desired: number;
+  minCapacity: number;
+  maxCapacity: number;
 }

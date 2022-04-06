@@ -70,7 +70,18 @@ getSecret("jwt", (data: any) => {
   });
   cdk.Tags.of(platformApp).add("IAC.Module", "AppStack");
 
-  const containerStack = new ContainerStack(app, "ContainerStack", { env });
+  const containerStack = new ContainerStack(app, "ContainerStack", {
+    env,
+    name: "ContainerStack",
+    clusterVPC: infrastructure.vpc,
+    capacity: {
+      min: _SETTINGS.ECSConfig.minCapacity,
+      max: _SETTINGS.ECSConfig.maxCapacity,
+      desired: _SETTINGS.ECSConfig.desiredCapacity,
+    },
+    range: _SETTINGS.existingSubnetIDs || [],
+    domainName: _MYDOMAIN,
+  });
   cdk.Tags.of(containerStack).add("IAC.Module", "ContainerStack");
 
   // Global Tags

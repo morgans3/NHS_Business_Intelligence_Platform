@@ -1,31 +1,93 @@
-import { CfnOutput, Stack } from "aws-cdk-lib";
-import { ContainerImage } from "aws-cdk-lib/aws-ecs";
+import { Stack, Tags } from "aws-cdk-lib";
+import { Cluster, EcsOptimizedImage } from "aws-cdk-lib/aws-ecs";
 import { _SETTINGS } from "./_config";
-import * as ecs_patterns from "aws-cdk-lib/aws-ecs-patterns";
+import { ContainerStackProps } from "./types/interfaces";
+import { InstanceType, ISubnet, Peer, Port, SecurityGroup, Subnet } from "aws-cdk-lib/aws-ec2";
+import { Schedule } from "aws-cdk-lib/aws-autoscaling";
+import { LoadBalancerStack } from "./loadbalancerstack";
 
 export class ContainerStack extends Stack {
-  constructor(scope: any, id: string, props: any) {
+  public readonly cluster: Cluster;
+
+  constructor(scope: any, id: string, props: ContainerStackProps) {
     super(scope, id, props);
 
-    // TODO: Change to ECS
-    // TODO: Add in APIStack(s): _RequiredAppList
-    // TODO: add type interface instead of props: any
-
-    const fargate = new ecs_patterns.ApplicationLoadBalancedFargateService(this, props.name + "-FargateService", {
-      cpu: props.cpu,
-      desiredCount: props.desiredCount,
-      taskImageOptions: { image: ContainerImage.fromEcrRepository(props.repo) },
-      memoryLimitMiB: props.memory,
-      publicLoadBalancer: true,
-      domainName: props.subdomain + props.domainName,
+    this.cluster = new Cluster(this, "ECS-DIU-" + props.name, {
+      vpc: props.clusterVPC,
+      clusterName: "ECS-DIU-" + props.name,
     });
 
-    new CfnOutput(this, props.name + "-LoadBalancerDNS", {
-      value: fargate.loadBalancer.loadBalancerDnsName,
+    let subnetArray: ISubnet[] = [];
+    props.range.forEach((subnet: { ID: string; AZ: string }) => {
+      subnetArray.push(Subnet.fromSubnetAttributes(this, subnet.ID, { subnetId: subnet.ID, availabilityZone: subnet.AZ }));
     });
+    const subnets = props.clusterVPC.selectSubnets({
+      subnets: subnetArray,
+    });
+    const capacity = this.cluster.addCapacity("ASG-BIPlatform-" + props.name, {
+      instanceType: new InstanceType("c5.2xlarge"),
+      machineImage: EcsOptimizedImage.amazonLinux2(),
+      associatePublicIpAddress: false,
+      minCapacity: props.capacity.min,
+      maxCapacity: props.capacity.max,
+      desiredCapacity: props.capacity.desired,
+      vpcSubnets: subnets,
+      autoScalingGroupName: "ASG-DIU-" + props.name,
+    });
+
+    if (_SETTINGS.serversAlwaysOn === false) {
+      const starthour = _SETTINGS.startHour || "8";
+      const stophour = _SETTINGS.stopHour || "18";
+      Tags.of(this.cluster).add("Automation.Schedule", "Operates in Working Hours only");
+      Tags.of(this.cluster).add("Automation.Schedules.Shutdown", "Weekdays at " + stophour);
+      Tags.of(this.cluster).add("Automation.Schedules.Startup", "Weekdays at " + starthour);
+
+      capacity.scaleOnSchedule(props.name + "-PowerOn", {
+        minCapacity: props.capacity.min,
+        maxCapacity: props.capacity.max,
+        desiredCapacity: props.capacity.desired,
+        schedule: Schedule.cron({ hour: starthour, minute: "0" }),
+      });
+      capacity.scaleOnSchedule(props.name + "-PowerOff", {
+        minCapacity: 0,
+        maxCapacity: 0,
+        desiredCapacity: 0,
+        schedule: Schedule.cron({ hour: stophour, minute: "0" }),
+      });
+      capacity.scaleOnSchedule(props.name + "-PowerOff-Saturday", {
+        minCapacity: 0,
+        maxCapacity: 0,
+        desiredCapacity: 0,
+        schedule: Schedule.cron({ hour: starthour, minute: "15", weekDay: "Sat" }),
+      });
+      capacity.scaleOnSchedule(props.name + "-PowerOff-Sunday", {
+        minCapacity: 0,
+        maxCapacity: 0,
+        desiredCapacity: 0,
+        schedule: Schedule.cron({ hour: starthour, minute: "15", weekDay: "Sun" }),
+      });
+    }
+
+    const secGroup = new SecurityGroup(this, "ECSCluster-SecGroup-" + props.name, {
+      vpc: props.clusterVPC,
+      securityGroupName: "SG-DIU-LB-" + props.name,
+      description: "HTTP/S Access to ECS",
+      allowAllOutbound: true,
+    });
+    secGroup.addIngressRule(Peer.anyIpv6(), Port.tcpRange(80, 8100), "Container Port Range");
+    Tags.of(secGroup).add("Component", "Security Group");
+    Tags.of(secGroup).add("Name", "SG-DIU-LB-" + props.name);
+
+    const loadbalancer = new LoadBalancerStack(this, "ECSCluster-LoadBalancer-" + props.name, {
+      vpc: props.clusterVPC,
+      cluster: this.cluster,
+      secGroup: secGroup,
+      name: props.name,
+      domainName: props.domainName,
+    }).loadbalancer;
 
     if (_SETTINGS.manageDNS) {
-      // TODO: Add Route 53 DNS records
+      // TODO: Add Route 53 DNS records for each container/loadbalancer listener rule
     }
   }
 }
