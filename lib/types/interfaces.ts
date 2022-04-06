@@ -12,6 +12,8 @@ export interface iSettings {
   containerIPs: string[];
   dockerhub?: any;
   manageDNS: boolean;
+  existingVPC?: boolean;
+  existingVPCID?: string;
   rds_config: {
     username: string;
     instanceType: InstanceType;
@@ -40,7 +42,7 @@ export interface StaticSiteProps extends StackProps {
   domainName: string;
   siteSubDomain: string;
   application: iApplication;
-  webACLId: string;
+  webACLId?: string;
   codebuildRole: IRole;
 }
 

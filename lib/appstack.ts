@@ -9,6 +9,7 @@ import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
 import { Bucket, HttpMethods } from "aws-cdk-lib/aws-s3";
 import { cleanseBucketName } from "../authentication/_functions";
 import { StaticSiteProps } from "./types/interfaces";
+import { WAFStack } from "./wafstack";
 import { _SETTINGS } from "./_config";
 
 export class AppStack extends Stack {
@@ -48,6 +49,12 @@ export class AppStack extends Stack {
       cert = new Certificate(this, props.appname + "-SiteCertificate", { domainName: siteDomain });
     }
 
+    let wafArn: string = props.webACLId || "";
+    if (!props.webACLId) {
+      const waf = new WAFStack(this, props.appname + "-WAF", { env: props.env });
+      wafArn = waf.attrId;
+    }
+
     // CloudFront distribution that provides HTTPS
     const distribution = new CloudFrontWebDistribution(this, props.appname + "-SiteDistribution", {
       viewerCertificate: ViewerCertificate.fromAcmCertificate(cert, {
@@ -64,7 +71,7 @@ export class AppStack extends Stack {
           behaviors: [{ isDefaultBehavior: true }],
         },
       ],
-      webACLId: props.webACLId,
+      webACLId: wafArn,
     });
     new CfnOutput(this, props.appname + "-DistributionId", { value: distribution.distributionId });
 

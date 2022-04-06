@@ -66,12 +66,10 @@ getSecret("jwt", (data: any) => {
     domainName: _MYDOMAIN,
     siteSubDomain: "www",
     application: _PLATFORMAPP,
-    webACLId: "", // TODO: add WAF Id
     codebuildRole: iams.codebuildRole,
   });
   cdk.Tags.of(platformApp).add("IAC.Module", "AppStack");
 
-  // TODO: add required apis to containerStack
   const containerStack = new ContainerStack(app, "ContainerStack", { env });
   cdk.Tags.of(containerStack).add("IAC.Module", "ContainerStack");
 

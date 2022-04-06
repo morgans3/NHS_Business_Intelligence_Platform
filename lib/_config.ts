@@ -7,6 +7,8 @@ export const _ACCOUNT = process.env.CDK_DEFAULT_ACCOUNT;
 export const _SETTINGS: iSettings = {
   manageDNS: false, // Change to true if you want AWS to handle Global DNS records, set to false if handled by a third party (e.g. nhs.uk domains = NHS Digital)
   containerIPs: ["10.1.0.0/19"], // Replace if you have a unique IP range, for example from HSCN to ensure it's unique across the network
+  existingVPC: false, // Set to true if you have an existing VPC, set to false if you want to create a new VPC
+  // existingVPCID: "vpc-0c9f9f9f9f9f9f9f9", // Set to the VPC ID if you have an existing VPC
   // ADD IF YOU WISH TO USE A DOCKERHUB ACCOUNT FOR IMPROVED IMAGE PULLS (See authentication/README.md)
   //   dockerhub: {
   //     username: "USERNAME",

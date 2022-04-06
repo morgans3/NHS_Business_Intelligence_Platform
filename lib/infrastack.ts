@@ -1,26 +1,28 @@
 import { Stack } from "aws-cdk-lib";
-import { Peer, Port, SecurityGroup, SubnetType, Vpc } from "aws-cdk-lib/aws-ec2";
+import { Peer, Port, SecurityGroup, SubnetType, Vpc, IVpc } from "aws-cdk-lib/aws-ec2";
 import { _SETTINGS } from "./_config";
 
 export class InfrastructureStack extends Stack {
-  public vpc: Vpc;
+  public vpc: IVpc;
   public secGroups: SecurityGroup[];
 
   constructor(scope: any, id: string, props?: any) {
     super(scope, id, props);
 
-    // TODO: Make Optional (i.e. New or Existing - set in Config)
-
-    this.vpc = new Vpc(this, "BIPlatformVPC", {
-      cidr: _SETTINGS.containerIPs[0],
-      subnetConfiguration: [
-        { name: "BIPlatformVPC-private-0", subnetType: SubnetType.PRIVATE_ISOLATED },
-        { name: "BIPlatformVPC-private-1", subnetType: SubnetType.PRIVATE_ISOLATED },
-        { name: "BIPlatformVPC-public-0", subnetType: SubnetType.PUBLIC },
-        { name: "BIPlatformVPC-public-1", subnetType: SubnetType.PUBLIC },
-      ],
-      maxAzs: 2,
-    });
+    if (_SETTINGS.existingVPC) {
+      this.vpc = Vpc.fromLookup(this, "BIPlatformVPC", { vpcId: _SETTINGS.existingVPCID });
+    } else {
+      this.vpc = new Vpc(this, "BIPlatformVPC", {
+        cidr: _SETTINGS.containerIPs[0],
+        subnetConfiguration: [
+          { name: "BIPlatformVPC-private-0", subnetType: SubnetType.PRIVATE_ISOLATED },
+          { name: "BIPlatformVPC-private-1", subnetType: SubnetType.PRIVATE_ISOLATED },
+          { name: "BIPlatformVPC-public-0", subnetType: SubnetType.PUBLIC },
+          { name: "BIPlatformVPC-public-1", subnetType: SubnetType.PUBLIC },
+        ],
+        maxAzs: 2,
+      });
+    }
 
     const vpcSG = new SecurityGroup(this, "VPCSecGroup", {
       securityGroupName: "SG-BIPlatformVPC",
