@@ -1,5 +1,5 @@
 import { InstanceClass, InstanceSize, InstanceType } from "aws-cdk-lib/aws-ec2";
-import { iSettings } from "./types/interfaces";
+import { ApiProps, iSettings } from "./types/interfaces";
 
 export const _AWSREGION = process.env.CDK_DEFAULT_REGION || "eu-west-2";
 export const _ACCOUNT = process.env.CDK_DEFAULT_ACCOUNT;
@@ -28,13 +28,48 @@ export const _SETTINGS: iSettings = {
 export const _AccessListCountries = ["GB"];
 
 // APPLICATION LIST AND DEFAULTS
-
 export const _MYDOMAIN = "example.com";
-
 export const _PLATFORMAPP = {
   repo: "https://github.com/morgans3/NHS_Business_Intelligence_Platform_App",
   name: "BI_Platform",
   owner: "morgans3",
   branch: "main",
 };
-export const AppList = [];
+export const _RequiredAppList: ApiProps[] = [
+  {
+    apiname: "BI_Platform_Api",
+    application: {
+      repo: "https://github.com/morgans3/NHS_Business_Intelligence_Platform_Api",
+      name: "BI_Platform_Api",
+      owner: "morgans3",
+      branch: "main",
+    },
+    domainName: _MYDOMAIN,
+    siteSubDomain: "api",
+    buildArgs: [],
+  },
+  {
+    apiname: "BI_Platform_CF-Api",
+    application: {
+      repo: "https://github.com/morgans3/NHS_Business_Intelligence_Platform_CF-Api",
+      name: "BI_Platform_CF-Api",
+      owner: "morgans3",
+      branch: "main",
+    },
+    domainName: _MYDOMAIN,
+    siteSubDomain: "crossfilter",
+    buildArgs: [],
+  },
+  {
+    apiname: "BI_Platform_Otp",
+    application: {
+      repo: "https://github.com/morgans3/NHS_Business_Intelligence_Platform_Otp",
+      name: "BI_Platform_Otp",
+      owner: "morgans3",
+      branch: "main",
+    },
+    domainName: _MYDOMAIN,
+    siteSubDomain: "isochrone",
+    buildArgs: [],
+  },
+];

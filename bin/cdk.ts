@@ -75,8 +75,6 @@ getSecret("jwt", (data: any) => {
   const containerStack = new ContainerStack(app, "ContainerStack", { env });
   cdk.Tags.of(containerStack).add("IAC.Module", "ContainerStack");
 
-  // TODO: add selected optional apps & apis based on config
-
   // Global Tags
   cdk.Tags.of(app).add("Author", "https://github.com/morgans3");
   cdk.Tags.of(app).add("Component.Docs", "https://github.com/morgans3/NHS_Business_Intelligence_Platform");

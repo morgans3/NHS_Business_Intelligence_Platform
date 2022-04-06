@@ -7,6 +7,10 @@ export class ContainerStack extends Stack {
   constructor(scope: any, id: string, props: any) {
     super(scope, id, props);
 
+    // TODO: Change to ECS
+    // TODO: Add in APIStack(s): _RequiredAppList
+    // TODO: add type interface instead of props: any
+
     const fargate = new ecs_patterns.ApplicationLoadBalancedFargateService(this, props.name + "-FargateService", {
       cpu: props.cpu,
       desiredCount: props.desiredCount,

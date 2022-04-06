@@ -68,9 +68,9 @@ Once fully deployed, you will have the following AWS resources in your AWS accou
 
 - AWS Secret's Manager with secrets & passwords for your platform to operate
 - AWS Cloudformation containing all the Stacks created as part of the deployment, here you will find useful outputs like how to access the platform
-- A VPC, with a private and a public subnet. Relevant Security Groups to manage VPC traffic and data flows.
+- (Optional) A VPC, with a private and a public subnet. Relevant Security Groups to manage VPC traffic and data flows.
 - IAM roles and users with specific permissions in order to carry out service tasks for maintaining the platform
-- Fargate service for deploying any created containers, including task definitions and services for those applications.
+- ECS service for deploying any created containers, including task definitions and services for those applications.
 - Elastic Load Balancer to flow traffic between the Internet and the deployed containers, routed through a WAF (Firewall)
 - DynamoDB tables containing transactional data, accessed via API Gateway using a Lambda to handle authorized requests
 - RDS (PostgreSQL) database with multi-az failover, accesed via API Gateway using a Lambda to handle authorized requests
@@ -88,7 +88,7 @@ The platform operates using custom JWT authentication with a user database held 
 
 ### Notes on Testing
 
-Step six of the deployment carries out automated test scripts to ensure that your platform is online and fully usable. It will go through a series of tests including logging in, using all of the endpoints to create/update/delete data (where appropriate), and ensuring the role based access & security is working correctly. If there are no errors in the previous steps and there are failed tests please consult the `cypress` folder for in-depth documentation.
+Step six of the deployment carries out automated test scripts to ensure that your platform is online and fully usable. It will go through a series of tests including logging in, using all of the endpoints to create/update/delete data (where appropriate), and ensuring the role based access & security is working correctly. If there are no errors in the previous steps and there are failed tests please consult the `testing` folder for in-depth documentation.
 
 ## Terms of Use
 

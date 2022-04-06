@@ -89,11 +89,19 @@ export interface ApiStackProps extends StackProps {
   apiname: string;
   domainName: string;
   siteSubDomain: string;
-  application: any;
+  application: iApplication;
   codebuildRole: IRole;
   buildArgs: string[];
   service: IBaseService;
   loadbalancer: ILoadBalancerV2;
+}
+
+export interface ApiProps {
+  apiname: string;
+  domainName: string;
+  siteSubDomain: string;
+  application: iApplication;
+  buildArgs: string[];
 }
 
 export interface LambdaAuthorizersProps extends StackProps {

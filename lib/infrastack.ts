@@ -9,6 +9,8 @@ export class InfrastructureStack extends Stack {
   constructor(scope: any, id: string, props?: any) {
     super(scope, id, props);
 
+    // TODO: Make Optional (i.e. New or Existing - set in Config)
+
     this.vpc = new Vpc(this, "BIPlatformVPC", {
       cidr: _SETTINGS.containerIPs[0],
       subnetConfiguration: [
