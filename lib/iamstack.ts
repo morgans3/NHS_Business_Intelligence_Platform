@@ -19,7 +19,7 @@ export class IAMStack extends Stack {
     this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AWSCodeDeployRoleForECS"));
     this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("SecretsManagerReadWrite"));
 
-    this.databaseRole = new Role(this, "CodeBuildRole", {
+    this.databaseRole = new Role(this, "DatabaseRole", {
       roleName: "DatabaseRole",
       assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
       description: "Role for Databases to manage access.",

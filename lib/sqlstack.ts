@@ -2,7 +2,7 @@ import { CfnOutput, Duration, Stack } from "aws-cdk-lib";
 import { AuthorizationType, Cors, LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
 import { SubnetType } from "aws-cdk-lib/aws-ec2";
 import { Credentials, DatabaseInstance, DatabaseInstanceEngine, PostgresEngineVersion, SubnetGroup } from "aws-cdk-lib/aws-rds";
-import { PostgreSQLLambdaProps, RDSStackProps } from "./types/interfaces";
+import { pgFunction, PostgreSQLLambdaProps, RDSStackProps } from "./types/interfaces";
 import { _SETTINGS } from "./_config";
 import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
 import { _RequiredSQLTables } from "../datasets/postgresql/tables";
@@ -48,13 +48,11 @@ export class SQLStack extends Stack {
 
     new CfnOutput(this, "dbEndpoint", { value: this.dbInstance.dbInstanceEndpointAddress });
 
-    // TODO: Create Lambda to manage Access Patterns
     const accessLambda = new PostgreSQLLambda(this, "PostgreSQLLambda", { lambdarole: props.lambdarole });
     const authLambda = props.authLambda;
     const publicAuthLambda = props.publicLambda;
     const api: RestApi = props.apigateway;
 
-    // TODO: Create API Gateway with all endpoints and CORS (add WAFStack)
     _RequiredSQLTables.forEach((table) => {
       const baseendpoint = api.root.addResource(table.baseendpoint);
       let authorizer = authLambda;
@@ -70,12 +68,12 @@ export class SQLStack extends Stack {
         });
       }
 
-      table.functions.forEach((func: any) => {
+      table.functions.forEach((func: pgFunction) => {
         const thislambda = new LambdaIntegration(accessLambda.lambda, {
           requestTemplates: { "application/json": '{ "statusCode": "200" }' },
         });
-        const methodtype = selectMethodType(func);
-        const thisendpoint = baseendpoint.addResource(func.split("-").join(""));
+        const methodtype = selectMethodType(func.handlermethod);
+        const thisendpoint = baseendpoint.addResource(func.method.split("-").join(""));
         thisendpoint.addMethod(methodtype, thislambda, { authorizationType: AuthorizationType.CUSTOM, authorizer: authorizer });
         if (props.addCors) {
           thisendpoint.addCorsPreflight({

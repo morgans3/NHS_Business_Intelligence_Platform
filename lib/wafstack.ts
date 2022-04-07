@@ -8,6 +8,7 @@ export interface WAFProps extends StackProps {
   apigateway?: RestApi;
   name: string;
   resourceArn?: string;
+  scope?: string;
 }
 
 export class WAFStack extends Stack {
@@ -18,7 +19,7 @@ export class WAFStack extends Stack {
     const waf = new CfnWebACL(this, "WebACLForAPIGateway", {
       name: "BIPlatform-APIGateway-WAF",
       description: "ACL for Internet facing entry points to the BI Platform",
-      scope: "REGIONAL",
+      scope: props.scope || "REGIONAL",
       defaultAction: { allow: {} },
       visibilityConfig: {
         sampledRequestsEnabled: true,

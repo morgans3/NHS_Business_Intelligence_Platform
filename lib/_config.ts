@@ -103,5 +103,3 @@ export const _RequiredAppList: ApiProps[] = [
     memory: 2048,
   },
 ];
-
-// TODO: Add port, min, max and desired capacity for each API

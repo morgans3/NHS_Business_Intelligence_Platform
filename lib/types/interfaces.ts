@@ -34,6 +34,7 @@ export interface iSettings {
 export interface RDSStackProps extends StackProps {
   infrastructure: InfrastructureStack;
   lambdarole: Role;
+  JWTSECRET: string;
   authLambda: Authorizer;
   publicLambda: Authorizer;
   apigateway: RestApi;
@@ -49,7 +50,7 @@ export interface StaticSiteProps extends StackProps {
   domainName: string;
   siteSubDomain: string;
   application: iApplication;
-  webACLId?: string;
+  // webACLId: string;
   codebuildRole: IRole;
 }
 
@@ -62,6 +63,7 @@ export interface iApplication {
 
 export interface DynamoDBStackProps extends StackProps {
   lambdarole: Role;
+  JWTSECRET: string;
   authLambda: Authorizer;
   publicLambda: Authorizer;
   apigateway: RestApi;
@@ -123,9 +125,6 @@ export interface ApiProps {
 export interface LambdaAuthorizersProps extends StackProps {
   name: string;
   JWTSECRET: string;
-}
-
-export interface ApiGatewayStackProps extends StackProps {
   domainName: string;
 }
 

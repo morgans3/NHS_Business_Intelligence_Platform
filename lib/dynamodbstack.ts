@@ -27,9 +27,7 @@ export class DynamoDBStack extends Stack {
 
       const baseendpoint = api.root.addResource(table.baseendpoint);
       let authorizer = authLambda;
-      let splitLambdaNamesByAuthSoThatTheyRemainUnique = "";
       if (table.customAuth) {
-        splitLambdaNamesByAuthSoThatTheyRemainUnique = "-" + table.customAuth;
         authorizer = publicAuthLambda;
       }
       if (props.addCors) {
@@ -46,12 +44,12 @@ export class DynamoDBStack extends Stack {
         const methodtype = selectMethodType(func);
         const thisendpoint = baseendpoint.addResource(func.split("-").join(""));
         thisendpoint.addMethod(methodtype, thislambda, { authorizationType: AuthorizationType.CUSTOM, authorizer: authorizer });
-        if (props.addCors) {
-          thisendpoint.addCorsPreflight({
-            allowOrigins: Cors.ALL_ORIGINS,
-            allowHeaders: ["Content-Type", "X-Amz-Date", "Authorization", "X-Api-Key", "X-Amz-Security-Token", "X-Amz-User-Agent", "access-control-allow-origin", "Cache-Control", "Pragma"],
-          });
-        }
+        // if (props.addCors) {
+        //   thisendpoint.addCorsPreflight({
+        //     allowOrigins: Cors.ALL_ORIGINS,
+        //     allowHeaders: ["Content-Type", "X-Amz-Date", "Authorization", "X-Api-Key", "X-Amz-Security-Token", "X-Amz-User-Agent", "access-control-allow-origin", "Cache-Control", "Pragma"],
+        //   });
+        // }
       });
     });
   }
@@ -61,7 +59,7 @@ export class DynamoDBLambda extends Stack {
   public readonly lambda: Function;
   constructor(scope: any, id: string, props: DynamodbLambdaProps) {
     super(scope, id, props);
-    this.lambda = new Function(this, "DynamodbLambda-Handler", {
+    this.lambda = new Function(this, "DynamodbLambda-Handler-" + id, {
       functionName: "DynamodbLambda",
       runtime: Runtime.NODEJS_14_X,
       code: Code.fromAsset("./src/dynamodb", {

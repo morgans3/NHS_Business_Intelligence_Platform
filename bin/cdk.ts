@@ -10,7 +10,7 @@ import { AppStack } from "../lib/appstack";
 import { IAMStack } from "../lib/iamstack";
 import { LambdaAuthorizers } from "../lib/authorizers";
 import { getSecret } from "../authentication/_functions";
-import { ApiGatewayStack } from "../lib/apigatewaystack";
+import { WAFStack } from "../lib/wafstack";
 
 const env = { account: _ACCOUNT, region: _AWSREGION };
 
@@ -33,18 +33,17 @@ getSecret("jwt", (data: any) => {
     env,
     name: "AuthStack",
     JWTSECRET: jwtCredentials.secret,
+    domainName: _MYDOMAIN,
   });
   cdk.Tags.of(lambdaAuthorizers).add("IAC.Module", "LambdaAuthorizers");
 
-  const apigatewayStack = new ApiGatewayStack(app, "ApiGatewayStack", { env, domainName: _MYDOMAIN });
-  cdk.Tags.of(apigatewayStack).add("IAC.Module", "ApiGatewayStack");
-
   const dynamodbStack = new DynamoDBStack(app, "DynamoDBStack", {
     env,
+    JWTSECRET: jwtCredentials.secret,
+    lambdarole: iams.databaseRole,
     authLambda: lambdaAuthorizers.authorizer,
     publicLambda: lambdaAuthorizers.publicAuthorizer,
-    lambdarole: iams.databaseRole,
-    apigateway: apigatewayStack.apigateway,
+    apigateway: lambdaAuthorizers.apigateway,
     addCors: true,
   });
   cdk.Tags.of(dynamodbStack).add("IAC.Module", "DynamoDBStack");
@@ -52,13 +51,18 @@ getSecret("jwt", (data: any) => {
   const rdsStack = new SQLStack(app, "SQLStack", {
     env,
     infrastructure,
+    JWTSECRET: jwtCredentials.secret,
+    lambdarole: iams.databaseRole,
     authLambda: lambdaAuthorizers.authorizer,
     publicLambda: lambdaAuthorizers.publicAuthorizer,
-    lambdarole: iams.databaseRole,
-    apigateway: apigatewayStack.apigateway,
+    apigateway: lambdaAuthorizers.apigateway,
     addCors: true,
   });
   cdk.Tags.of(rdsStack).add("IAC.Module", "SQLStack");
+
+  // const envGlobal = { account: _ACCOUNT, region: "us-east-1" };
+  // const waf = new WAFStack(app, "WAFStack", { name: "WAFStack", scope: "CLOUDFRONT", env: envGlobal });
+  // cdk.Tags.of(waf).add("IAC.Module", "WAFStack");
 
   const platformApp = new AppStack(app, "PlatformAppStack", {
     env,
@@ -67,6 +71,7 @@ getSecret("jwt", (data: any) => {
     siteSubDomain: "www",
     application: _PLATFORMAPP,
     codebuildRole: iams.codebuildRole,
+    // webACLId: waf.attrId,
   });
   cdk.Tags.of(platformApp).add("IAC.Module", "AppStack");
 

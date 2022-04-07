@@ -1062,7 +1062,7 @@ export const _Settings: LambdaInfo[] = [
     filename: "dynamodb",
     functions: [],
     tablename: "users",
-    baseendpoint: "",
+    baseendpoint: "users",
     primarykey: { name: "username", type: "string" },
     secondarykey: { name: "organisation", type: "string" },
     fields: [
@@ -1079,7 +1079,7 @@ export const _Settings: LambdaInfo[] = [
     filename: "dynamodb",
     functions: [],
     tablename: "verificationcodes",
-    baseendpoint: "",
+    baseendpoint: "verificationcodes",
     primarykey: { name: "code", type: "string" },
     secondarykey: { name: "username", type: "string" },
     fields: [
@@ -1093,7 +1093,7 @@ export const _Settings: LambdaInfo[] = [
     filename: "dynamodb",
     functions: [],
     tablename: "mfa",
-    baseendpoint: "",
+    baseendpoint: "mfa",
     primarykey: { name: "username", type: "string" },
     secondarykey: { name: "verification", type: "string" },
     fields: [],

@@ -4,12 +4,12 @@ import { CloudFrontWebDistribution, OriginProtocolPolicy, SecurityPolicyProtocol
 import { BuildSpec, ComputeType, LinuxBuildImage, PipelineProject } from "aws-cdk-lib/aws-codebuild";
 import { Artifact, Pipeline } from "aws-cdk-lib/aws-codepipeline";
 import { CodeBuildAction, GitHubSourceAction, GitHubTrigger, S3DeployAction } from "aws-cdk-lib/aws-codepipeline-actions";
+import { Role } from "aws-cdk-lib/aws-iam";
 import { ARecord, HostedZone, IHostedZone, RecordTarget } from "aws-cdk-lib/aws-route53";
 import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
 import { Bucket, HttpMethods } from "aws-cdk-lib/aws-s3";
 import { cleanseBucketName } from "../authentication/_functions";
 import { StaticSiteProps } from "./types/interfaces";
-import { WAFStack } from "./wafstack";
 import { _SETTINGS } from "./_config";
 
 export class AppStack extends Stack {
@@ -21,7 +21,7 @@ export class AppStack extends Stack {
 
     // Content bucket
     const siteBucket = new Bucket(this, props.appname + "-SiteBucket", {
-      bucketName: cleanseBucketName(props.application.repo + "-" + props.application.name + "-bucket"),
+      bucketName: cleanseBucketName(props.application.name + "-bucket"),
       websiteIndexDocument: "index.html",
       websiteErrorDocument: "index.html",
       publicReadAccess: true,
@@ -49,17 +49,13 @@ export class AppStack extends Stack {
       cert = new Certificate(this, props.appname + "-SiteCertificate", { domainName: siteDomain });
     }
 
-    let wafArn: string = props.webACLId || "";
-    if (!props.webACLId) {
-      const waf = new WAFStack(this, props.appname + "-WAF", { name: props.appname + "-WAF" });
-      wafArn = waf.attrId;
-    }
+    // let wafArn: string = props.webACLId;
 
     // CloudFront distribution that provides HTTPS
     const distribution = new CloudFrontWebDistribution(this, props.appname + "-SiteDistribution", {
       viewerCertificate: ViewerCertificate.fromAcmCertificate(cert, {
         aliases: [siteDomain],
-        securityPolicy: SecurityPolicyProtocol.SSL_V3,
+        securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2018,
         sslMethod: SSLMethod.SNI,
       }),
       originConfigs: [
@@ -71,7 +67,7 @@ export class AppStack extends Stack {
           behaviors: [{ isDefaultBehavior: true }],
         },
       ],
-      webACLId: wafArn,
+      // webACLId: wafArn,
     });
     new CfnOutput(this, props.appname + "-DistributionId", { value: distribution.distributionId });
 
@@ -100,6 +96,8 @@ export class AppStack extends Stack {
       },
     };
 
+    const role = Role.fromRoleArn(this, "AppStackRoleFromArn" + props.siteSubDomain, props.codebuildRole.roleArn, { mutable: false });
+
     const build = new PipelineProject(this, props.application.name + "-Build", {
       buildSpec: BuildSpec.fromObject(buildSpecObject),
       environment: {
@@ -109,7 +107,7 @@ export class AppStack extends Stack {
       },
       timeout: Duration.minutes(10),
       projectName: props.application.name + "-Build",
-      role: props.codebuildRole,
+      role: role,
     });
 
     // Deploy site contents to S3 bucket
@@ -142,7 +140,7 @@ export class AppStack extends Stack {
               project: build,
               input: sourceOutput,
               outputs: [buildOutput],
-              role: props.codebuildRole,
+              role: role,
             }),
           ],
         },
@@ -153,7 +151,7 @@ export class AppStack extends Stack {
               actionName: "S3_Deploy",
               bucket: siteBucket,
               input: buildOutput,
-              role: props.codebuildRole,
+              role: role,
             }),
           ],
         },

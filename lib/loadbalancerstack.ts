@@ -100,7 +100,7 @@ export class LoadBalancerStack extends Stack {
         maxCapacity: container.maxCapacity || 1,
       });
 
-      const target = new ApplicationTargetGroup(this, props.name + "-TG", {
+      const target = new ApplicationTargetGroup(this, container.apiname + "-TG", {
         vpc: props.vpc,
         targetGroupName: (props.name.replace("_", "-") + "-lbtarget").substring(0, 31),
         protocol: ApplicationProtocol.HTTP,
@@ -111,7 +111,7 @@ export class LoadBalancerStack extends Stack {
           timeout: Duration.seconds(container.leadInTime || 30),
         },
       });
-      this.loadbalancer443.addTargetGroups(props.name + "-Listener", {
+      this.loadbalancer443.addTargetGroups(container.apiname + "-Listener", {
         targetGroups: [target],
         conditions: [ListenerCondition.hostHeaders(["*" + container.siteSubDomain + "*"])],
         priority: index + 1,

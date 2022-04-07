@@ -3,7 +3,7 @@ import { BuildSpec, ComputeType, LinuxBuildImage, PipelineProject } from "aws-cd
 import { Artifact, Pipeline } from "aws-cdk-lib/aws-codepipeline";
 import { CodeBuildAction, EcsDeployAction, GitHubSourceAction, GitHubTrigger } from "aws-cdk-lib/aws-codepipeline-actions";
 import { Repository } from "aws-cdk-lib/aws-ecr";
-import { ArnPrincipal, Effect, PolicyStatement } from "aws-cdk-lib/aws-iam";
+import { ArnPrincipal, Effect, PolicyStatement, Role } from "aws-cdk-lib/aws-iam";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
 import { ARecord, HostedZone, RecordTarget } from "aws-cdk-lib/aws-route53";
 import { LoadBalancerTarget } from "aws-cdk-lib/aws-route53-targets";
@@ -15,13 +15,14 @@ export class ApiStack extends Stack {
     super(scope, id, props);
 
     const siteDomain = props.siteSubDomain + "." + props.domainName;
+    const role = Role.fromRoleArn(this, "ApiStackRoleFromArn" + props.siteSubDomain, props.codebuildRole.roleArn, { mutable: false });
     const repository = new Repository(this, "ECR-Repository-" + props.apiname, { repositoryName: props.apiname });
     repository.addLifecycleRule({ tagPrefixList: ["main"], maxImageCount: 99 });
     repository.addLifecycleRule({ maxImageAge: Duration.days(30) });
     const statement = new PolicyStatement({
       effect: Effect.ALLOW,
       sid: "CDK Access",
-      principals: [new ArnPrincipal(props.codebuildRole.roleArn)],
+      principals: [new ArnPrincipal(role.roleArn)],
       actions: ["ecr:BatchCheckLayerAvailability", "ecr:BatchGetImage", "ecr:DescribeImages", "ecr:DescribeRepositories", "ecr:GetDownloadUrlForLayer", "ecr:GetLifecyclePolicy", "ecr:GetLifecyclePolicyPreview", "ecr:GetRepositoryPolicy", "ecr:InitiateLayerUpload", "ecr:ListImages"],
     });
     repository.addToResourcePolicy(statement);
@@ -57,7 +58,7 @@ export class ApiStack extends Stack {
     };
 
     const build = new PipelineProject(this, props.application.name + "-Build", {
-      role: props.codebuildRole,
+      role: role,
       buildSpec: BuildSpec.fromObject(buildSpecObject),
       environment: {
         buildImage: LinuxBuildImage.STANDARD_3_0,
@@ -103,7 +104,7 @@ export class ApiStack extends Stack {
               project: build,
               input: sourceOutput,
               outputs: [buildOutput],
-              role: props.codebuildRole,
+              role: role,
             }),
           ],
         },
@@ -114,7 +115,7 @@ export class ApiStack extends Stack {
               actionName: "Deploy",
               input: buildOutput,
               service: props.service,
-              role: props.codebuildRole,
+              role: role,
             }),
           ],
         },
