@@ -45,8 +45,8 @@ export class Container extends Stack {
     const inboundscaling = this.service.autoScaleTaskCount({ minCapacity: minCapacity, maxCapacity: maxCapacity });
     inboundscaling.scaleOnCpuUtilization(props.name + "-CpuScaling", {
       targetUtilizationPercent: 80,
-      scaleInCooldown: Duration.seconds(60),
-      scaleOutCooldown: Duration.seconds(60),
+      scaleInCooldown: Duration.seconds(300),
+      scaleOutCooldown: Duration.seconds(300),
     });
 
     Tags.of(this.service).add("Component", "ECS Service");

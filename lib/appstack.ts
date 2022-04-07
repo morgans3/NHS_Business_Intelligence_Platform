@@ -51,7 +51,7 @@ export class AppStack extends Stack {
 
     let wafArn: string = props.webACLId || "";
     if (!props.webACLId) {
-      const waf = new WAFStack(this, props.appname + "-WAF", { env: props.env });
+      const waf = new WAFStack(this, props.appname + "-WAF", { name: props.appname + "-WAF" });
       wafArn = waf.attrId;
     }
 

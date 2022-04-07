@@ -61,8 +61,8 @@ export const _RequiredAppList: ApiProps[] = [
     buildArgs: [],
     port: 8080,
     minCapacity: 1,
-    maxCapacity: 1,
-    desired: 1,
+    maxCapacity: 5,
+    desired: 3,
   },
   {
     apiname: "BI_Platform_CF-Api",
@@ -75,6 +75,13 @@ export const _RequiredAppList: ApiProps[] = [
     domainName: _MYDOMAIN,
     siteSubDomain: "crossfilter",
     buildArgs: [],
+    leadInTime: 300,
+    port: 8080,
+    minCapacity: 1,
+    maxCapacity: 1,
+    desired: 1,
+    cpu: 1024,
+    memory: 2048,
   },
   {
     apiname: "BI_Platform_Otp",
@@ -87,6 +94,13 @@ export const _RequiredAppList: ApiProps[] = [
     domainName: _MYDOMAIN,
     siteSubDomain: "isochrone",
     buildArgs: [],
+    leadInTime: 300,
+    port: 8080,
+    minCapacity: 1,
+    maxCapacity: 1,
+    desired: 1,
+    cpu: 1024,
+    memory: 2048,
   },
 ];
 

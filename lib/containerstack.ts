@@ -1,10 +1,13 @@
-import { Stack, Tags } from "aws-cdk-lib";
+import { CfnOutput, Stack, Tags } from "aws-cdk-lib";
 import { Cluster, EcsOptimizedImage } from "aws-cdk-lib/aws-ecs";
-import { _SETTINGS } from "./_config";
-import { ContainerStackProps } from "./types/interfaces";
+import { _RequiredAppList, _SETTINGS } from "./_config";
+import { ApiProps, ContainerStackProps } from "./types/interfaces";
 import { InstanceType, ISubnet, Peer, Port, SecurityGroup, Subnet } from "aws-cdk-lib/aws-ec2";
 import { Schedule } from "aws-cdk-lib/aws-autoscaling";
 import { LoadBalancerStack } from "./loadbalancerstack";
+import { ARecord, HostedZone, RecordTarget } from "aws-cdk-lib/aws-route53";
+import { DnsValidatedCertificate } from "aws-cdk-lib/aws-certificatemanager";
+import { LoadBalancerTarget } from "aws-cdk-lib/aws-route53-targets";
 
 export class ContainerStack extends Stack {
   public readonly cluster: Cluster;
@@ -87,7 +90,24 @@ export class ContainerStack extends Stack {
     }).loadbalancer;
 
     if (_SETTINGS.manageDNS) {
-      // TODO: Add Route 53 DNS records for each container/loadbalancer listener rule
+      const zone = HostedZone.fromLookup(this, props.name + "-Zone", { domainName: props.domainName });
+      // TLS certificate
+      const cert = new DnsValidatedCertificate(this, props.name + "-SiteCertificate", {
+        domainName: "*." + props.domainName,
+        hostedZone: zone,
+        region: props.env?.region || "eu-west-2",
+      });
+      new CfnOutput(this, props.name + "-Certificate", { value: cert.certificateArn });
+
+      _RequiredAppList.forEach((app: ApiProps) => {
+        const siteDomain = app.siteSubDomain + "." + props.domainName;
+        new CfnOutput(this, app.apiname + "-Site", { value: "https://" + siteDomain });
+        new ARecord(this, app.apiname + "-SiteAliasRecord", {
+          recordName: siteDomain,
+          target: RecordTarget.fromAlias(new LoadBalancerTarget(loadbalancer)),
+          zone: zone,
+        });
+      });
     }
   }
 }

@@ -117,6 +117,7 @@ export interface ApiProps {
   desired?: number;
   cpu?: number;
   memory?: number;
+  leadInTime?: number;
 }
 
 export interface LambdaAuthorizersProps extends StackProps {

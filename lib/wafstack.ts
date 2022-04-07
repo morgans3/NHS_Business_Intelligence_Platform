@@ -1,10 +1,13 @@
 import { CfnOutput, Fn, Stack, StackProps } from "aws-cdk-lib";
-import { CfnWebACL, CfnWebACLAssociation } from "aws-cdk-lib/aws-wafv2";
+import { CfnLoggingConfiguration, CfnWebACL, CfnWebACLAssociation } from "aws-cdk-lib/aws-wafv2";
 import { RestApi } from "aws-cdk-lib/aws-apigateway";
 import { _AccessListCountries } from "./_config";
+import { LogGroup, RetentionDays } from "aws-cdk-lib/aws-logs";
 
 export interface WAFProps extends StackProps {
   apigateway?: RestApi;
+  name: string;
+  resourceArn?: string;
 }
 
 export class WAFStack extends Stack {
@@ -14,7 +17,7 @@ export class WAFStack extends Stack {
 
     const waf = new CfnWebACL(this, "WebACLForAPIGateway", {
       name: "BIPlatform-APIGateway-WAF",
-      description: "ACL for API Gateway",
+      description: "ACL for Internet facing entry points to the BI Platform",
       scope: "REGIONAL",
       defaultAction: { allow: {} },
       visibilityConfig: {
@@ -67,11 +70,24 @@ export class WAFStack extends Stack {
     this.attrId = waf.attrArn;
     if (props.apigateway) {
       let apiGwArn = this.getResourceARNForEndpoint(props.env!.region || "eu-west-2", props.apigateway.deploymentStage.restApi.restApiId, props.apigateway.deploymentStage.stageName);
-      new CfnWebACLAssociation(this, "mywebaclassoc", {
+      new CfnWebACLAssociation(this, "webaclassoc-" + props.name, {
         webAclArn: waf.attrArn,
         resourceArn: apiGwArn,
       });
     }
+
+    if (props.resourceArn) {
+      new CfnWebACLAssociation(this, "webaclassoc-" + props.name, {
+        webAclArn: waf.attrArn,
+        resourceArn: props.resourceArn,
+      });
+    }
+
+    const loggingGroup = new LogGroup(this, "WebACLLogGroup-" + props.name, { logGroupName: "aws-waf-logs-monitoring", retention: RetentionDays.TWO_MONTHS });
+    new CfnLoggingConfiguration(this, "WebACLLogConfiguration-" + props.name, {
+      logDestinationConfigs: [loggingGroup.logGroupArn],
+      resourceArn: waf.attrArn,
+    });
 
     this.attrId = waf.attrArn;
     new CfnOutput(this, "WAFArn", { value: this.attrId });

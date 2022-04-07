@@ -1,9 +1,10 @@
 import { Duration, Stack, Tags } from "aws-cdk-lib";
 import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 import { Subnet, SubnetSelection, SubnetType } from "aws-cdk-lib/aws-ec2";
-import { ApplicationListener, ApplicationLoadBalancer, ApplicationProtocol, ApplicationTargetGroup, ListenerAction, SslPolicy } from "aws-cdk-lib/aws-elasticloadbalancingv2";
+import { ApplicationListener, ApplicationLoadBalancer, ApplicationProtocol, ApplicationTargetGroup, ListenerAction, ListenerCondition, SslPolicy } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import { Container } from "./container";
 import { LoadBalancerStackProps } from "./types/interfaces";
+import { WAFStack } from "./wafstack";
 import { _RequiredAppList, _SETTINGS } from "./_config";
 
 export class LoadBalancerStack extends Stack {
@@ -24,7 +25,7 @@ export class LoadBalancerStack extends Stack {
     const publicsubnets = vpc.selectSubnets(settings);
     const secGroup = props.secGroup;
 
-    this.loadbalancer = new ApplicationLoadBalancer(this, "BIPlatform-ALB" + props.name, {
+    this.loadbalancer = new ApplicationLoadBalancer(this, "BIPlatform-ALB-" + props.name, {
       vpc: vpc,
       deletionProtection: true,
       internetFacing: true,
@@ -83,8 +84,44 @@ export class LoadBalancerStack extends Stack {
       }),
     });
 
-    // TODO: add remaining containers as targets
+    let index = 1;
+    const otherContainers = containerList.slice(index);
+    otherContainers.forEach((container) => {
+      const containerInstance = new Container(this, "Container-" + container.apiname, {
+        branch: container.application.branch,
+        secGroup: secGroup,
+        cluster: props.cluster,
+        name: props.name,
+        port: container.port || 80,
+        cpu: container.cpu || 256,
+        memory: container.memory || 256,
+        desired: container.desired || 1,
+        minCapacity: container.minCapacity || 1,
+        maxCapacity: container.maxCapacity || 1,
+      });
 
-    // TODO: WAFSTACK
+      const target = new ApplicationTargetGroup(this, props.name + "-TG", {
+        vpc: props.vpc,
+        targetGroupName: (props.name.replace("_", "-") + "-lbtarget").substring(0, 31),
+        protocol: ApplicationProtocol.HTTP,
+        port: container.port || 80,
+        targets: [containerInstance.service],
+        healthCheck: {
+          path: "/",
+          timeout: Duration.seconds(container.leadInTime || 30),
+        },
+      });
+      this.loadbalancer443.addTargetGroups(props.name + "-Listener", {
+        targetGroups: [target],
+        conditions: [ListenerCondition.hostHeaders(["*" + container.siteSubDomain + "*"])],
+        priority: index + 1,
+      });
+      index++;
+    });
+
+    new WAFStack(this, "WAFStack-" + props.name, {
+      name: "WAF-" + props.name,
+      resourceArn: this.loadbalancer.loadBalancerArn,
+    });
   }
 }
