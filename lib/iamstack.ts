@@ -4,6 +4,7 @@ import { ManagedPolicy, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 export class IAMStack extends Stack {
   public codebuildRole: Role;
   public databaseRole: Role;
+  public lambdaRole: Role;
 
   constructor(scope: any, id: string, props: StackProps) {
     super(scope, id, props);
@@ -26,5 +27,14 @@ export class IAMStack extends Stack {
     });
     this.databaseRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AmazonDynamoDBFullAccess"));
     this.databaseRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("CloudWatchFullAccess"));
+
+    this.lambdaRole = new Role(this, "LambdaRole", {
+      roleName: "LambdaRole",
+      assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
+      description: "Role for Lambdas to manage access.",
+    });
+    this.lambdaRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AmazonDynamoDBFullAccess"));
+    this.lambdaRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("CloudWatchFullAccess"));
+    this.lambdaRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("SecretsManagerReadWrite"));
   }
 }

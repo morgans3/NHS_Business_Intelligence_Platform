@@ -5,6 +5,7 @@ import { BuildSpec, ComputeType, LinuxBuildImage, PipelineProject } from "aws-cd
 import { Artifact, Pipeline } from "aws-cdk-lib/aws-codepipeline";
 import { CodeBuildAction, GitHubSourceAction, GitHubTrigger, S3DeployAction } from "aws-cdk-lib/aws-codepipeline-actions";
 import { Role } from "aws-cdk-lib/aws-iam";
+import { LogGroup } from "aws-cdk-lib/aws-logs";
 import { ARecord, HostedZone, IHostedZone, RecordTarget } from "aws-cdk-lib/aws-route53";
 import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
 import { Bucket, HttpMethods } from "aws-cdk-lib/aws-s3";
@@ -112,6 +113,12 @@ export class AppStack extends Stack {
       timeout: Duration.minutes(10),
       projectName: props.application.name + "-Build",
       role: role,
+      logging: {
+        cloudWatch: {
+          enabled: true,
+          logGroup: new LogGroup(this, props.appname + "-BuildLogGroup"),
+        },
+      },
     });
 
     // Deploy site contents to S3 bucket

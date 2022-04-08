@@ -126,6 +126,7 @@ export interface LambdaAuthorizersProps extends StackProps {
   name: string;
   JWTSECRET: string;
   domainName: string;
+  roleArn: string;
 }
 
 export interface LambdaPGInfo {

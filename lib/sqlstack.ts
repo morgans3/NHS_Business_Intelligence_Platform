@@ -6,6 +6,7 @@ import { pgFunction, PostgreSQLLambdaProps, RDSStackProps } from "./types/interf
 import { _SETTINGS } from "./_config";
 import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
 import { _RequiredSQLTables } from "../datasets/postgresql/tables";
+import { RetentionDays } from "aws-cdk-lib/aws-logs";
 
 export class SQLStack extends Stack {
   public dbInstance: DatabaseInstance;
@@ -96,6 +97,8 @@ export class SQLStack extends Stack {
       environment: {},
       role: props.lambdarole,
       timeout: Duration.seconds(30),
+      logRetentionRole: props.lambdarole,
+      logRetention: RetentionDays.TWO_MONTHS,
     });
   }
 }

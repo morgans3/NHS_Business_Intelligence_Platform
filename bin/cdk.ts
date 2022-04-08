@@ -31,6 +31,7 @@ getSecret("jwt", (data: any) => {
     name: "AuthStack",
     JWTSECRET: jwtCredentials.secret,
     domainName: _MYDOMAIN,
+    roleArn: iams.lambdaRole.roleArn,
   });
   cdk.Tags.of(lambdaAuthorizers).add("IAC.Module", "LambdaAuthorizers");
 

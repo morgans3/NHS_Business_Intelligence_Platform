@@ -1,7 +1,9 @@
 import { Duration, RemovalPolicy, Stack } from "aws-cdk-lib";
 import { AuthorizationType, Cors, LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
-import { AttributeType, BillingMode, Table } from "aws-cdk-lib/aws-dynamodb";
+import { BackupPlan, BackupResource } from "aws-cdk-lib/aws-backup";
+import { AttributeType, BillingMode, Table, TableEncryption } from "aws-cdk-lib/aws-dynamodb";
 import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
+import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { _RequiredTables } from "../datasets/dynamodb/tables";
 import { DynamodbLambdaProps, DynamoDBStackProps, DynamoDBTableStackProps } from "./types/interfaces";
 import { _SETTINGS } from "./_config";
@@ -59,6 +61,8 @@ export class DynamoDBStack extends Stack {
       environment: {},
       role: props.lambdarole,
       timeout: Duration.seconds(30),
+      logRetentionRole: props.lambdarole,
+      logRetention: RetentionDays.TWO_MONTHS,
     });
   }
 
@@ -68,8 +72,13 @@ export class DynamoDBStack extends Stack {
     const partitionKey = { name: primarykey.name, type: convertToAttribueType(primarykey.type) };
     let sortKey = undefined;
     if (secondarykey) sortKey = { name: secondarykey.name, type: convertToAttribueType(secondarykey.type) };
-    let TableProps = { partitionKey: partitionKey, tableName: props.tablename, sortKey: sortKey, removalPolicy: RemovalPolicy.DESTROY, billingMode: BillingMode.PAY_PER_REQUEST };
-    return new Table(this, props.tablename + "-Table", TableProps);
+    let TableProps = { partitionKey: partitionKey, tableName: props.tablename, sortKey: sortKey, removalPolicy: RemovalPolicy.DESTROY, billingMode: BillingMode.PAY_PER_REQUEST, encryption: TableEncryption.AWS_MANAGED };
+    const table = new Table(this, props.tablename + "-Table", TableProps);
+
+    // Add backup plan
+    const plan = BackupPlan.daily35DayRetention(this, "BackupPlan-" + props.tablename);
+    plan.addSelection("BackupPlan-" + props.tablename + "-Selection", { resources: [BackupResource.fromDynamoDbTable(table)] });
+    return table;
   }
 }
 

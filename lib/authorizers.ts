@@ -2,11 +2,13 @@ import { CfnOutput, Duration, Stack } from "aws-cdk-lib";
 import { TokenAuthorizer } from "aws-cdk-lib/aws-apigateway";
 import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
 import { LambdaAuthorizersProps } from "./types/interfaces";
-import { Cors, RestApi, SecurityPolicy } from "aws-cdk-lib/aws-apigateway";
+import { RestApi, SecurityPolicy } from "aws-cdk-lib/aws-apigateway";
 import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 import { ARecord, HostedZone, RecordTarget } from "aws-cdk-lib/aws-route53";
 import { ApiGatewayDomain } from "aws-cdk-lib/aws-route53-targets";
 import { _SETTINGS } from "./_config";
+import { Role } from "aws-cdk-lib/aws-iam";
+import { RetentionDays } from "aws-cdk-lib/aws-logs";
 
 export class LambdaAuthorizers extends Stack {
   public readonly authlambda: Function;
@@ -45,6 +47,8 @@ export class LambdaAuthorizers extends Stack {
       });
     }
 
+    const role = Role.fromRoleArn(this, "AuthorizerRole", props.roleArn, { mutable: false });
+
     this.authlambda = new Function(this, "API-Auth-Handler", {
       functionName: "API-Auth-Lambda" + props.name,
       runtime: Runtime.NODEJS_14_X,
@@ -53,6 +57,9 @@ export class LambdaAuthorizers extends Stack {
       }),
       handler: "handler.main",
       environment: { SECRET: props.JWTSECRET },
+      role: role,
+      logRetentionRole: role,
+      logRetention: RetentionDays.TWO_MONTHS,
     });
 
     this.authorizer = new TokenAuthorizer(this, "API-Auth-Authorizer", {
@@ -71,6 +78,9 @@ export class LambdaAuthorizers extends Stack {
       }),
       handler: "handler.main",
       environment: { SECRET: props.JWTSECRET },
+      role: role,
+      logRetentionRole: role,
+      logRetention: RetentionDays.TWO_MONTHS,
     });
 
     this.publicAuthorizer = new TokenAuthorizer(this, "API-Public-Auth-Authorizer", {

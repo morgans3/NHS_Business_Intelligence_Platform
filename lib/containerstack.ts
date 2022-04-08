@@ -21,9 +21,9 @@ export class ContainerStack extends Stack {
   constructor(scope: any, id: string, props: ContainerStackProps) {
     super(scope, id, props);
 
-    this.cluster = new Cluster(this, "ECS-DIU-" + props.name, {
+    this.cluster = new Cluster(this, "ECS-BIPlatform-" + props.name, {
       vpc: props.clusterVPC,
-      clusterName: "ECS-DIU-" + props.name,
+      clusterName: "ECS-BIPlatform-" + props.name,
     });
 
     let subnetArray: ISubnet[] = [];
@@ -41,7 +41,7 @@ export class ContainerStack extends Stack {
       maxCapacity: props.capacity.max,
       desiredCapacity: props.capacity.desired,
       vpcSubnets: subnets,
-      autoScalingGroupName: "ASG-DIU-" + props.name,
+      autoScalingGroupName: "ASG-BIPlatform-" + props.name,
     });
 
     if (_SETTINGS.serversAlwaysOn === false) {
@@ -79,23 +79,15 @@ export class ContainerStack extends Stack {
 
     const secGroup = new SecurityGroup(this, "ECSCluster-SecGroup-" + props.name, {
       vpc: props.clusterVPC,
-      securityGroupName: "SG-DIU-LB-" + props.name,
+      securityGroupName: "SG-BIPlatform-LB-" + props.name,
       description: "HTTP/S Access to ECS",
       allowAllOutbound: true,
     });
     secGroup.addIngressRule(Peer.anyIpv6(), Port.tcpRange(80, 8100), "Container Port Range");
     Tags.of(secGroup).add("Component", "Security Group");
-    Tags.of(secGroup).add("Name", "SG-DIU-LB-" + props.name);
+    Tags.of(secGroup).add("Name", "SG-BIPlatform-LB-" + props.name);
 
-    const LBObject: LoadBalancerStackProps = {
-      vpc: props.clusterVPC,
-      cluster: this.cluster,
-      secGroup: secGroup,
-      name: props.name,
-      domainName: props.domainName,
-    };
-
-    const vpc = LBObject.vpc;
+    const vpc = props.clusterVPC;
     let settings: SubnetSelection = { subnetType: SubnetType.PUBLIC };
     if (_SETTINGS.existingSubnetIDs) {
       const lbsubnetAZ1 = Subnet.fromSubnetAttributes(this, "lbsubnet", { subnetId: _SETTINGS.existingSubnetIDs[0].ID, availabilityZone: _SETTINGS.existingSubnetIDs[0].AZ });
@@ -104,7 +96,7 @@ export class ContainerStack extends Stack {
     }
     const publicsubnets = vpc.selectSubnets(settings);
 
-    this.loadbalancer = new ApplicationLoadBalancer(this, "BIPlatform-ALB-" + LBObject.name, {
+    this.loadbalancer = new ApplicationLoadBalancer(this, "BIPlatform-ALB-" + props.name, {
       vpc: vpc,
       deletionProtection: true,
       internetFacing: true,
@@ -114,10 +106,10 @@ export class ContainerStack extends Stack {
       idleTimeout: Duration.seconds(900),
     });
     Tags.of(this.loadbalancer).add("Component", "Load Balancer");
-    Tags.of(this.loadbalancer).add("Name", "BIPlatform-ALB" + LBObject.name);
+    Tags.of(this.loadbalancer).add("Name", "BIPlatform-ALB" + props.name);
 
     const cert = new Certificate(this, "SSLCertificate-LB", {
-      domainName: LBObject.domainName,
+      domainName: props.domainName,
     });
 
     const containerList = _RequiredAppList;
@@ -126,8 +118,8 @@ export class ContainerStack extends Stack {
     const defaultContainerService = this.newContainer({
       branch: baseContainer.application.branch,
       secGroup: secGroup,
-      cluster: LBObject.cluster,
-      name: LBObject.name,
+      cluster: this.cluster,
+      name: props.name,
       port: baseContainer.port || 80,
       cpu: baseContainer.cpu || 256,
       memory: baseContainer.memory || 512,
@@ -144,7 +136,7 @@ export class ContainerStack extends Stack {
       targets: [defaultContainerService],
     });
     Tags.of(this.defaultTargetGroup).add("Component", "Default Target Group");
-    Tags.of(this.defaultTargetGroup).add("Name", "BIPlatform-ALB" + LBObject.name + "- Default Target Group");
+    Tags.of(this.defaultTargetGroup).add("Name", "BIPlatform-ALB" + props.name + "- Default Target Group");
     this.loadbalancer443 = this.loadbalancer.addListener("443-Listener", {
       protocol: ApplicationProtocol.HTTPS,
       port: 443,
@@ -169,7 +161,7 @@ export class ContainerStack extends Stack {
       const containerService = this.newContainer({
         branch: container.application.branch,
         secGroup: secGroup,
-        cluster: LBObject.cluster,
+        cluster: this.cluster,
         name: container.apiname,
         port: container.port || 80,
         cpu: container.cpu || 256,
@@ -180,7 +172,7 @@ export class ContainerStack extends Stack {
       });
 
       const target = new ApplicationTargetGroup(this, container.apiname + "-TG", {
-        vpc: LBObject.vpc,
+        vpc: vpc,
         targetGroupName: (props.name.replace("_", "-") + "-lbtarget").substring(0, 31),
         protocol: ApplicationProtocol.HTTP,
         port: container.port || 80,
