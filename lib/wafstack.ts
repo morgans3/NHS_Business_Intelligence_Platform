@@ -3,13 +3,7 @@ import { CfnLoggingConfiguration, CfnWebACL, CfnWebACLAssociation } from "aws-cd
 import { RestApi } from "aws-cdk-lib/aws-apigateway";
 import { _AccessListCountries } from "./_config";
 import { LogGroup, RetentionDays } from "aws-cdk-lib/aws-logs";
-
-export interface WAFProps extends StackProps {
-  apigateway?: RestApi;
-  name: string;
-  resourceArn?: string;
-  scope?: string;
-}
+import { WAFProps } from "./types/interfaces";
 
 export class WAFStack extends Stack {
   public readonly attrId: string;

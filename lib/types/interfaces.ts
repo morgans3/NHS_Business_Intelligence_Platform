@@ -182,3 +182,10 @@ export interface ContainerProps extends StackProps {
   minCapacity: number;
   maxCapacity: number;
 }
+
+export interface WAFProps extends StackProps {
+  apigateway?: RestApi;
+  name: string;
+  resourceArn?: string;
+  scope?: string;
+}
