@@ -1,3 +1,7 @@
+import { Effect, PolicyStatement } from "aws-cdk-lib/aws-iam";
+import { AwsCustomResource, AwsSdkCall } from "aws-cdk-lib/custom-resources";
+import { Construct } from "constructs";
+
 const crypto = require("crypto");
 const AWS = (module.exports.AWS = require("aws-sdk"));
 AWS.config.update({
@@ -62,4 +66,42 @@ export async function getSecret(secretName: string, callback: (arg: any) => void
       }
     }
   });
+}
+
+interface SSMParameterReaderProps {
+  parameterName: string;
+  region: string;
+}
+
+export class SSMParameterReader extends AwsCustomResource {
+  constructor(scope: Construct, name: string, props: SSMParameterReaderProps) {
+    const { parameterName, region } = props;
+
+    const ssmAwsSdkCall: AwsSdkCall = {
+      service: "SSM",
+      action: "getParameter",
+      parameters: {
+        Name: parameterName,
+      },
+      region,
+      physicalResourceId: { id: Date.now().toString() },
+    };
+
+    super(scope, name, {
+      onUpdate: ssmAwsSdkCall,
+      policy: {
+        statements: [
+          new PolicyStatement({
+            resources: ["*"],
+            actions: ["ssm:GetParameter"],
+            effect: Effect.ALLOW,
+          }),
+        ],
+      },
+    });
+  }
+
+  public getParameterValue(): string {
+    return this.getResponseField("Parameter.Value").toString();
+  }
 }

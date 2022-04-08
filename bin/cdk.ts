@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-import "source-map-support/register";
 import * as cdk from "aws-cdk-lib";
 import { InfrastructureStack } from "../lib/infrastack";
 import { _ACCOUNT, _AWSREGION, _MYDOMAIN, _PLATFORMAPP, _SETTINGS } from "../lib/_config";
@@ -10,7 +8,6 @@ import { AppStack } from "../lib/appstack";
 import { IAMStack } from "../lib/iamstack";
 import { LambdaAuthorizers } from "../lib/authorizers";
 import { getSecret } from "../authentication/_functions";
-import { WAFStack } from "../lib/wafstack";
 
 const env = { account: _ACCOUNT, region: _AWSREGION };
 
@@ -60,10 +57,6 @@ getSecret("jwt", (data: any) => {
   });
   cdk.Tags.of(rdsStack).add("IAC.Module", "SQLStack");
 
-  // const envGlobal = { account: _ACCOUNT, region: "us-east-1" };
-  // const waf = new WAFStack(app, "WAFStack", { name: "WAFStack", scope: "CLOUDFRONT", env: envGlobal });
-  // cdk.Tags.of(waf).add("IAC.Module", "WAFStack");
-
   const platformApp = new AppStack(app, "PlatformAppStack", {
     env,
     appname: "BI_Platform",
@@ -71,7 +64,6 @@ getSecret("jwt", (data: any) => {
     siteSubDomain: "www",
     application: _PLATFORMAPP,
     codebuildRole: iams.codebuildRole,
-    // webACLId: waf.attrId,
   });
   cdk.Tags.of(platformApp).add("IAC.Module", "AppStack");
 

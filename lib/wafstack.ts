@@ -1,9 +1,9 @@
-import { CfnOutput, Fn, Stack, StackProps } from "aws-cdk-lib";
+import { CfnOutput, Fn, Stack } from "aws-cdk-lib";
 import { CfnLoggingConfiguration, CfnWebACL, CfnWebACLAssociation } from "aws-cdk-lib/aws-wafv2";
-import { RestApi } from "aws-cdk-lib/aws-apigateway";
 import { _AccessListCountries } from "./_config";
 import { LogGroup, RetentionDays } from "aws-cdk-lib/aws-logs";
 import { WAFProps } from "./types/interfaces";
+import { StringParameter } from "aws-cdk-lib/aws-ssm";
 
 export class WAFStack extends Stack {
   public readonly attrId: string;
@@ -75,6 +75,14 @@ export class WAFStack extends Stack {
       new CfnWebACLAssociation(this, "webaclassoc-" + props.name, {
         webAclArn: waf.attrArn,
         resourceArn: props.resourceArn,
+      });
+    }
+
+    if (props.scope === "CLOUDFRONT") {
+      new StringParameter(this, "GloablWafArnSSMParam", {
+        parameterName: "GLOBAL_WAF_ARN_PARAM",
+        description: "The Global WAF ARN for this account",
+        stringValue: waf.attrId,
       });
     }
 

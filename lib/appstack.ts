@@ -8,7 +8,7 @@ import { Role } from "aws-cdk-lib/aws-iam";
 import { ARecord, HostedZone, IHostedZone, RecordTarget } from "aws-cdk-lib/aws-route53";
 import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
 import { Bucket, HttpMethods } from "aws-cdk-lib/aws-s3";
-import { cleanseBucketName } from "../authentication/_functions";
+import { cleanseBucketName, SSMParameterReader } from "../authentication/_functions";
 import { StaticSiteProps } from "./types/interfaces";
 import { _SETTINGS } from "./_config";
 
@@ -49,7 +49,11 @@ export class AppStack extends Stack {
       cert = new Certificate(this, props.appname + "-SiteCertificate", { domainName: siteDomain });
     }
 
-    // let wafArn: string = props.webACLId;
+    const globalReader = new SSMParameterReader(this, "GlobalReader", {
+      parameterName: "GLOBAL_WAF_ARN_PARAM",
+      region: "us-east-1",
+    });
+    let wafArn: string = globalReader.getParameterValue();
 
     // CloudFront distribution that provides HTTPS
     const distribution = new CloudFrontWebDistribution(this, props.appname + "-SiteDistribution", {
@@ -67,7 +71,7 @@ export class AppStack extends Stack {
           behaviors: [{ isDefaultBehavior: true }],
         },
       ],
-      // webACLId: wafArn,
+      webACLId: wafArn,
     });
     new CfnOutput(this, props.appname + "-DistributionId", { value: distribution.distributionId });
 
