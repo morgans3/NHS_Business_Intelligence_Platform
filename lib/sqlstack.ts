@@ -48,7 +48,7 @@ export class SQLStack extends Stack {
 
     new CfnOutput(this, "dbEndpoint", { value: this.dbInstance.dbInstanceEndpointAddress });
 
-    const accessLambda = new PostgreSQLLambda(this, "PostgreSQLLambda", { lambdarole: props.lambdarole });
+    const accessLambda = this.createLambda({ lambdarole: props.lambdarole });
     const authLambda = props.authLambda;
     const publicAuthLambda = props.publicLambda;
     const api: RestApi = props.apigateway;
@@ -69,7 +69,7 @@ export class SQLStack extends Stack {
       }
 
       table.functions.forEach((func: pgFunction) => {
-        const thislambda = new LambdaIntegration(accessLambda.lambda, {
+        const thislambda = new LambdaIntegration(accessLambda, {
           requestTemplates: { "application/json": '{ "statusCode": "200" }' },
         });
         const methodtype = selectMethodType(func.handlermethod);
@@ -84,13 +84,9 @@ export class SQLStack extends Stack {
       });
     });
   }
-}
 
-export class PostgreSQLLambda extends Stack {
-  public readonly lambda: Function;
-  constructor(scope: any, id: string, props: PostgreSQLLambdaProps) {
-    super(scope, id, props);
-    this.lambda = new Function(this, "PostgreSQLLambda-Handler", {
+  createLambda(props: PostgreSQLLambdaProps) {
+    return new Function(this, "PostgreSQLLambda-Handler", {
       functionName: "PostgreSQLLambda",
       runtime: Runtime.NODEJS_14_X,
       code: Code.fromAsset("./src/postgresql", {
