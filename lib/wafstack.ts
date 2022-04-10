@@ -88,7 +88,7 @@ export class WAFStack extends Stack {
 
     const loggingGroup = new LogGroup(this, "WebACLLogGroup-" + props.name, { logGroupName: "aws-waf-logs-monitoring", retention: RetentionDays.TWO_MONTHS });
     new CfnLoggingConfiguration(this, "WebACLLogConfiguration-" + props.name, {
-      logDestinationConfigs: [loggingGroup.logGroupArn],
+      logDestinationConfigs: ["arn:aws:logs:us-east-1:" + props.env?.account + ":log-group:aws-waf-logs-monitoring"],
       resourceArn: waf.attrArn,
     });
 

@@ -48,7 +48,8 @@ We will be actively maintaining these repositories, so if you identify an issue 
 
 ### Step Three - Setup AWS Cloudformation
 
-- Run `cdk bootstrap` to bootstrap your AWS account (One time setup only)
+- Run `cdk bootstrap` to bootstrap your AWS account
+- Run `cdk bootstrap --app "node bin/globalcdk.js"` to bootstrap the global region in your AWS account
 
 ### Step Four - Deploy Infrastructure
 

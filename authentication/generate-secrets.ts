@@ -3,7 +3,7 @@ import { checkSecretExists, generateSecrets, generatePassword } from "./_functio
 
 if (_SETTINGS.dockerhub) {
   checkSecretExists("dockerhub", (res: any) => {
-    if (res && res === false) {
+    if (res === false) {
       generateSecrets("dockerhub", "username", "password", _SETTINGS.dockerhub.username, _SETTINGS.dockerhub.password, (result: any) => {
         console.log(result);
       });
@@ -14,7 +14,7 @@ if (_SETTINGS.dockerhub) {
 }
 
 checkSecretExists("jwt", (res: any) => {
-  if (res && res === false) {
+  if (res === false) {
     const jwtsecret = generatePassword(20, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~!@-#$");
     const jwtsecretkey = generatePassword(20, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~!@-#$");
     generateSecrets("jwt", "secret", "secretkey", jwtsecret, jwtsecretkey, (result: any) => {
@@ -25,19 +25,21 @@ checkSecretExists("jwt", (res: any) => {
   }
 });
 
-checkSecretExists("postgres", (res: any) => {
-  if (res && res === false) {
-    const password = generatePassword(20, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~!@-#$");
-    generateSecrets("postgres", "POSTGRES_UN", "POSTGRES_PW", _SETTINGS.rds_config.username, password, (result: any) => {
-      console.log(result);
-    });
-  } else {
-    console.log("PostgreSQL secret exists.");
-  }
-});
+if (_SETTINGS.newRDSConfig) {
+  checkSecretExists("postgres", (res: any) => {
+    if (res === false) {
+      const password = generatePassword(20, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~!@-#$");
+      generateSecrets("postgres", "POSTGRES_UN", "POSTGRES_PW", _SETTINGS.newRDSConfig!.username, password, (result: any) => {
+        console.log(result);
+      });
+    } else {
+      console.log("PostgreSQL secret exists.");
+    }
+  });
+}
 
 checkSecretExists("github", (res: any) => {
-  if (res && res === false) {
+  if (res === false) {
     generateSecrets("github", "oauthToken", "", _SETTINGS.github.oAuthToken, "", (result: any) => {
       console.log(result);
     });

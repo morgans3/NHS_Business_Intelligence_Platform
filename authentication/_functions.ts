@@ -38,7 +38,6 @@ export const checkSecretExists = function (name: string, callback: any) {
   };
   secretsmanager.describeSecret(params, (err: any, data: any) => {
     if (err) {
-      console.log(err);
       callback(false);
     } else {
       if (data && data.ARN) callback(true);
