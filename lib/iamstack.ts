@@ -10,7 +10,7 @@ export class IAMStack extends Stack {
     super(scope, id, props);
 
     this.codebuildRole = new Role(this, "CodeBuildRole", {
-      roleName: "CodeBuildRole",
+      roleName: "BI_CodeBuildRole",
       assumedBy: new ServicePrincipal("codebuild.amazonaws.com"),
       description: "Role for building and deploying code bases",
     });
@@ -21,7 +21,7 @@ export class IAMStack extends Stack {
     this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("SecretsManagerReadWrite"));
 
     this.databaseRole = new Role(this, "DatabaseRole", {
-      roleName: "DatabaseRole",
+      roleName: "BI_DatabaseRole",
       assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
       description: "Role for Databases to manage access.",
     });
@@ -29,7 +29,7 @@ export class IAMStack extends Stack {
     this.databaseRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("CloudWatchFullAccess"));
 
     this.lambdaRole = new Role(this, "LambdaRole", {
-      roleName: "LambdaRole",
+      roleName: "BI_LambdaRole",
       assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
       description: "Role for Lambdas to manage access.",
     });

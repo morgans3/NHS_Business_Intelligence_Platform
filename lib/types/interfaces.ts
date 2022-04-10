@@ -1,6 +1,6 @@
 import { StackProps } from "aws-cdk-lib";
 import { InfrastructureStack } from "../infrastack";
-import { InstanceType, ISecurityGroup, IVpc, SecurityGroup } from "aws-cdk-lib/aws-ec2";
+import { ISecurityGroup, IVpc, SecurityGroup } from "aws-cdk-lib/aws-ec2";
 import { IRole, Role } from "aws-cdk-lib/aws-iam";
 import { IBaseService, ICluster } from "aws-cdk-lib/aws-ecs";
 import { ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
@@ -13,9 +13,10 @@ export interface iSettings {
   existingVPC?: boolean;
   existingVPCID?: string;
   existingSubnetIDs?: { ID: string; AZ: string }[];
-  rds_config: {
+  existingRDS?: boolean;
+  newRDSConfig?: {
     username: string;
-    instanceType: InstanceType;
+    instanceType: string;
     deletionProtection: boolean;
   };
   github: {

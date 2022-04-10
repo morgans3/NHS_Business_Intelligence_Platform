@@ -1,6 +1,6 @@
 import { CfnOutput, Duration, Stack } from "aws-cdk-lib";
 import { AuthorizationType, Cors, LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
-import { SubnetType } from "aws-cdk-lib/aws-ec2";
+import { InstanceClass, InstanceSize, InstanceType, SubnetType } from "aws-cdk-lib/aws-ec2";
 import { Credentials, DatabaseInstance, DatabaseInstanceEngine, PostgresEngineVersion, SubnetGroup } from "aws-cdk-lib/aws-rds";
 import { pgFunction, PostgreSQLLambdaProps, RDSStackProps } from "./types/interfaces";
 import { _SETTINGS } from "./_config";
@@ -20,34 +20,36 @@ export class SQLStack extends Stack {
       description: "Subnet Group for RDS Instance, managed by CDK_RDS",
       vpc,
       subnetGroupName: "RDS-Instance-LL-SUBG",
-      vpcSubnets: { subnetType: SubnetType.PRIVATE_ISOLATED },
+      vpcSubnets: { subnetType: SubnetType.PRIVATE_WITH_NAT },
     });
 
-    this.dbInstance = new DatabaseInstance(this, "RDSInstance", {
-      vpc: vpc,
-      vpcSubnets: { subnetType: SubnetType.PRIVATE_ISOLATED },
-      instanceType: _SETTINGS.rds_config.instanceType,
-      allowMajorVersionUpgrade: false,
-      autoMinorVersionUpgrade: true,
-      deleteAutomatedBackups: true,
-      publiclyAccessible: false,
-      securityGroups: secGroup,
-      multiAz: true,
-      subnetGroup: subnetgroup,
-      engine: DatabaseInstanceEngine.postgres({
-        version: PostgresEngineVersion.VER_13_3,
-      }),
-      backupRetention: Duration.days(2),
-      storageEncrypted: true,
-      port: 5432,
-      credentials: Credentials.fromGeneratedSecret("postgres"),
-      deletionProtection: _SETTINGS.rds_config.deletionProtection,
-      databaseName: "gis",
-      maxAllocatedStorage: 100,
-      allocatedStorage: 20,
-    });
+    if (_SETTINGS.existingRDS === false && _SETTINGS.newRDSConfig) {
+      this.dbInstance = new DatabaseInstance(this, "RDSInstance", {
+        vpc: vpc,
+        vpcSubnets: { subnetType: SubnetType.PRIVATE_WITH_NAT },
+        instanceType: this.setInstanceType(_SETTINGS.newRDSConfig.instanceType),
+        allowMajorVersionUpgrade: false,
+        autoMinorVersionUpgrade: true,
+        deleteAutomatedBackups: true,
+        publiclyAccessible: false,
+        securityGroups: secGroup,
+        multiAz: true,
+        subnetGroup: subnetgroup,
+        engine: DatabaseInstanceEngine.postgres({
+          version: PostgresEngineVersion.VER_13_3,
+        }),
+        backupRetention: Duration.days(2),
+        storageEncrypted: true,
+        port: 5432,
+        credentials: Credentials.fromGeneratedSecret("postgres"),
+        deletionProtection: _SETTINGS.newRDSConfig.deletionProtection,
+        databaseName: "gis",
+        maxAllocatedStorage: 100,
+        allocatedStorage: 20,
+      });
 
-    new CfnOutput(this, "dbEndpoint", { value: this.dbInstance.dbInstanceEndpointAddress });
+      new CfnOutput(this, "dbEndpoint", { value: this.dbInstance.dbInstanceEndpointAddress });
+    }
 
     const accessLambda = this.createLambda({ lambdarole: props.lambdarole });
     const authLambda = props.authLambda;
@@ -100,6 +102,12 @@ export class SQLStack extends Stack {
       logRetentionRole: props.lambdarole,
       logRetention: RetentionDays.TWO_MONTHS,
     });
+  }
+
+  setInstanceType(instanceType: string) {
+    const iClass = instanceType.split(".")[0] as InstanceClass;
+    const iSize = instanceType.split(".")[1] as InstanceSize;
+    return InstanceType.of(iClass, iSize);
   }
 }
 

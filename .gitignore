@@ -9,3 +9,6 @@ cdk.out
 
 # Parcel default cache directory
 .parcel-cache
+
+# local configuration
+lib/_local_config.json

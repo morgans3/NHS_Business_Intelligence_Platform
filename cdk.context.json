@@ -8,5 +8,66 @@
     "eu-west-2a",
     "eu-west-2b",
     "eu-west-2c"
-  ]
+  ],
+  "vpc-provider:account=077341872813:filter.vpc-id=vpc-03fefae2006f624c0:region=eu-west-2:returnAsymmetricSubnets=true": {
+    "vpcId": "vpc-03fefae2006f624c0",
+    "vpcCidrBlock": "10.105.0.0/26",
+    "availabilityZones": [],
+    "subnetGroups": [
+      {
+        "name": "Public",
+        "type": "Public",
+        "subnets": [
+          {
+            "subnetId": "subnet-0b4158deee4dac9b1",
+            "cidr": "10.105.1.128/28",
+            "availabilityZone": "eu-west-2a",
+            "routeTableId": "rtb-0289b854e13d0e4e8"
+          },
+          {
+            "subnetId": "subnet-038b8ffa808102788",
+            "cidr": "10.2.0.0/24",
+            "availabilityZone": "eu-west-2a",
+            "routeTableId": "rtb-0289b854e13d0e4e8"
+          },
+          {
+            "subnetId": "subnet-06f606022237a6415",
+            "cidr": "10.105.1.144/28",
+            "availabilityZone": "eu-west-2b",
+            "routeTableId": "rtb-03d954de8fa21952b"
+          },
+          {
+            "subnetId": "subnet-072a228a8fdaa3da9",
+            "cidr": "10.3.0.0/24",
+            "availabilityZone": "eu-west-2b",
+            "routeTableId": "rtb-0289b854e13d0e4e8"
+          }
+        ]
+      },
+      {
+        "name": "Private",
+        "type": "Private",
+        "subnets": [
+          {
+            "subnetId": "subnet-085743e6e003802ff",
+            "cidr": "10.105.0.0/27",
+            "availabilityZone": "eu-west-2a",
+            "routeTableId": "rtb-06f43a5cec31f586d"
+          },
+          {
+            "subnetId": "subnet-0219e5fbf138c64ff",
+            "cidr": "10.1.0.0/19",
+            "availabilityZone": "eu-west-2a",
+            "routeTableId": "rtb-06f43a5cec31f586d"
+          },
+          {
+            "subnetId": "subnet-05a34fd5ddf440fb4",
+            "cidr": "10.105.0.32/27",
+            "availabilityZone": "eu-west-2b",
+            "routeTableId": "rtb-0dffa02e7bd1d2318"
+          }
+        ]
+      }
+    ]
+  }
 }

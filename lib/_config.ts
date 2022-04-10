@@ -4,7 +4,10 @@ import { ApiProps, iSettings } from "./types/interfaces";
 export const _AWSREGION = process.env.CDK_DEFAULT_REGION || "eu-west-2";
 export const _ACCOUNT = process.env.CDK_DEFAULT_ACCOUNT;
 
-export const _SETTINGS: iSettings = {
+// For local configuration that is not saved to Github, please create a file called _local_config.json in this folder and add your settings there.
+const localSettings = require("./_local_config.json") as iSettings;
+
+export const _SETTINGS: iSettings = localSettings || {
   manageDNS: false, // Change to true if you want AWS to handle Global DNS records, set to false if handled by a third party (e.g. nhs.uk domains = NHS Digital)
   containerIPs: ["10.1.0.0/19"], // Replace if you have a unique IP range, for example from HSCN to ensure it's unique across the network
   existingVPC: false, // Set to true if you have an existing VPC, set to false if you want to create a new VPC
@@ -18,9 +21,10 @@ export const _SETTINGS: iSettings = {
   //     username: "USERNAME",
   //     password: "PASSWORD",
   //   },
-  rds_config: {
+  existingRDS: false, // Set to true if you have an existing RDS, set to false if you want to create a new RDS
+  newRDSConfig: {
     username: "Admin",
-    instanceType: InstanceType.of(InstanceClass.BURSTABLE3, InstanceSize.SMALL),
+    instanceType: "t3.small",
     deletionProtection: false,
   },
   github: {
