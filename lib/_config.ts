@@ -1,5 +1,8 @@
+import { BuildEnvironmentVariableType } from "aws-cdk-lib/aws-codebuild";
 import { InstanceClass, InstanceSize, InstanceType } from "aws-cdk-lib/aws-ec2";
+import { containerSettings, minAPI, addAPI } from "./types/buildEnv";
 import { ApiProps, iSettings } from "./types/interfaces";
+const SECRET = BuildEnvironmentVariableType.SECRETS_MANAGER;
 
 export const _AWSREGION = process.env.CDK_DEFAULT_REGION || "eu-west-2";
 export const _ACCOUNT = process.env.CDK_DEFAULT_ACCOUNT;
@@ -47,7 +50,7 @@ export const _AccessListCountries = ["GB"];
 // APPLICATION LIST AND DEFAULTS
 export const _MYDOMAIN = _SETTINGS.domainName || "example.com";
 export const _PLATFORMAPP = {
-  repo: "https://github.com/morgans3/NHS_Business_Intelligence_Platform_App",
+  repo: "NHS_Business_Intelligence_Platform_App",
   name: "BI_Platform",
   owner: "morgans3",
   branch: "main",
@@ -56,36 +59,38 @@ export const _RequiredAppList: ApiProps[] = [
   {
     apiname: "BI_Platform_Api",
     application: {
-      repo: "https://github.com/morgans3/NHS_Business_Intelligence_Platform_Api",
+      repo: "NHS_Business_Intelligence_Platform_Api",
       name: "BI_Platform_Api",
       owner: "morgans3",
       branch: "main",
     },
     domainName: _MYDOMAIN,
     siteSubDomain: "api",
-    buildArgs: [],
+    variables: addAPI(containerSettings, "api-server"),
+    buildArgs: minAPI,
     port: 8079,
-    minCapacity: 1,
-    maxCapacity: 5,
-    desired: 3,
+    minCapacity: 0, //1,
+    maxCapacity: 0, //5,
+    desired: 0, //3,
     priority: 1,
   },
   {
     apiname: "BI_Platform_CF-Api",
     application: {
-      repo: "https://github.com/morgans3/NHS_Business_Intelligence_Platform_CF-Api",
+      repo: "NHS_Business_Intelligence_Platform_CF-Api",
       name: "BI_Platform_CF-Api",
       owner: "morgans3",
       branch: "main",
     },
     domainName: _MYDOMAIN,
     siteSubDomain: "crossfilter",
-    buildArgs: [],
+    variables: addAPI(containerSettings, "cf-api-server"),
+    buildArgs: minAPI,
     leadInTime: 120,
     port: 8080,
-    minCapacity: 1,
-    maxCapacity: 1,
-    desired: 1,
+    minCapacity: 0, //1,
+    maxCapacity: 0, //1,
+    desired: 0, //1,
     cpu: 1024,
     memory: 2048,
     priority: 2,
@@ -93,19 +98,20 @@ export const _RequiredAppList: ApiProps[] = [
   {
     apiname: "BI_Platform_Otp",
     application: {
-      repo: "https://github.com/morgans3/NHS_Business_Intelligence_Platform_Otp",
+      repo: "NHS_Business_Intelligence_Platform_Otp",
       name: "BI_Platform_Otp",
       owner: "morgans3",
       branch: "main",
     },
     domainName: _MYDOMAIN,
     siteSubDomain: "isochrone",
+    variables: addAPI(containerSettings, "otp-server"),
     buildArgs: [],
     leadInTime: 120,
     port: 80,
-    minCapacity: 1,
-    maxCapacity: 1,
-    desired: 1,
+    minCapacity: 0, //1,
+    maxCapacity: 0, //1,
+    desired: 0, //1,
     cpu: 1024,
     memory: 2048,
     priority: 3,

@@ -79,6 +79,7 @@ getSecret("jwt", (data: any) => {
     },
     range: _SETTINGS.existingSubnetIDs || [],
     domainName: _MYDOMAIN,
+    codebuildRole: iams.codebuildRole,
   });
   cdk.Tags.of(containerStack).add("IAC.Module", "ContainerStack");
 

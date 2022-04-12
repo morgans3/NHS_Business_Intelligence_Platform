@@ -100,23 +100,13 @@ interface fields {
   required?: boolean;
 }
 
-export interface ApiStackProps extends StackProps {
-  apiname: string;
-  domainName: string;
-  siteSubDomain: string;
-  application: iApplication;
-  codebuildRole: IRole;
-  buildArgs: string[];
-  service: IBaseService;
-  loadbalancer: ILoadBalancerV2;
-}
-
 export interface ApiProps {
   apiname: string;
   domainName: string;
   siteSubDomain: string;
   application: iApplication;
   buildArgs: string[];
+  variables: any;
   port?: number;
   minCapacity?: number;
   maxCapacity?: number;
@@ -166,6 +156,7 @@ export interface ContainerStackProps extends StackProps {
   };
   range: { ID: string; AZ: string }[];
   domainName: string;
+  codebuildRole: Role;
 }
 
 export interface LoadBalancerStackProps extends StackProps {
@@ -177,8 +168,11 @@ export interface LoadBalancerStackProps extends StackProps {
 }
 
 export interface ContainerProps extends StackProps {
+  application: iApplication;
   name: string;
   branch: string;
+  buildArgs: string[];
+  variables: any;
   port: number;
   memory: number;
   cluster: ICluster;
@@ -187,6 +181,8 @@ export interface ContainerProps extends StackProps {
   desired: number;
   minCapacity: number;
   maxCapacity: number;
+  subDomain: string;
+  roleArn: string;
 }
 
 export interface WAFProps extends StackProps {

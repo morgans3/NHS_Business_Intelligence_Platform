@@ -1,7 +1,7 @@
-import { CfnOutput, Duration, Fn, Stack, Tags } from "aws-cdk-lib";
+import { CfnOutput, Duration, Fn, SecretValue, Stack, Tags } from "aws-cdk-lib";
 import { AwsLogDriver, Cluster, ContainerImage, Ec2Service, Ec2TaskDefinition, EcsOptimizedImage, NetworkMode, Protocol } from "aws-cdk-lib/aws-ecs";
 import { _AccessListCountries, _RequiredAppList, _SETTINGS } from "./_config";
-import { ApiProps, ContainerProps, ContainerStackProps, LoadBalancerStackProps, WAFProps } from "./types/interfaces";
+import { ApiProps, ContainerProps, ContainerStackProps, iApplication, LoadBalancerStackProps, WAFProps } from "./types/interfaces";
 import { InstanceType, ISubnet, Peer, Port, SecurityGroup, Subnet, SubnetSelection, SubnetType } from "aws-cdk-lib/aws-ec2";
 import { Schedule } from "aws-cdk-lib/aws-autoscaling";
 import { ARecord, HostedZone, RecordTarget } from "aws-cdk-lib/aws-route53";
@@ -12,6 +12,10 @@ import { Repository } from "aws-cdk-lib/aws-ecr";
 import { CfnLoggingConfiguration, CfnWebACL, CfnWebACLAssociation } from "aws-cdk-lib/aws-wafv2";
 import { LogGroup, RetentionDays } from "aws-cdk-lib/aws-logs";
 import { cleanseBucketName } from "../authentication/_functions";
+import { ArnPrincipal, Effect, PolicyStatement, Role } from "aws-cdk-lib/aws-iam";
+import { CodeBuildAction, EcsDeployAction, GitHubSourceAction, GitHubTrigger } from "aws-cdk-lib/aws-codepipeline-actions";
+import { BuildSpec, ComputeType, LinuxBuildImage, PipelineProject } from "aws-cdk-lib/aws-codebuild";
+import { Artifact, Pipeline } from "aws-cdk-lib/aws-codepipeline";
 
 export class ContainerStack extends Stack {
   public readonly loadbalancer: ApplicationLoadBalancer;
@@ -125,6 +129,7 @@ export class ContainerStack extends Stack {
     const baseContainer = containerList[0];
 
     const defaultContainerService = this.newContainer({
+      application: baseContainer.application,
       branch: baseContainer.application.branch,
       secGroup: secGroup,
       cluster: this.cluster,
@@ -135,10 +140,14 @@ export class ContainerStack extends Stack {
       desired: baseContainer.desired || 1,
       minCapacity: baseContainer.minCapacity || 1,
       maxCapacity: baseContainer.maxCapacity || 1,
+      buildArgs: baseContainer.buildArgs || [],
+      subDomain: baseContainer.siteSubDomain || "api",
+      roleArn: props.codebuildRole.roleArn,
+      variables: baseContainer.variables,
     });
 
     this.defaultTargetGroup = new ApplicationTargetGroup(this, "defaultTargetGroup", {
-      targetGroupName: "api",
+      targetGroupName: baseContainer.siteSubDomain || "api",
       vpc: vpc,
       protocol: ApplicationProtocol.HTTP,
       port: 80,
@@ -167,6 +176,7 @@ export class ContainerStack extends Stack {
     const otherContainers = containerList.slice(1);
     otherContainers.forEach((container) => {
       const containerService = this.newContainer({
+        application: container.application,
         branch: container.application.branch,
         secGroup: secGroup,
         cluster: this.cluster,
@@ -177,6 +187,10 @@ export class ContainerStack extends Stack {
         desired: container.desired || 1,
         minCapacity: container.minCapacity || 1,
         maxCapacity: container.maxCapacity || 1,
+        buildArgs: container.buildArgs || [],
+        subDomain: container.siteSubDomain,
+        roleArn: props.codebuildRole.roleArn,
+        variables: container.variables,
       });
 
       const timeout = (container.leadInTime || 30) * 2;
@@ -195,7 +209,7 @@ export class ContainerStack extends Stack {
       });
       this.loadbalancer443.addTargetGroups(container.apiname + "-Listener", {
         targetGroups: [target],
-        conditions: [ListenerCondition.hostHeaders(["*" + container.siteSubDomain + "*"])],
+        conditions: [ListenerCondition.hostHeaders(["*" + container.siteSubDomain + ".*"])],
         priority: container.priority,
       });
     });
@@ -231,7 +245,104 @@ export class ContainerStack extends Stack {
   }
 
   newContainer(props: ContainerProps) {
-    const repo = Repository.fromRepositoryName(this, props.name + "-Repo", props.name);
+    const role = Role.fromRoleArn(this, "ApiStackRoleFromArn-" + props.subDomain, props.roleArn, { mutable: false });
+    const ecrRepoName = cleanseBucketName(props.name);
+    const repo = new Repository(this, "ECR-Repository-" + props.name, { repositoryName: ecrRepoName });
+    repo.addLifecycleRule({ tagPrefixList: ["main"], maxImageCount: 99 });
+    repo.addLifecycleRule({ maxImageAge: Duration.days(30) });
+    const statement = new PolicyStatement({
+      effect: Effect.ALLOW,
+      sid: "CDK Access",
+      principals: [new ArnPrincipal(role.roleArn)],
+      actions: ["ecr:BatchCheckLayerAvailability", "ecr:BatchGetImage", "ecr:DescribeImages", "ecr:DescribeRepositories", "ecr:GetDownloadUrlForLayer", "ecr:GetLifecyclePolicy", "ecr:GetLifecyclePolicyPreview", "ecr:GetRepositoryPolicy", "ecr:InitiateLayerUpload", "ecr:ListImages"],
+    });
+    repo.addToResourcePolicy(statement);
+    let commandlist = [];
+    if (_SETTINGS.dockerhub) {
+      commandlist.push("docker login -u $dockerhub_username -p $dockerhub_password");
+    }
+    commandlist.push("docker build " + getBuildArgs(props.buildArgs) + " -t " + ecrRepoName + ":main .");
+    const postbuildcommand = ["docker tag " + ecrRepoName + `:${props.branch} ` + this.account + ".dkr.ecr.eu-west-2.amazonaws.com/" + ecrRepoName + ":" + props.branch, "docker push " + this.account + ".dkr.ecr.eu-west-2.amazonaws.com/" + ecrRepoName + ":" + props.branch, `printf '[{"name":"` + ecrRepoName + `","imageUri":"${this.account}.dkr.ecr.eu-west-2.amazonaws.com/` + ecrRepoName + `:${props.branch}}]' > imagedefinitions.json`];
+
+    const buildSpecObject = {
+      version: "0.2",
+      env: { "git-credential-helper": "yes" },
+      phases: {
+        install: {
+          "runtime-versions": { docker: 18 },
+          commands: "npm install",
+        },
+        pre_build: {
+          commands: ["eval $(aws ecr get-login --no-include-email --region eu-west-2 --registry-ids " + this.account + ")"],
+        },
+        build: {
+          commands: commandlist,
+        },
+        post_build: {
+          commands: postbuildcommand,
+        },
+      },
+      artifacts: {
+        files: "imagedefinitions.json",
+      },
+    };
+
+    const build = new PipelineProject(this, props.name + "-Build", {
+      role: role,
+      environmentVariables: props.variables,
+      buildSpec: BuildSpec.fromObject(buildSpecObject),
+      environment: {
+        buildImage: LinuxBuildImage.STANDARD_3_0,
+        privileged: true,
+        computeType: ComputeType.SMALL,
+      },
+      timeout: Duration.minutes(10),
+      projectName: props.name + "-Build",
+      // logging: {
+      //   cloudWatch: {
+      //     enabled: true,
+      //     logGroup: new LogGroup(this, props.name + "-BuildLogGroup"),
+      //   },
+      // },
+    });
+
+    const sourceOutput = new Artifact();
+    const buildOutput = new Artifact();
+    const pipe = new Pipeline(this, props.name + "-Pipeline", {
+      role: role,
+      pipelineName: props.name + "-Pipeline",
+      stages: [
+        {
+          stageName: "Source",
+          actions: [
+            new GitHubSourceAction({
+              actionName: "Source",
+              branch: props.application.branch,
+              output: sourceOutput,
+              repo: props.application.repo,
+              owner: props.application.owner,
+              oauthToken: SecretValue.secretsManager("github", {
+                jsonField: "oauthToken",
+              }),
+              trigger: GitHubTrigger.WEBHOOK,
+            }),
+          ],
+        },
+        {
+          stageName: "Build",
+          actions: [
+            new CodeBuildAction({
+              actionName: "Build",
+              project: build,
+              input: sourceOutput,
+              outputs: [buildOutput],
+              role: role,
+            }),
+          ],
+        },
+      ],
+      restartExecutionOnUpdate: true,
+    });
     const inboundlogging = new AwsLogDriver({
       streamPrefix: props.name,
     });
@@ -272,6 +383,17 @@ export class ContainerStack extends Stack {
 
     Tags.of(service).add("Component", "ECS Service");
     Tags.of(service).add("Name", props.name + "-Service");
+    pipe.addStage({
+      stageName: "Deploy",
+      actions: [
+        new EcsDeployAction({
+          actionName: "Deploy",
+          input: buildOutput,
+          service: service,
+          role: role,
+        }),
+      ],
+    });
     return service;
   }
 
@@ -350,4 +472,12 @@ export class ContainerStack extends Stack {
     let Arn: string = Fn.join("", ["arn:aws:apigateway:", region, "::/restapis/", restApiId, "/stages/", stageName]);
     return Arn;
   }
+}
+
+function getBuildArgs(argArray: string[]) {
+  let str = "";
+  argArray.forEach((arg) => {
+    str += "--build-arg " + arg + "=$" + arg + " ";
+  });
+  return str;
 }

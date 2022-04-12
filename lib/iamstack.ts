@@ -1,5 +1,5 @@
 import { Stack, StackProps } from "aws-cdk-lib";
-import { ManagedPolicy, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
+import { ArnPrincipal, CompositePrincipal, ManagedPolicy, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 
 export class IAMStack extends Stack {
   public codebuildRole: Role;
@@ -11,13 +11,13 @@ export class IAMStack extends Stack {
 
     this.codebuildRole = new Role(this, "CodeBuildRole", {
       roleName: "BI_CodeBuildRole",
-      assumedBy: new ServicePrincipal("codebuild.amazonaws.com"),
-      description: "Role for building and deploying code bases",
+      assumedBy: new CompositePrincipal(new ServicePrincipal("codebuild.amazonaws.com"), new ServicePrincipal("codepipeline.amazonaws.com"), new ArnPrincipal(`arn:aws:iam::${props.env?.account}:role/BI_CodeBuildRole`)),
+      description: "Role for building code bases",
     });
+    this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AWSCodeBuildDeveloperAccess"));
     this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AWSCodePipelineFullAccess"));
     this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("CloudWatchFullAccess"));
     this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AmazonS3FullAccess"));
-    this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AWSCodeDeployRoleForECS"));
     this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("SecretsManagerReadWrite"));
 
     this.databaseRole = new Role(this, "DatabaseRole", {
