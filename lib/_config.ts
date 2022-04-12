@@ -28,7 +28,7 @@ export const _SETTINGS: iSettings = localSettings || {
     deletionProtection: false,
   },
   github: {
-    oAuthToken: "TOKENHERE",
+    oauthToken: "TOKENHERE",
   },
   serversAlwaysOn: false, // Set to true if you want to keep the servers always on, set to false if you want to turn them off outside of working hours
   ECSConfig: {
@@ -36,6 +36,7 @@ export const _SETTINGS: iSettings = localSettings || {
     maxCapacity: 1,
     desiredCapacity: 1,
   },
+  domainName: "example.com",
 };
 
 // ACCESS LIST (ISO 3166)
@@ -44,7 +45,7 @@ export const _SETTINGS: iSettings = localSettings || {
 export const _AccessListCountries = ["GB"];
 
 // APPLICATION LIST AND DEFAULTS
-export const _MYDOMAIN = "example.com";
+export const _MYDOMAIN = _SETTINGS.domainName || "example.com";
 export const _PLATFORMAPP = {
   repo: "https://github.com/morgans3/NHS_Business_Intelligence_Platform_App",
   name: "BI_Platform",
@@ -63,10 +64,11 @@ export const _RequiredAppList: ApiProps[] = [
     domainName: _MYDOMAIN,
     siteSubDomain: "api",
     buildArgs: [],
-    port: 8080,
+    port: 8079,
     minCapacity: 1,
     maxCapacity: 5,
     desired: 3,
+    priority: 1,
   },
   {
     apiname: "BI_Platform_CF-Api",
@@ -79,13 +81,14 @@ export const _RequiredAppList: ApiProps[] = [
     domainName: _MYDOMAIN,
     siteSubDomain: "crossfilter",
     buildArgs: [],
-    leadInTime: 300,
+    leadInTime: 120,
     port: 8080,
     minCapacity: 1,
     maxCapacity: 1,
     desired: 1,
     cpu: 1024,
     memory: 2048,
+    priority: 2,
   },
   {
     apiname: "BI_Platform_Otp",
@@ -98,12 +101,13 @@ export const _RequiredAppList: ApiProps[] = [
     domainName: _MYDOMAIN,
     siteSubDomain: "isochrone",
     buildArgs: [],
-    leadInTime: 300,
-    port: 8080,
+    leadInTime: 120,
+    port: 80,
     minCapacity: 1,
     maxCapacity: 1,
     desired: 1,
     cpu: 1024,
     memory: 2048,
+    priority: 3,
   },
 ];

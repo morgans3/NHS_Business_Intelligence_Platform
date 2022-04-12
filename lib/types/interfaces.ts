@@ -20,7 +20,7 @@ export interface iSettings {
     deletionProtection: boolean;
   };
   github: {
-    oAuthToken: string;
+    oauthToken: string;
   };
   serversAlwaysOn: boolean;
   startHour?: string;
@@ -30,6 +30,9 @@ export interface iSettings {
     maxCapacity: number;
     desiredCapacity: number;
   };
+  domainName: string;
+  sslCertificateId?: string;
+  otherSecrets?: any[];
 }
 
 export interface RDSStackProps extends StackProps {
@@ -121,6 +124,7 @@ export interface ApiProps {
   cpu?: number;
   memory?: number;
   leadInTime?: number;
+  priority: number;
 }
 
 export interface LambdaAuthorizersProps extends StackProps {

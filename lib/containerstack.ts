@@ -11,6 +11,7 @@ import { ApplicationListener, ApplicationLoadBalancer, ApplicationProtocol, Appl
 import { Repository } from "aws-cdk-lib/aws-ecr";
 import { CfnLoggingConfiguration, CfnWebACL, CfnWebACLAssociation } from "aws-cdk-lib/aws-wafv2";
 import { LogGroup, RetentionDays } from "aws-cdk-lib/aws-logs";
+import { cleanseBucketName } from "../authentication/_functions";
 
 export class ContainerStack extends Stack {
   public readonly loadbalancer: ApplicationLoadBalancer;
@@ -108,9 +109,17 @@ export class ContainerStack extends Stack {
     Tags.of(this.loadbalancer).add("Component", "Load Balancer");
     Tags.of(this.loadbalancer).add("Name", "BIPlatform-ALB" + props.name);
 
-    const cert = new Certificate(this, "SSLCertificate-LB", {
-      domainName: props.domainName,
-    });
+    let cert;
+
+    if (_SETTINGS.sslCertificateId) {
+      const region = props.env!.region || "eu-west-2";
+      const account = props.env!.account! || process.env.CDK_DEFAULT_ACCOUNT;
+      cert = Certificate.fromCertificateArn(this, "BIPlatform-Certificate-" + props.name, `arn:aws:acm:${region}:${account}:certificate/` + _SETTINGS.sslCertificateId);
+    } else {
+      cert = new Certificate(this, "SSLCertificate-LB", {
+        domainName: props.domainName,
+      });
+    }
 
     const containerList = _RequiredAppList;
     const baseContainer = containerList[0];
@@ -119,7 +128,7 @@ export class ContainerStack extends Stack {
       branch: baseContainer.application.branch,
       secGroup: secGroup,
       cluster: this.cluster,
-      name: props.name,
+      name: baseContainer.apiname,
       port: baseContainer.port || 80,
       cpu: baseContainer.cpu || 256,
       memory: baseContainer.memory || 512,
@@ -132,7 +141,7 @@ export class ContainerStack extends Stack {
       targetGroupName: "api",
       vpc: vpc,
       protocol: ApplicationProtocol.HTTP,
-      port: baseContainer.port || 80,
+      port: 80,
       targets: [defaultContainerService],
     });
     Tags.of(this.defaultTargetGroup).add("Component", "Default Target Group");
@@ -155,8 +164,7 @@ export class ContainerStack extends Stack {
       }),
     });
 
-    let index = 1;
-    const otherContainers = containerList.slice(index);
+    const otherContainers = containerList.slice(1);
     otherContainers.forEach((container) => {
       const containerService = this.newContainer({
         branch: container.application.branch,
@@ -171,29 +179,34 @@ export class ContainerStack extends Stack {
         maxCapacity: container.maxCapacity || 1,
       });
 
+      const timeout = (container.leadInTime || 30) * 2;
+
       const target = new ApplicationTargetGroup(this, container.apiname + "-TG", {
         vpc: vpc,
-        targetGroupName: (props.name.replace("_", "-") + "-lbtarget").substring(0, 31),
+        targetGroupName: cleanseBucketName(container.apiname.replace("_", "-") + "-lbtarget").substring(0, 31),
         protocol: ApplicationProtocol.HTTP,
-        port: container.port || 80,
+        port: 80,
         targets: [containerService],
         healthCheck: {
           path: "/",
           timeout: Duration.seconds(container.leadInTime || 30),
+          interval: Duration.seconds(timeout),
         },
       });
       this.loadbalancer443.addTargetGroups(container.apiname + "-Listener", {
         targetGroups: [target],
         conditions: [ListenerCondition.hostHeaders(["*" + container.siteSubDomain + "*"])],
-        priority: index + 1,
+        priority: container.priority,
       });
-      index++;
     });
 
-    this.albWAF({
-      name: "WAF-" + props.name,
-      resourceArn: this.loadbalancer.loadBalancerArn,
-    });
+    this.albWAF(
+      {
+        name: "WAF-" + props.name,
+        resourceArn: this.loadbalancer.loadBalancerArn,
+      },
+      { account: props.env!.account!, region: props.env!.region || "eu-west-2" }
+    );
 
     if (_SETTINGS.manageDNS) {
       const zone = HostedZone.fromLookup(this, props.name + "-Zone", { domainName: props.domainName });
@@ -262,7 +275,7 @@ export class ContainerStack extends Stack {
     return service;
   }
 
-  albWAF(props: WAFProps) {
+  albWAF(props: WAFProps, env: { account: string; region: string }) {
     const waf = new CfnWebACL(this, "WebACLForAPIGateway", {
       name: "BIPlatform-APIGateway-WAF",
       description: "ACL for Internet facing entry points to the BI Platform",
@@ -324,9 +337,9 @@ export class ContainerStack extends Stack {
       });
     }
 
-    const loggingGroup = new LogGroup(this, "WebACLLogGroup-" + props.name, { logGroupName: "aws-waf-logs-monitoring", retention: RetentionDays.TWO_MONTHS });
+    const loggingGroup = new LogGroup(this, "WebACLLogGroup-" + props.name, { logGroupName: "aws-waf-logs-biplatformmonitoring", retention: RetentionDays.TWO_MONTHS });
     new CfnLoggingConfiguration(this, "WebACLLogConfiguration-" + props.name, {
-      logDestinationConfigs: [loggingGroup.logGroupArn],
+      logDestinationConfigs: ["arn:aws:logs:" + env.region + ":" + env.account + ":log-group:aws-waf-logs-biplatformmonitoring"],
       resourceArn: waf.attrArn,
     });
 

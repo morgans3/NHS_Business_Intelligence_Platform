@@ -4,7 +4,8 @@ import { checkSecretExists, generateSecrets, generatePassword } from "./_functio
 if (_SETTINGS.dockerhub) {
   checkSecretExists("dockerhub", (res: any) => {
     if (res === false) {
-      generateSecrets("dockerhub", "username", "password", _SETTINGS.dockerhub.username, _SETTINGS.dockerhub.password, (result: any) => {
+      const secretObject = { username: _SETTINGS.dockerhub.username, password: _SETTINGS.dockerhub.password };
+      generateSecrets("dockerhub", secretObject, (result: any) => {
         console.log(result);
       });
     } else {
@@ -17,7 +18,8 @@ checkSecretExists("jwt", (res: any) => {
   if (res === false) {
     const jwtsecret = generatePassword(20, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~!@-#$");
     const jwtsecretkey = generatePassword(20, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~!@-#$");
-    generateSecrets("jwt", "secret", "secretkey", jwtsecret, jwtsecretkey, (result: any) => {
+    const secretObject = { jwtsecret: jwtsecret, jwtsecretkey: jwtsecretkey };
+    generateSecrets("jwt", secretObject, (result: any) => {
       console.log(result);
     });
   } else {
@@ -29,7 +31,8 @@ if (_SETTINGS.newRDSConfig) {
   checkSecretExists("postgres", (res: any) => {
     if (res === false) {
       const password = generatePassword(20, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~!@-#$");
-      generateSecrets("postgres", "POSTGRES_UN", "POSTGRES_PW", _SETTINGS.newRDSConfig!.username, password, (result: any) => {
+      const secretObject = { POSTGRES_UN: _SETTINGS.newRDSConfig!.username, POSTGRES_PW: password };
+      generateSecrets("postgres", secretObject, (result: any) => {
         console.log(result);
       });
     } else {
@@ -40,10 +43,25 @@ if (_SETTINGS.newRDSConfig) {
 
 checkSecretExists("github", (res: any) => {
   if (res === false) {
-    generateSecrets("github", "oauthToken", "", _SETTINGS.github.oAuthToken, "", (result: any) => {
+    generateSecrets("github", _SETTINGS.github, (result: any) => {
       console.log(result);
     });
   } else {
     console.log("GitHub secret exists.");
   }
 });
+
+if (_SETTINGS.otherSecrets) {
+  _SETTINGS.otherSecrets.forEach((secret: any) => {
+    const name = Object.keys(secret)[0];
+    checkSecretExists(name, (res: any) => {
+      if (res === false) {
+        generateSecrets(name, secret[name], (result: any) => {
+          console.log(result);
+        });
+      } else {
+        console.log(`${name} secret exists.`);
+      }
+    });
+  });
+}

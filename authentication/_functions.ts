@@ -8,7 +8,7 @@ AWS.config.update({
   region: process.env.CDK_DEFAULT_REGION || "eu-west-2",
 });
 let access = process.env.AWSPROFILE || "default";
-const credentials = new AWS.SharedIniFileCredentials({ profile: access });
+const credentials = new AWS.SharedIniFileCredentials({ profile: "DIU_ETL_Dev_Data_Processing" });
 AWS.config.credentials = credentials;
 const secretsmanager = new AWS.SecretsManager();
 
@@ -16,11 +16,14 @@ export const cleanseBucketName = function (original: string): string {
   return original.split("_").join("-").split(".").join("-").toLowerCase();
 };
 
-export const generateSecrets = function (name: string, keyA: string, keyB: string, valueA: string, valueB: string, callback: any) {
-  let secretstring = `{\"` + keyA + `\":\"` + valueA + `\"}`;
-  if (keyB.length > 0) {
-    secretstring = `{\"` + keyA + `\":\"` + valueA + `\",\"` + keyB + `\":\"` + valueB + `\"}`;
-  }
+export const generateSecrets = function (name: string, object: any, callback: any) {
+  let secretstring = `{\"`;
+  const keys = Object.keys(object);
+  keys.forEach((key: string) => {
+    secretstring += `${key}\":\"${object[key]}\",`;
+  });
+  secretstring = secretstring.slice(0, -1);
+  secretstring += `}`;
   const params = {
     Description: "Adding secrets for CDK deployment: " + name,
     Name: name,
