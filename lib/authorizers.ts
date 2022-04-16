@@ -3,11 +3,11 @@ import { TokenAuthorizer } from "aws-cdk-lib/aws-apigateway";
 import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
 import { LambdaAuthorizersProps } from "./types/interfaces";
 import { RestApi, SecurityPolicy } from "aws-cdk-lib/aws-apigateway";
-import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
+import { Certificate, CertificateValidation, ICertificate } from "aws-cdk-lib/aws-certificatemanager";
 import { ARecord, HostedZone, RecordTarget } from "aws-cdk-lib/aws-route53";
 import { ApiGatewayDomain } from "aws-cdk-lib/aws-route53-targets";
 import { _SETTINGS } from "./_config";
-import { Role } from "aws-cdk-lib/aws-iam";
+import { AnyPrincipal, Effect, PolicyStatement, Role } from "aws-cdk-lib/aws-iam";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 
 export class LambdaAuthorizers extends Stack {
@@ -20,9 +20,19 @@ export class LambdaAuthorizers extends Stack {
   constructor(scope: any, id: string, props: LambdaAuthorizersProps) {
     super(scope, id, props);
 
-    const sslcert = new Certificate(this, "SSLCertificate", {
-      domainName: props.domainName,
-    });
+    let sslcert: ICertificate;
+
+    if (_SETTINGS.manageDNS) {
+      const zone = HostedZone.fromLookup(this, "ApiGateway-Zone-Cert", { domainName: props.domainName });
+      sslcert = new Certificate(this, "SSLCertificate", {
+        domainName: props.domainName,
+        validation: CertificateValidation.fromDns(zone),
+      });
+    } else {
+      sslcert = new Certificate(this, "SSLCertificate", {
+        domainName: props.domainName,
+      });
+    }
 
     this.apigateway = new RestApi(this, "BIPlatform-api-gateway", {
       restApiName: "API Services",
@@ -41,7 +51,7 @@ export class LambdaAuthorizers extends Stack {
     if (_SETTINGS.manageDNS) {
       const zone = HostedZone.fromLookup(this, "ApiGateway-Zone", { domainName: props.domainName });
       new ARecord(this, "ApiGateway-SiteAliasRecord", {
-        recordName: "api",
+        recordName: "apig",
         target: RecordTarget.fromAlias(new ApiGatewayDomain(this.apigateway.domainName!)),
         zone: zone!,
       });
@@ -60,6 +70,13 @@ export class LambdaAuthorizers extends Stack {
       role: role,
       logRetentionRole: role,
       logRetention: RetentionDays.TWO_MONTHS,
+      initialPolicy: [
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          resources: ["*"],
+          principals: [new AnyPrincipal()],
+        }),
+      ],
     });
 
     this.authorizer = new TokenAuthorizer(this, "API-Auth-Authorizer", {

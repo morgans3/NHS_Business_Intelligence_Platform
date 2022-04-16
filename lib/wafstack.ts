@@ -82,7 +82,7 @@ export class WAFStack extends Stack {
       new StringParameter(this, "GloablWafArnSSMParam", {
         parameterName: "GLOBAL_WAF_ARN_PARAM",
         description: "The Global WAF ARN for this account",
-        stringValue: waf.attrId,
+        stringValue: waf.attrArn,
       });
     }
 

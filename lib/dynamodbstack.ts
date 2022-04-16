@@ -2,6 +2,7 @@ import { Duration, RemovalPolicy, Stack } from "aws-cdk-lib";
 import { AuthorizationType, Cors, LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
 import { BackupPlan, BackupResource } from "aws-cdk-lib/aws-backup";
 import { AttributeType, BillingMode, Table, TableEncryption } from "aws-cdk-lib/aws-dynamodb";
+import { AnyPrincipal, Effect, PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { _RequiredTables } from "../datasets/dynamodb/tables";

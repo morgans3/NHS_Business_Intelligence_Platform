@@ -8,7 +8,7 @@ AWS.config.update({
   region: process.env.CDK_DEFAULT_REGION || "eu-west-2",
 });
 let access = process.env.AWSPROFILE || "default";
-const credentials = new AWS.SharedIniFileCredentials({ profile: "DIU_ETL_Dev_Data_Processing" });
+const credentials = new AWS.SharedIniFileCredentials({ profile: access });
 AWS.config.credentials = credentials;
 const secretsmanager = new AWS.SecretsManager();
 

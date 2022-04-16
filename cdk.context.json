@@ -69,5 +69,9 @@
         ]
       }
     ]
+  },
+  "hosted-zone:account=077341872813:domainName=nhs-bi-platform.co.uk:region=eu-west-2": {
+    "Id": "/hostedzone/Z10439901QUDN666JDUSY",
+    "Name": "nhs-bi-platform.co.uk."
   }
 }

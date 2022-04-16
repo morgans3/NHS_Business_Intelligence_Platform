@@ -2,8 +2,7 @@ import { StackProps } from "aws-cdk-lib";
 import { InfrastructureStack } from "../infrastack";
 import { ISecurityGroup, IVpc, SecurityGroup } from "aws-cdk-lib/aws-ec2";
 import { IRole, Role } from "aws-cdk-lib/aws-iam";
-import { IBaseService, ICluster } from "aws-cdk-lib/aws-ecs";
-import { ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
+import { ICluster } from "aws-cdk-lib/aws-ecs";
 import { Authorizer, RestApi } from "aws-cdk-lib/aws-apigateway";
 
 export interface iSettings {
@@ -33,6 +32,7 @@ export interface iSettings {
   domainName: string;
   sslCertificateId?: string;
   otherSecrets?: any[];
+  sslCertificateArn?: string;
 }
 
 export interface RDSStackProps extends StackProps {

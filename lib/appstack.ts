@@ -46,8 +46,10 @@ export class AppStack extends Stack {
         region: "us-east-1", // Cloudfront only checks this region for certificates.
       });
       new CfnOutput(this, props.appname + "-Certificate", { value: cert.certificateArn });
+    } else if (_SETTINGS.sslCertificateArn) {
+      cert = Certificate.fromCertificateArn(this, props.appname + "-SiteCertificate", _SETTINGS.sslCertificateArn); // This needs to be in us-east-1 for Cloudfront to be able to use it
     } else {
-      cert = new Certificate(this, props.appname + "-SiteCertificate", { domainName: siteDomain });
+      cert = new Certificate(this, props.appname + "-SiteCertificate", { domainName: siteDomain }); // TODO: This may not work (cross-region?), should it be created in the Global deployment?
     }
 
     const globalReader = new SSMParameterReader(this, "GlobalReader", {
@@ -92,7 +94,7 @@ export class AppStack extends Stack {
           commands: "npm install",
         },
         build: {
-          commands: ["npm run build-prod"],
+          commands: ["npm run build"],
         },
       },
       artifacts: {
@@ -113,18 +115,19 @@ export class AppStack extends Stack {
       timeout: Duration.minutes(10),
       projectName: props.application.name + "-Build",
       role: role,
-      logging: {
-        cloudWatch: {
-          enabled: true,
-          logGroup: new LogGroup(this, props.appname + "-BuildLogGroup"),
-        },
-      },
+      // logging: {
+      //   cloudWatch: {
+      //     enabled: true,
+      //     logGroup: new LogGroup(this, props.appname + "-BuildLogGroup"),
+      //   },
+      // },
     });
 
     // Deploy site contents to S3 bucket
     const sourceOutput = new Artifact();
     const buildOutput = new Artifact();
     new Pipeline(this, "Pipeline", {
+      role: role,
       pipelineName: props.application.name + "-Pipeline",
       stages: [
         {
