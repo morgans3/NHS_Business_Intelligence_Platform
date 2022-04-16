@@ -1,9 +1,9 @@
 import { CfnOutput, Duration, Fn, SecretValue, Stack, Tags } from "aws-cdk-lib";
-import { AwsLogDriver, Cluster, ContainerImage, Ec2Service, Ec2TaskDefinition, EcsOptimizedImage, NetworkMode, Protocol } from "aws-cdk-lib/aws-ecs";
+import { AsgCapacityProvider, AwsLogDriver, Cluster, ContainerImage, Ec2Service, Ec2TaskDefinition, EcsOptimizedImage, NetworkMode, Protocol } from "aws-cdk-lib/aws-ecs";
 import { _AccessListCountries, _RequiredAppList, _SETTINGS } from "./_config";
 import { ApiProps, ContainerProps, ContainerStackProps, iApplication, LoadBalancerStackProps, WAFProps } from "./types/interfaces";
 import { InstanceType, ISubnet, Peer, Port, SecurityGroup, Subnet, SubnetSelection, SubnetType } from "aws-cdk-lib/aws-ec2";
-import { Schedule } from "aws-cdk-lib/aws-autoscaling";
+import { AutoScalingGroup, Schedule } from "aws-cdk-lib/aws-autoscaling";
 import { ARecord, HostedZone, RecordTarget } from "aws-cdk-lib/aws-route53";
 import { Certificate, DnsValidatedCertificate } from "aws-cdk-lib/aws-certificatemanager";
 import { LoadBalancerTarget } from "aws-cdk-lib/aws-route53-targets";
@@ -12,7 +12,7 @@ import { Repository } from "aws-cdk-lib/aws-ecr";
 import { CfnLoggingConfiguration, CfnWebACL, CfnWebACLAssociation } from "aws-cdk-lib/aws-wafv2";
 import { LogGroup, RetentionDays } from "aws-cdk-lib/aws-logs";
 import { cleanseBucketName } from "../authentication/_functions";
-import { ArnPrincipal, Effect, PolicyStatement, Role } from "aws-cdk-lib/aws-iam";
+import { ArnPrincipal, CompositePrincipal, Effect, PolicyStatement, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 import { CodeBuildAction, EcsDeployAction, GitHubSourceAction, GitHubTrigger } from "aws-cdk-lib/aws-codepipeline-actions";
 import { BuildSpec, ComputeType, LinuxBuildImage, PipelineProject } from "aws-cdk-lib/aws-codebuild";
 import { Artifact, Pipeline } from "aws-cdk-lib/aws-codepipeline";
@@ -38,16 +38,23 @@ export class ContainerStack extends Stack {
     const subnets = props.clusterVPC.selectSubnets({
       subnets: subnetArray,
     });
-    const capacity = this.cluster.addCapacity("ASG-BIPlatform-" + props.name, {
+
+    const autoScalingGroup = new AutoScalingGroup(this, "ASG", {
+      vpc: props.clusterVPC,
+      vpcSubnets: subnets,
       instanceType: new InstanceType("c5.2xlarge"),
       machineImage: EcsOptimizedImage.amazonLinux2(),
-      associatePublicIpAddress: false,
       minCapacity: props.capacity.min,
       maxCapacity: props.capacity.max,
       desiredCapacity: props.capacity.desired,
-      vpcSubnets: subnets,
       autoScalingGroupName: "ASG-BIPlatform-" + props.name,
+      associatePublicIpAddress: false,
     });
+
+    const capacityProvider = new AsgCapacityProvider(this, "AsgCapacityProvider", {
+      autoScalingGroup,
+    });
+    this.cluster.addAsgCapacityProvider(capacityProvider);
 
     if (_SETTINGS.serversAlwaysOn === false) {
       const starthour = _SETTINGS.startHour || "8";
@@ -56,25 +63,25 @@ export class ContainerStack extends Stack {
       Tags.of(this.cluster).add("Automation.Schedules.Shutdown", "Weekdays at " + stophour);
       Tags.of(this.cluster).add("Automation.Schedules.Startup", "Weekdays at " + starthour);
 
-      capacity.scaleOnSchedule(props.name + "-PowerOn", {
+      autoScalingGroup.scaleOnSchedule(props.name + "-PowerOn", {
         minCapacity: props.capacity.min,
         maxCapacity: props.capacity.max,
         desiredCapacity: props.capacity.desired,
         schedule: Schedule.cron({ hour: starthour, minute: "0" }),
       });
-      capacity.scaleOnSchedule(props.name + "-PowerOff", {
+      autoScalingGroup.scaleOnSchedule(props.name + "-PowerOff", {
         minCapacity: 0,
         maxCapacity: 0,
         desiredCapacity: 0,
         schedule: Schedule.cron({ hour: stophour, minute: "0" }),
       });
-      capacity.scaleOnSchedule(props.name + "-PowerOff-Saturday", {
+      autoScalingGroup.scaleOnSchedule(props.name + "-PowerOff-Saturday", {
         minCapacity: 0,
         maxCapacity: 0,
         desiredCapacity: 0,
         schedule: Schedule.cron({ hour: starthour, minute: "15", weekDay: "Sat" }),
       });
-      capacity.scaleOnSchedule(props.name + "-PowerOff-Sunday", {
+      autoScalingGroup.scaleOnSchedule(props.name + "-PowerOff-Sunday", {
         minCapacity: 0,
         maxCapacity: 0,
         desiredCapacity: 0,
@@ -253,8 +260,8 @@ export class ContainerStack extends Stack {
     const statement = new PolicyStatement({
       effect: Effect.ALLOW,
       sid: "CDK Access",
-      principals: [new ArnPrincipal(role.roleArn)],
-      actions: ["ecr:BatchCheckLayerAvailability", "ecr:BatchGetImage", "ecr:DescribeImages", "ecr:DescribeRepositories", "ecr:GetDownloadUrlForLayer", "ecr:GetLifecyclePolicy", "ecr:GetLifecyclePolicyPreview", "ecr:GetRepositoryPolicy", "ecr:InitiateLayerUpload", "ecr:ListImages"],
+      principals: [new CompositePrincipal(new ServicePrincipal("codebuild.amazonaws.com"), new ArnPrincipal(role.roleArn))],
+      actions: ["ecr:BatchCheckLayerAvailability", "ecr:BatchGetImage", "ecr:DescribeImages", "ecr:DescribeRepositories", "ecr:GetDownloadUrlForLayer", "ecr:GetLifecyclePolicy", "ecr:GetLifecyclePolicyPreview", "ecr:GetRepositoryPolicy", "ecr:InitiateLayerUpload", "ecr:ListImages", "ecr:PutImage", "ecr:UploadLayerPart"],
     });
     repo.addToResourcePolicy(statement);
     let commandlist = [];
@@ -262,7 +269,7 @@ export class ContainerStack extends Stack {
       commandlist.push("docker login -u $dockerhub_username -p $dockerhub_password");
     }
     commandlist.push("docker build " + getBuildArgs(props.buildArgs) + " -t " + ecrRepoName + ":main .");
-    const postbuildcommand = ["docker tag " + ecrRepoName + `:${props.branch} ` + this.account + ".dkr.ecr.eu-west-2.amazonaws.com/" + ecrRepoName + ":" + props.branch, "docker push " + this.account + ".dkr.ecr.eu-west-2.amazonaws.com/" + ecrRepoName + ":" + props.branch, `printf '[{"name":"` + ecrRepoName + `","imageUri":"${this.account}.dkr.ecr.eu-west-2.amazonaws.com/` + ecrRepoName + `:${props.branch}}]' > imagedefinitions.json`];
+    const postbuildcommand = ["docker tag " + ecrRepoName + `:${props.branch} ` + this.account + ".dkr.ecr.eu-west-2.amazonaws.com/" + ecrRepoName + ":" + props.branch, "docker push " + this.account + ".dkr.ecr.eu-west-2.amazonaws.com/" + ecrRepoName + ":" + props.branch, `printf '[{"name":"` + ecrRepoName + `","imageUri":"${this.account}.dkr.ecr.eu-west-2.amazonaws.com/` + ecrRepoName + `:${props.branch}"}]' > imagedefinitions.json`];
 
     const buildSpecObject = {
       version: "0.2",
@@ -353,6 +360,7 @@ export class ContainerStack extends Stack {
     Tags.of(taskDef).add("Name", props.name + "-TaskDef");
 
     const container = taskDef.addContainer(props.name, {
+      containerName: ecrRepoName,
       image: ContainerImage.fromEcrRepository(repo, props.branch),
       logging: inboundlogging,
       essential: true,
@@ -372,7 +380,7 @@ export class ContainerStack extends Stack {
       desiredCount: desiredCount,
       minHealthyPercent: 50,
       securityGroups: [props.secGroup],
-      serviceName: props.name,
+      serviceName: ecrRepoName,
     });
     const inboundscaling = service.autoScaleTaskCount({ minCapacity: minCapacity, maxCapacity: maxCapacity });
     inboundscaling.scaleOnCpuUtilization(props.name + "-CpuScaling", {

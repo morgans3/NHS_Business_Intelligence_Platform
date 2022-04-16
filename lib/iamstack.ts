@@ -1,5 +1,5 @@
 import { Stack, StackProps } from "aws-cdk-lib";
-import { ArnPrincipal, CompositePrincipal, ManagedPolicy, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
+import { ArnPrincipal, CompositePrincipal, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 
 export class IAMStack extends Stack {
   public codebuildRole: Role;
@@ -19,6 +19,27 @@ export class IAMStack extends Stack {
     this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("CloudWatchFullAccess"));
     this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AmazonS3FullAccess"));
     this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("SecretsManagerReadWrite"));
+    this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AmazonEC2ContainerRegistryFullAccess"));
+    this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AWSCodeDeployRoleForECS"));
+
+    this.codebuildRole.addToPrincipalPolicy(
+      new PolicyStatement({
+        actions: ["ecs:*"],
+        resources: ["*"],
+      })
+    );
+
+    this.codebuildRole.addToPrincipalPolicy(
+      new PolicyStatement({
+        actions: ["iam:PassRole"],
+        resources: ["*"],
+        conditions: {
+          StringEqualsIfExists: {
+            "iam:PassedToService": ["ec2.amazonaws.com", "ecs-tasks.amazonaws.com"],
+          },
+        },
+      })
+    );
 
     this.databaseRole = new Role(this, "DatabaseRole", {
       roleName: "BI_DatabaseRole",
