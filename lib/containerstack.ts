@@ -19,6 +19,7 @@ import { Artifact, Pipeline } from "aws-cdk-lib/aws-codepipeline";
 import { Alarm, ComparisonOperator, Dashboard, GraphWidget, IMetric, Metric, TextWidget, TreatMissingData } from "aws-cdk-lib/aws-cloudwatch";
 import { SnsAction } from "aws-cdk-lib/aws-cloudwatch-actions";
 import { CdkLambdaMsTeamsStack } from "./dashboards/lambdamsteams";
+import { WAFCloudwatchDashboardStack } from "./dashboards/waf-dashboard";
 
 export class ContainerStack extends Stack {
   public readonly loadbalancer: ApplicationLoadBalancer;
@@ -498,13 +499,19 @@ export class ContainerStack extends Stack {
       });
     }
 
-    const loggingGroup = new LogGroup(this, "WebACLLogGroup-" + props.name, { logGroupName: "aws-waf-logs-biplatformmonitoring", retention: RetentionDays.TWO_MONTHS });
+    new LogGroup(this, "WebACLLogGroup-" + props.name, { logGroupName: "aws-waf-logs-biplatformmonitoring", retention: RetentionDays.TWO_MONTHS });
     new CfnLoggingConfiguration(this, "WebACLLogConfiguration-" + props.name, {
       logDestinationConfigs: ["arn:aws:logs:" + env.region + ":" + env.account + ":log-group:aws-waf-logs-biplatformmonitoring"],
       resourceArn: waf.attrArn,
     });
 
     new CfnOutput(this, "WAFArn", { value: attrId });
+
+    new WAFCloudwatchDashboardStack(this, "BIPlatform-APIGateway-WAF-Dashboard", {
+      env: env,
+      dashboardName: "BIPlatform-APIGateway-WAF-Dashboard",
+      WAFWebACL: [{ name: waf.attrId, region: env.region }],
+    });
   }
 
   getResourceARNForEndpoint(region: string, restApiId: string, stageName: string): string {

@@ -53,8 +53,8 @@ We will be actively maintaining these repositories, so if you identify an issue 
 
 ### Step Four - Deploy Infrastructure
 
-- Run `cdk deploy --app "node bin/globalcdk.js"` to deploy all the global resources, like the Cloudfront Firewall
-- Run `cdk deploy` to deploy all the regional resources
+- Run `cdk deploy --app "node bin/globalcdk.js" --all` to deploy all the global resources, like the Cloudfront Firewall
+- Run `cdk deploy --all` to deploy all the regional resources
 
 ### Step Five - Deploy Datasets
 

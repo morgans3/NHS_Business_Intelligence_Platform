@@ -8,6 +8,7 @@ import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
 import { _RequiredSQLTables } from "../datasets/postgresql/tables";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { StringParameter } from "aws-cdk-lib/aws-ssm";
+import { RDSCloudwatchDashboardStack } from "./dashboards/rds-dashboard";
 
 export class SQLStack extends Stack {
   public dbInstance: DatabaseInstance;
@@ -53,6 +54,16 @@ export class SQLStack extends Stack {
         parameterName: "RDS_DB_ENDPOINT",
         description: "The RDS endpoint for the PostgreSQL database",
         stringValue: this.dbInstance.dbInstanceEndpointAddress,
+      });
+
+      new RDSCloudwatchDashboardStack(this, "RDSCloudwatchDashboardStack", {
+        dashboardName: "RDS-Dashboard",
+        databases: [
+          {
+            DBInstanceIdentifier: this.dbInstance.instanceIdentifier,
+            Engine: "postgres",
+          },
+        ],
       });
     } else if (_SETTINGS.existingRDS && _SETTINGS.existingRDSEndpoint) {
       new StringParameter(this, "RDSEndpointSSMParam", {
