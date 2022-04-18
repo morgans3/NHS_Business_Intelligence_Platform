@@ -10,6 +10,7 @@ import { ARecord, HostedZone, IHostedZone, RecordTarget } from "aws-cdk-lib/aws-
 import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
 import { Bucket, HttpMethods } from "aws-cdk-lib/aws-s3";
 import { cleanseBucketName, SSMParameterReader } from "../authentication/_functions";
+import { CDNCloudwatchDashboardStack } from "./dashboards/cdn-dashboard";
 import { StaticSiteProps } from "./types/interfaces";
 import { _SETTINGS } from "./_config";
 
@@ -77,6 +78,11 @@ export class AppStack extends Stack {
       webACLId: wafArn,
     });
     new CfnOutput(this, props.appname + "-DistributionId", { value: distribution.distributionId });
+
+    new CDNCloudwatchDashboardStack(this, "CDNCloudwatchDashboardStack-" + props.appname, {
+      dashboardName: "CDNDashboard-" + props.appname,
+      distributions: [{ Id: distribution.distributionId, Alias: siteDomain }],
+    });
 
     // Route53 alias record for the CloudFront distribution
     if (_SETTINGS.manageDNS) {
