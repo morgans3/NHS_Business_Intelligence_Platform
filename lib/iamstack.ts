@@ -1,5 +1,5 @@
 import { Stack, StackProps } from "aws-cdk-lib";
-import { ArnPrincipal, CompositePrincipal, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
+import { ArnPrincipal, CompositePrincipal, Effect, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 
 export class IAMStack extends Stack {
   public codebuildRole: Role;
@@ -21,6 +21,12 @@ export class IAMStack extends Stack {
     this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("SecretsManagerReadWrite"));
     this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AmazonEC2ContainerRegistryFullAccess"));
     this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AWSCodeDeployRoleForECS"));
+    const statement = new PolicyStatement({
+      effect: Effect.ALLOW,
+      actions: ["ssm:*"],
+      resources: ["*"],
+    });
+    this.codebuildRole.addToPolicy(statement);
 
     this.codebuildRole.addToPrincipalPolicy(
       new PolicyStatement({

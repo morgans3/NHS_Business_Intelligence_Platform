@@ -7,6 +7,7 @@ import { _SETTINGS } from "./_config";
 import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
 import { _RequiredSQLTables } from "../datasets/postgresql/tables";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
+import { StringParameter } from "aws-cdk-lib/aws-ssm";
 
 export class SQLStack extends Stack {
   public dbInstance: DatabaseInstance;
@@ -47,8 +48,18 @@ export class SQLStack extends Stack {
         maxAllocatedStorage: 100,
         allocatedStorage: 20,
       });
-
       new CfnOutput(this, "dbEndpoint", { value: this.dbInstance.dbInstanceEndpointAddress });
+      new StringParameter(this, "RDSEndpointSSMParam", {
+        parameterName: "RDS_DB_ENDPOINT",
+        description: "The RDS endpoint for the PostgreSQL database",
+        stringValue: this.dbInstance.dbInstanceEndpointAddress,
+      });
+    } else if (_SETTINGS.existingRDS && _SETTINGS.existingRDSEndpoint) {
+      new StringParameter(this, "RDSEndpointSSMParam", {
+        parameterName: "RDS_DB_ENDPOINT",
+        description: "The RDS endpoint for the PostgreSQL database",
+        stringValue: _SETTINGS.existingRDSEndpoint,
+      });
     }
 
     const accessLambda = this.createLambda({ lambdarole: props.lambdarole });

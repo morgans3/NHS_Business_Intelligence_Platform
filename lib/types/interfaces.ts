@@ -13,6 +13,7 @@ export interface iSettings {
   existingVPCID?: string;
   existingSubnetIDs?: { ID: string; AZ: string; type: string }[];
   existingRDS?: boolean;
+  existingRDSEndpoint?: string;
   newRDSConfig?: {
     username: string;
     instanceType: string;
