@@ -18,7 +18,7 @@ import { BuildSpec, ComputeType, LinuxBuildImage, PipelineProject } from "aws-cd
 import { Artifact, Pipeline } from "aws-cdk-lib/aws-codepipeline";
 import { Alarm, ComparisonOperator, Dashboard, GraphWidget, IMetric, Metric, TextWidget, TreatMissingData } from "aws-cdk-lib/aws-cloudwatch";
 import { SnsAction } from "aws-cdk-lib/aws-cloudwatch-actions";
-import { CdkLambdaMsTeamsStack } from "./lambdamsteams";
+import { CdkLambdaMsTeamsStack } from "./dashboards/lambdamsteams";
 
 export class ContainerStack extends Stack {
   public readonly loadbalancer: ApplicationLoadBalancer;
