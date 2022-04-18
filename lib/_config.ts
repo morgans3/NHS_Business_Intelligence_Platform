@@ -1,8 +1,6 @@
 import { BuildEnvironmentVariableType } from "aws-cdk-lib/aws-codebuild";
-import { InstanceClass, InstanceSize, InstanceType } from "aws-cdk-lib/aws-ec2";
 import { containerSettings, minAPI, addAPI } from "./types/buildEnv";
 import { ApiProps, iSettings } from "./types/interfaces";
-const SECRET = BuildEnvironmentVariableType.SECRETS_MANAGER;
 
 export const _AWSREGION = process.env.CDK_DEFAULT_REGION || "eu-west-2";
 export const _ACCOUNT = process.env.CDK_DEFAULT_ACCOUNT;
@@ -72,7 +70,7 @@ export const _RequiredAppList: ApiProps[] = [
     ]),
     buildArgs: minAPI.concat(["EMAILHOST", "EMAILPORT"]),
     port: 8079,
-    minCapacity: 0, //1,
+    minCapacity: 0, //1, // TODO: Change to 1 when ready to deploy
     maxCapacity: 0, //5,
     desired: 0, //3,
     priority: 1,

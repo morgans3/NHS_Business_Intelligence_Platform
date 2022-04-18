@@ -306,9 +306,9 @@ export class ContainerStack extends Stack {
       environment: {
         buildImage: LinuxBuildImage.STANDARD_3_0,
         privileged: true,
-        computeType: ComputeType.SMALL,
+        computeType: ComputeType.LARGE,
       },
-      timeout: Duration.minutes(10),
+      timeout: Duration.minutes(30),
       projectName: props.name + "-Build",
       // logging: {
       //   cloudWatch: {
