@@ -11,7 +11,7 @@ export interface iSettings {
   manageDNS: boolean;
   existingVPC?: boolean;
   existingVPCID?: string;
-  existingSubnetIDs?: { ID: string; AZ: string }[];
+  existingSubnetIDs?: { ID: string; AZ: string; type: string }[];
   existingRDS?: boolean;
   newRDSConfig?: {
     username: string;

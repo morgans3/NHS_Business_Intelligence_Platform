@@ -101,10 +101,15 @@ export class ContainerStack extends Stack {
 
     const vpc = props.clusterVPC;
     let settings: SubnetSelection = { subnetType: SubnetType.PUBLIC };
-    if (_SETTINGS.existingSubnetIDs) {
-      const lbsubnetAZ1 = Subnet.fromSubnetAttributes(this, "lbsubnet", { subnetId: _SETTINGS.existingSubnetIDs[0].ID, availabilityZone: _SETTINGS.existingSubnetIDs[0].AZ });
-      const lbsubnetAZ2 = Subnet.fromSubnetAttributes(this, "lbsubnet2", { subnetId: _SETTINGS.existingSubnetIDs[1].ID, availabilityZone: _SETTINGS.existingSubnetIDs[1].AZ });
-      settings = { subnets: [lbsubnetAZ1, lbsubnetAZ2] };
+    if (_SETTINGS.existingSubnetIDs && _SETTINGS.existingSubnetIDs.filter((x) => x.type === "PUBLIC").length > 0) {
+      const pubSubnets = _SETTINGS.existingSubnetIDs.filter((x) => x.type === "PUBLIC");
+      const output: ISubnet[] = [];
+      let index = 0;
+      pubSubnets.forEach((x) => {
+        output.push(Subnet.fromSubnetAttributes(this, "lbsubnet-" + index, { subnetId: x.ID, availabilityZone: x.AZ }));
+        index++;
+      });
+      settings = { subnets: output };
     }
     const publicsubnets = vpc.selectSubnets(settings);
 
