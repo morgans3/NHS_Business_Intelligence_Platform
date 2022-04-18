@@ -1,7 +1,7 @@
 import { CfnOutput, Duration, Fn, SecretValue, Stack, Tags } from "aws-cdk-lib";
 import { AsgCapacityProvider, AwsLogDriver, Cluster, ContainerImage, Ec2Service, Ec2TaskDefinition, EcsOptimizedImage, NetworkMode, Protocol } from "aws-cdk-lib/aws-ecs";
 import { _AccessListCountries, _RequiredAppList, _SETTINGS } from "./_config";
-import { ApiProps, ContainerProps, ContainerStackProps, iApplication, LoadBalancerStackProps, WAFProps } from "./types/interfaces";
+import { ApiProps, ContainerProps, ContainerStackProps, iServiceDetails, ObservabilityProps, ServiceObservabilityProps, WAFProps } from "./types/interfaces";
 import { InstanceType, ISubnet, Peer, Port, SecurityGroup, Subnet, SubnetSelection, SubnetType } from "aws-cdk-lib/aws-ec2";
 import { AutoScalingGroup, Schedule } from "aws-cdk-lib/aws-autoscaling";
 import { ARecord, HostedZone, RecordTarget } from "aws-cdk-lib/aws-route53";
@@ -16,6 +16,9 @@ import { ArnPrincipal, CompositePrincipal, Effect, PolicyStatement, Role, Servic
 import { CodeBuildAction, EcsDeployAction, GitHubSourceAction, GitHubTrigger } from "aws-cdk-lib/aws-codepipeline-actions";
 import { BuildSpec, ComputeType, LinuxBuildImage, PipelineProject } from "aws-cdk-lib/aws-codebuild";
 import { Artifact, Pipeline } from "aws-cdk-lib/aws-codepipeline";
+import { Alarm, ComparisonOperator, Dashboard, GraphWidget, IMetric, Metric, TextWidget, TreatMissingData } from "aws-cdk-lib/aws-cloudwatch";
+import { SnsAction } from "aws-cdk-lib/aws-cloudwatch-actions";
+import { CdkLambdaMsTeamsStack } from "./lambdamsteams";
 
 export class ContainerStack extends Stack {
   public readonly loadbalancer: ApplicationLoadBalancer;
@@ -185,6 +188,8 @@ export class ContainerStack extends Stack {
       }),
     });
 
+    const obsServiceList: iServiceDetails[] = [];
+
     const otherContainers = containerList.slice(1);
     otherContainers.forEach((container) => {
       const containerService = this.newContainer({
@@ -224,6 +229,11 @@ export class ContainerStack extends Stack {
         conditions: [ListenerCondition.hostHeaders(["*" + container.siteSubDomain + ".*"])],
         priority: container.priority,
       });
+
+      obsServiceList.push({
+        service: cleanseBucketName(container.apiname),
+        cluster: this.cluster.clusterName,
+      });
     });
 
     this.albWAF(
@@ -254,6 +264,22 @@ export class ContainerStack extends Stack {
         });
       });
     }
+
+    this.addObservability({
+      dashboardName: this.cluster.clusterName + "-ClusterDashboard",
+      ECSCluster: ["ECS-BIPlatform-" + props.name],
+    });
+
+    let teamsLambda;
+    if (_SETTINGS.msTeamsWebhook) {
+      teamsLambda = new CdkLambdaMsTeamsStack(this, "MSTeamsLambdaStack-Services", { env: { account: this.account, region: this.region }, name: "Services" });
+    }
+
+    this.addServiceObservability({
+      dashboardName: "ECS-BIPlatform-ServicesDashboard-" + props.name,
+      ECSEc2Service: obsServiceList,
+      topic: teamsLambda?.topic || undefined,
+    });
   }
 
   newContainer(props: ContainerProps) {
@@ -485,6 +511,123 @@ export class ContainerStack extends Stack {
     let Arn: string = Fn.join("", ["arn:aws:apigateway:", region, "::/restapis/", restApiId, "/stages/", stageName]);
     return Arn;
   }
+
+  addObservability(props: ObservabilityProps) {
+    const titleWidget = new TextWidget({
+      markdown: `# Dashboard: All ECS Clusters`,
+      height: 1,
+      width: 24,
+    });
+
+    const clusterlist = props.ECSCluster;
+    const arrECSClusterCPUUtilization: IMetric[] = [];
+    const arrECSClusterCPUReservation: IMetric[] = [];
+    const arrECSClusterMemoryReservation: IMetric[] = [];
+    clusterlist.forEach((item) => {
+      arrECSClusterCPUUtilization.push(newMetric(item, "CPUUtilization"));
+      arrECSClusterCPUReservation.push(newMetric(item, "CPUReservation"));
+      arrECSClusterMemoryReservation.push(newMetric(item, "MemoryReservation"));
+    });
+
+    // Create CloudWatch Dashboard for ECS Cluster: CPU Utilization, CPU Reservation, Memory Reservation
+    const graphWidget = new GraphWidget({
+      title: "ECS Cluster CPU Utilization",
+      left: arrECSClusterCPUUtilization,
+      width: 24,
+    });
+
+    const graphWidget2 = new GraphWidget({
+      title: "ECS Cluster CPU Reservation",
+      left: arrECSClusterCPUReservation,
+      width: 24,
+    });
+
+    const graphWidget3 = new GraphWidget({
+      title: "ECS Cluster Memory Reservation",
+      left: arrECSClusterMemoryReservation,
+      width: 24,
+    });
+
+    // Create CloudWatch Dashboard
+    new Dashboard(this, "ECSDashboard-Cluster", {
+      dashboardName: props.dashboardName,
+      widgets: [[titleWidget], [graphWidget], [graphWidget2], [graphWidget3]],
+    });
+
+    // Generate Outputs
+    const cloudwatchDashboardURL = `https://${this.region}.console.aws.amazon.com/cloudwatch/home?region=${this.region}#dashboards:name=${props.dashboardName}`;
+    new CfnOutput(this, "DashboardOutput-Cluster", {
+      value: cloudwatchDashboardURL,
+      description: "URL of the CloudWatch Dashboard",
+      exportName: "CloudWatchDashboardURL-Clusters",
+    });
+  }
+
+  addServiceObservability(props: ServiceObservabilityProps) {
+    // Create Title for Dashboard
+    const titleWidget = new TextWidget({
+      markdown: `# Dashboard: All ECS Services`,
+      height: 1,
+      width: 24,
+    });
+
+    // ECS EC2Service Configuration
+    const Ec2Servicelist: iServiceDetails[] = props.ECSEc2Service;
+    const arrECSEc2ServiceCPUUtilization: IMetric[] = [];
+    const arrECSEc2ServiceMemoryUtilization: IMetric[] = [];
+    const arrECSEc2ServiceRunningTaskCount: IMetric[] = [];
+    Ec2Servicelist.forEach((service) => {
+      arrECSEc2ServiceCPUUtilization.push(newServiceMetric(service.service, "CPUUtilization", service.cluster, "avg"));
+      arrECSEc2ServiceMemoryUtilization.push(newServiceMetric(service.service, "MemoryUtilization", service.cluster, "avg"));
+      arrECSEc2ServiceRunningTaskCount.push(newServiceMetric(service.service, "CPUUtilization", service.cluster, "n"));
+      const alarm = new Alarm(this, service.service + "ServiceRunningCountAlarm", {
+        alarmName: service.service + "ServiceRunningCountAlarm",
+        comparisonOperator: ComparisonOperator.LESS_THAN_OR_EQUAL_TO_THRESHOLD,
+        threshold: 0,
+        evaluationPeriods: 1,
+        treatMissingData: TreatMissingData.BREACHING,
+        metric: newServiceMetric(service.service, "CPUUtilization", service.cluster, "n"),
+        alarmDescription: "ECS Ec2Service alarm if the services running threshold equals (0) for 1 evaluation period",
+      });
+      if (props.topic) alarm.addAlarmAction(new SnsAction(props.topic));
+    });
+
+    // Create CloudWatch Widget for ECS Ec2Service: CPU Utilization
+    const graphWidget = new GraphWidget({
+      title: "ECS EC2 Service CPU Utilization",
+      left: arrECSEc2ServiceCPUUtilization,
+      width: 24,
+    });
+
+    // Create CloudWatch Widget for ECS Ec2Service: Memory Utilization
+    const graphWidgetMem = new GraphWidget({
+      title: "ECS EC2 Service Memory Utilization",
+      left: arrECSEc2ServiceMemoryUtilization,
+      width: 24,
+    });
+
+    // Create CloudWatch Widget for ECS Ec2Service: Running Services Count
+    // https://docs.aws.amazon.com/AmazonECS/latest/developerguide/cloudwatch-metrics.html#cw_running_task_count - https://docs.aws.amazon.com/cdk/api/v1/docs/@aws-cdk_aws-cloudwatch.MetricProps.html
+    const graphWidgetCount = new GraphWidget({
+      title: "ECS EC2 Service Running Task Count",
+      left: arrECSEc2ServiceRunningTaskCount,
+      width: 24,
+    });
+
+    // Create CloudWatch Dashboard
+    new Dashboard(this, "ECSDashboard-Service", {
+      dashboardName: props.dashboardName,
+      widgets: [[titleWidget], [graphWidget], [graphWidgetMem], [graphWidgetCount]],
+    });
+
+    // Generate Outputs
+    const cloudwatchDashboardURL = `https://${this.region}.console.aws.amazon.com/cloudwatch/home?region=${this.region}#dashboards:name=${props.dashboardName}`;
+    new CfnOutput(this, "DashboardOutput-Services", {
+      value: cloudwatchDashboardURL,
+      description: "URL of the CloudWatch Dashboard",
+      exportName: "CloudWatchDashboardURL-Services",
+    });
+  }
 }
 
 function getBuildArgs(argArray: string[]) {
@@ -493,4 +636,31 @@ function getBuildArgs(argArray: string[]) {
     str += "--build-arg " + arg + "=$" + arg + " ";
   });
   return str;
+}
+
+// Metric to show CPU Utilization, CPU Reservation, Memory Reservation
+function newMetric(clustername: string, metricName: string) {
+  return new Metric({
+    metricName: metricName,
+    namespace: "AWS/ECS",
+    dimensionsMap: {
+      ClusterName: clustername,
+    },
+    statistic: "avg",
+    period: Duration.minutes(1),
+  });
+}
+
+// Metric to show CPU Utilization, Memory Utilization
+function newServiceMetric(servicename: string, metricName: string, clustername: string, statistic: string) {
+  return new Metric({
+    metricName: metricName,
+    namespace: "AWS/ECS",
+    dimensionsMap: {
+      ClusterName: clustername,
+      ServiceName: servicename,
+    },
+    statistic: statistic,
+    period: Duration.minutes(1),
+  });
 }

@@ -4,6 +4,7 @@ import { ISecurityGroup, IVpc, SecurityGroup } from "aws-cdk-lib/aws-ec2";
 import { IRole, Role } from "aws-cdk-lib/aws-iam";
 import { ICluster } from "aws-cdk-lib/aws-ecs";
 import { Authorizer, RestApi } from "aws-cdk-lib/aws-apigateway";
+import { Topic } from "aws-cdk-lib/aws-sns";
 
 export interface iSettings {
   containerIPs: string[];
@@ -34,6 +35,7 @@ export interface iSettings {
   sslCertificateId?: string;
   otherSecrets?: any[];
   sslCertificateArn?: string;
+  msTeamsWebhook?: string;
 }
 
 export interface RDSStackProps extends StackProps {
@@ -191,4 +193,20 @@ export interface WAFProps extends StackProps {
   name: string;
   resourceArn?: string;
   scope?: string;
+}
+
+export interface ObservabilityProps {
+  dashboardName: string;
+  ECSCluster: string[];
+}
+
+export interface ServiceObservabilityProps {
+  topic?: Topic;
+  dashboardName: string;
+  ECSEc2Service: iServiceDetails[];
+}
+
+export interface iServiceDetails {
+  cluster: string;
+  service: string;
 }
