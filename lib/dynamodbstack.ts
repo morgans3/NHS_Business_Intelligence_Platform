@@ -2,7 +2,7 @@ import { Duration, RemovalPolicy, Stack } from "aws-cdk-lib";
 import { AuthorizationType, Cors, LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
 import { BackupPlan, BackupResource } from "aws-cdk-lib/aws-backup";
 import { AttributeType, BillingMode, Table, TableEncryption } from "aws-cdk-lib/aws-dynamodb";
-import { AnyPrincipal, Effect, PolicyStatement, Role } from "aws-cdk-lib/aws-iam";
+import { Role } from "aws-cdk-lib/aws-iam";
 import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { _RequiredTables } from "../datasets/dynamodb/tables";
@@ -30,26 +30,28 @@ export class DynamoDBStack extends Stack {
       }
       // TODO: add all global-secondary index
 
-      const baseendpoint = api.root.addResource(table.baseendpoint);
-      let authorizer = authLambda;
-      if (table.customAuth) {
-        authorizer = publicAuthLambda;
-      }
-      if (props.addCors) {
-        baseendpoint.addCorsPreflight({
-          allowOrigins: Cors.ALL_ORIGINS,
-          allowHeaders: ["Content-Type", "X-Amz-Date", "Authorization", "X-Api-Key", "X-Amz-Security-Token", "X-Amz-User-Agent", "access-control-allow-origin", "Cache-Control", "Pragma"],
-        });
-      }
+      if (table.functions.length > 0) {
+        const baseendpoint = api.root.addResource(table.baseendpoint);
+        let authorizer = authLambda;
+        if (table.customAuth) {
+          authorizer = publicAuthLambda;
+        }
+        if (props.addCors) {
+          baseendpoint.addCorsPreflight({
+            allowOrigins: Cors.ALL_ORIGINS,
+            allowHeaders: ["Content-Type", "X-Amz-Date", "Authorization", "X-Api-Key", "X-Amz-Security-Token", "X-Amz-User-Agent", "access-control-allow-origin", "Cache-Control", "Pragma"],
+          });
+        }
 
-      table.functions.forEach((func: any) => {
-        const thislambda = new LambdaIntegration(accessLambda, {
-          requestTemplates: { "application/json": '{ "statusCode": "200" }' },
+        table.functions.forEach((func: any) => {
+          const thislambda = new LambdaIntegration(accessLambda, {
+            requestTemplates: { "application/json": '{ "statusCode": "200" }' },
+          });
+          const methodtype = selectMethodType(func);
+          const thisendpoint = baseendpoint.addResource(func.split("-").join(""));
+          thisendpoint.addMethod(methodtype, thislambda, { authorizationType: AuthorizationType.CUSTOM, authorizer: authorizer });
         });
-        const methodtype = selectMethodType(func);
-        const thisendpoint = baseendpoint.addResource(func.split("-").join(""));
-        thisendpoint.addMethod(methodtype, thislambda, { authorizationType: AuthorizationType.CUSTOM, authorizer: authorizer });
-      });
+      }
     });
   }
 
