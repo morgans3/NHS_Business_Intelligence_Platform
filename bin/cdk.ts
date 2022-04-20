@@ -38,7 +38,7 @@ getSecret("jwt", (data: any) => {
   const dynamodbStack = new DynamoDBStack(app, "DynamoDBStack", {
     env,
     JWTSECRET: jwtCredentials.secret,
-    lambdarole: iams.databaseRole,
+    lambdarole: iams.lambdaRole.roleArn,
     authLambda: lambdaAuthorizers.authorizer,
     publicLambda: lambdaAuthorizers.publicAuthorizer,
     apigateway: lambdaAuthorizers.apigateway,
@@ -49,12 +49,6 @@ getSecret("jwt", (data: any) => {
   const rdsStack = new SQLStack(app, "SQLStack", {
     env,
     infrastructure,
-    JWTSECRET: jwtCredentials.secret,
-    lambdarole: iams.databaseRole,
-    authLambda: lambdaAuthorizers.authorizer,
-    publicLambda: lambdaAuthorizers.publicAuthorizer,
-    apigateway: lambdaAuthorizers.apigateway,
-    addCors: true,
   });
   cdk.Tags.of(rdsStack).add("IAC.Module", "SQLStack");
 

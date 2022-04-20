@@ -37,7 +37,7 @@ export class LambdaDashboardStack extends Stack {
         comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
         threshold: 3,
         evaluationPeriods: 1,
-        treatMissingData: TreatMissingData.BREACHING,
+        treatMissingData: TreatMissingData.IGNORE,
         metric: newMetric(lambda.FunctionName, "Errors", "n"),
         alarmDescription: "Lambda alarm if the SUM of Errors is greater than or equal to the threshold (3) for 1 evaluation period",
       });

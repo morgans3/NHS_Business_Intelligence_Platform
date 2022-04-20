@@ -75,7 +75,7 @@ Once fully deployed, you will have the following AWS resources in your AWS accou
 - ECS service for deploying any created containers, including task definitions and services for those applications.
 - Elastic Load Balancer to flow traffic between the Internet and the deployed containers, routed through a WAF (Firewall)
 - DynamoDB tables containing transactional data, accessed via API Gateway using a Lambda to handle authorized requests
-- RDS (PostgreSQL) database with multi-az failover, accesed via API Gateway using a Lambda to handle authorized requests
+- RDS (PostgreSQL) database with multi-az failover
 - A WAF (Firewall) for the API Gateway endpoints
 - Authorizer Lambda for securing the API Gateway endpoints
 - CodeBuild, CodePipeline, Elastic Container Registry and S3 buckets for managing application deployment. The applications will be pulled from other GitHub repositiories as desribed in the configuration file.

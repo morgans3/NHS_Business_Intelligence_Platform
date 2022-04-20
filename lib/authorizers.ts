@@ -7,7 +7,7 @@ import { Certificate, CertificateValidation, ICertificate } from "aws-cdk-lib/aw
 import { ARecord, HostedZone, RecordTarget } from "aws-cdk-lib/aws-route53";
 import { ApiGatewayDomain } from "aws-cdk-lib/aws-route53-targets";
 import { _SETTINGS } from "./_config";
-import { AnyPrincipal, Effect, PolicyStatement, Role } from "aws-cdk-lib/aws-iam";
+import { AccountRootPrincipal, AnyPrincipal, ArnPrincipal, CompositePrincipal, Effect, PolicyDocument, PolicyStatement, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 
 export class LambdaAuthorizers extends Stack {
@@ -43,6 +43,15 @@ export class LambdaAuthorizers extends Stack {
         certificate: sslcert,
         securityPolicy: SecurityPolicy.TLS_1_2,
       },
+      policy: new PolicyDocument({
+        statements: [
+          new PolicyStatement({
+            actions: ["lambda:*"],
+            principals: [new CompositePrincipal(new ArnPrincipal(props.roleArn), new ServicePrincipal("apigateway.amazonaws.com"), new ServicePrincipal("lambda.amazonaws.com"))],
+            resources: ["*"],
+          }),
+        ],
+      }),
     });
 
     new CfnOutput(this, "API-Gateway-RestAPIID", { value: this.apigateway.restApiId });
@@ -72,9 +81,10 @@ export class LambdaAuthorizers extends Stack {
       logRetention: RetentionDays.TWO_MONTHS,
       initialPolicy: [
         new PolicyStatement({
+          actions: ["lambda:InvokeFunction"],
           effect: Effect.ALLOW,
           resources: ["*"],
-          principals: [new AnyPrincipal()],
+          principals: [new CompositePrincipal(new ArnPrincipal(props.roleArn), new ServicePrincipal("apigateway.amazonaws.com"), new ServicePrincipal("lambda.amazonaws.com"))],
         }),
       ],
     });
@@ -83,6 +93,7 @@ export class LambdaAuthorizers extends Stack {
       handler: this.authlambda,
       authorizerName: "API-Auth-Authorizer" + props.name,
       resultsCacheTtl: Duration.seconds(0),
+      assumeRole: role,
     });
 
     new CfnOutput(this, "API-Auth-Authorizer-Output", { value: this.authorizer.authorizerArn });
@@ -98,12 +109,21 @@ export class LambdaAuthorizers extends Stack {
       role: role,
       logRetentionRole: role,
       logRetention: RetentionDays.TWO_MONTHS,
+      initialPolicy: [
+        new PolicyStatement({
+          actions: ["lambda:InvokeFunction"],
+          effect: Effect.ALLOW,
+          resources: ["*"],
+          principals: [new CompositePrincipal(new ArnPrincipal(props.roleArn), new ServicePrincipal("apigateway.amazonaws.com"), new ServicePrincipal("lambda.amazonaws.com"))],
+        }),
+      ],
     });
 
     this.publicAuthorizer = new TokenAuthorizer(this, "API-Public-Auth-Authorizer", {
       handler: this.publicLambda,
       authorizerName: "API-Public-Auth-Authorizer" + props.name,
       resultsCacheTtl: Duration.seconds(0),
+      assumeRole: role,
     });
 
     new CfnOutput(this, "API-Public-Auth-Authorizer-Output", { value: this.publicAuthorizer.authorizerArn });

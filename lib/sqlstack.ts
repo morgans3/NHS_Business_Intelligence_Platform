@@ -1,8 +1,7 @@
 import { CfnOutput, Duration, Stack } from "aws-cdk-lib";
-import { AuthorizationType, Cors, LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
 import { InstanceClass, InstanceSize, InstanceType, SubnetType } from "aws-cdk-lib/aws-ec2";
 import { Credentials, DatabaseInstance, DatabaseInstanceEngine, PostgresEngineVersion, SubnetGroup } from "aws-cdk-lib/aws-rds";
-import { pgFunction, PostgreSQLLambdaProps, RDSStackProps } from "./types/interfaces";
+import { PostgreSQLLambdaProps, RDSStackProps } from "./types/interfaces";
 import { _SETTINGS } from "./_config";
 import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
 import { _RequiredSQLTables } from "../datasets/postgresql/tables";
@@ -73,41 +72,41 @@ export class SQLStack extends Stack {
       });
     }
 
-    const accessLambda = this.createLambda({ lambdarole: props.lambdarole });
-    const authLambda = props.authLambda;
-    const publicAuthLambda = props.publicLambda;
-    const api: RestApi = props.apigateway;
+    // const accessLambda = this.createLambda({ lambdarole: props.lambdarole });
+    // const authLambda = props.authLambda;
+    // const publicAuthLambda = props.publicLambda;
+    // const api: RestApi = props.apigateway;
 
-    _RequiredSQLTables.forEach((table) => {
-      const baseendpoint = api.root.addResource(table.baseendpoint);
-      let authorizer = authLambda;
-      let splitLambdaNamesByAuthSoThatTheyRemainUnique = "";
-      if (table.customAuth) {
-        splitLambdaNamesByAuthSoThatTheyRemainUnique = "-" + table.customAuth;
-        authorizer = publicAuthLambda;
-      }
-      if (props.addCors) {
-        baseendpoint.addCorsPreflight({
-          allowOrigins: Cors.ALL_ORIGINS,
-          allowHeaders: ["Content-Type", "X-Amz-Date", "Authorization", "X-Api-Key", "X-Amz-Security-Token", "X-Amz-User-Agent", "access-control-allow-origin", "Cache-Control", "Pragma"],
-        });
-      }
+    // _RequiredSQLTables.forEach((table) => {
+    //   const baseendpoint = api.root.addResource(table.baseendpoint);
+    //   let authorizer = authLambda;
+    //   let splitLambdaNamesByAuthSoThatTheyRemainUnique = "";
+    //   if (table.customAuth) {
+    //     splitLambdaNamesByAuthSoThatTheyRemainUnique = "-" + table.customAuth;
+    //     authorizer = publicAuthLambda;
+    //   }
+    //   if (props.addCors) {
+    //     baseendpoint.addCorsPreflight({
+    //       allowOrigins: Cors.ALL_ORIGINS,
+    //       allowHeaders: ["Content-Type", "X-Amz-Date", "Authorization", "X-Api-Key", "X-Amz-Security-Token", "X-Amz-User-Agent", "access-control-allow-origin", "Cache-Control", "Pragma"],
+    //     });
+    //   }
 
-      table.functions.forEach((func: pgFunction) => {
-        const thislambda = new LambdaIntegration(accessLambda, {
-          requestTemplates: { "application/json": '{ "statusCode": "200" }' },
-        });
-        const methodtype = selectMethodType(func.handlermethod);
-        const thisendpoint = baseendpoint.addResource(func.method.split("-").join(""));
-        thisendpoint.addMethod(methodtype, thislambda, { authorizationType: AuthorizationType.CUSTOM, authorizer: authorizer });
-        if (props.addCors) {
-          thisendpoint.addCorsPreflight({
-            allowOrigins: Cors.ALL_ORIGINS,
-            allowHeaders: ["Content-Type", "X-Amz-Date", "Authorization", "X-Api-Key", "X-Amz-Security-Token", "X-Amz-User-Agent", "access-control-allow-origin", "Cache-Control", "Pragma"],
-          });
-        }
-      });
-    });
+    //   table.functions.forEach((func: pgFunction) => {
+    //     const thislambda = new LambdaIntegration(accessLambda, {
+    //       requestTemplates: { "application/json": '{ "statusCode": "200" }' },
+    //     });
+    //     const methodtype = selectMethodType(func.handlermethod);
+    //     const thisendpoint = baseendpoint.addResource(func.method.split("-").join(""));
+    //     thisendpoint.addMethod(methodtype, thislambda, { authorizationType: AuthorizationType.CUSTOM, authorizer: authorizer });
+    //     if (props.addCors) {
+    //       thisendpoint.addCorsPreflight({
+    //         allowOrigins: Cors.ALL_ORIGINS,
+    //         allowHeaders: ["Content-Type", "X-Amz-Date", "Authorization", "X-Api-Key", "X-Amz-Security-Token", "X-Amz-User-Agent", "access-control-allow-origin", "Cache-Control", "Pragma"],
+    //       });
+    //     }
+    //   });
+    // });
   }
 
   createLambda(props: PostgreSQLLambdaProps) {

@@ -40,12 +40,12 @@ export interface iSettings {
 
 export interface RDSStackProps extends StackProps {
   infrastructure: InfrastructureStack;
-  lambdarole: Role;
-  JWTSECRET: string;
-  authLambda: Authorizer;
-  publicLambda: Authorizer;
-  apigateway: RestApi;
-  addCors: boolean;
+  // lambdarole: Role;
+  // JWTSECRET: string;
+  // authLambda: Authorizer;
+  // publicLambda: Authorizer;
+  // apigateway: RestApi;
+  // addCors: boolean;
 }
 
 export interface DynamodbLambdaProps extends StackProps {
@@ -69,7 +69,7 @@ export interface iApplication {
 }
 
 export interface DynamoDBStackProps extends StackProps {
-  lambdarole: Role;
+  lambdarole: string;
   JWTSECRET: string;
   authLambda: Authorizer;
   publicLambda: Authorizer;

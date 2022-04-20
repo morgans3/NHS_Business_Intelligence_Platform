@@ -57,11 +57,18 @@ export class IAMStack extends Stack {
 
     this.lambdaRole = new Role(this, "LambdaRole", {
       roleName: "BI_LambdaRole",
-      assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
+      assumedBy: new CompositePrincipal(new ServicePrincipal("apigateway.amazonaws.com"), new ServicePrincipal("lambda.amazonaws.com")),
       description: "Role for Lambdas to manage access.",
     });
+    this.lambdaRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AmazonAPIGatewayAdministrator"));
     this.lambdaRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AmazonDynamoDBFullAccess"));
     this.lambdaRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("CloudWatchFullAccess"));
     this.lambdaRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("SecretsManagerReadWrite"));
+    const lambdastatement = new PolicyStatement({
+      effect: Effect.ALLOW,
+      actions: ["lambda:*"],
+      resources: ["*"],
+    });
+    this.lambdaRole.addToPolicy(lambdastatement);
   }
 }
