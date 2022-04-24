@@ -64,7 +64,7 @@ export class WAFStack extends Stack {
     });
     this.attrId = waf.attrArn;
     if (props.apigateway) {
-      let apiGwArn = this.getResourceARNForEndpoint(props.env!.region || "eu-west-2", props.apigateway.deploymentStage.restApi.restApiId, props.apigateway.deploymentStage.stageName);
+      let apiGwArn = this.getResourceARNForEndpoint(this.region || "eu-west-2", props.apigateway.deploymentStage.restApi.restApiId, props.apigateway.deploymentStage.stageName);
       new CfnWebACLAssociation(this, "webaclassoc-" + props.name, {
         webAclArn: waf.attrArn,
         resourceArn: apiGwArn,

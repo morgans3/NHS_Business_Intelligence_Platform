@@ -4,14 +4,14 @@ import { ArnPrincipal, CompositePrincipal, Effect, ManagedPolicy, PolicyStatemen
 export class IAMStack extends Stack {
   public codebuildRole: Role;
   public databaseRole: Role;
-  public lambdaRole: Role;
+  // public lambdaRole: Role;
 
   constructor(scope: any, id: string, props: StackProps) {
     super(scope, id, props);
 
     this.codebuildRole = new Role(this, "CodeBuildRole", {
       roleName: "BI_CodeBuildRole",
-      assumedBy: new CompositePrincipal(new ServicePrincipal("codebuild.amazonaws.com"), new ServicePrincipal("codepipeline.amazonaws.com"), new ArnPrincipal(`arn:aws:iam::${props.env?.account}:role/BI_CodeBuildRole`)),
+      assumedBy: new CompositePrincipal(new ServicePrincipal("codebuild.amazonaws.com"), new ServicePrincipal("codepipeline.amazonaws.com"), new ArnPrincipal(`arn:aws:iam::${this.account}:role/BI_CodeBuildRole`)),
       description: "Role for building code bases",
     });
     this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AWSCodeBuildDeveloperAccess"));
@@ -30,6 +30,7 @@ export class IAMStack extends Stack {
 
     this.codebuildRole.addToPrincipalPolicy(
       new PolicyStatement({
+        effect: Effect.ALLOW,
         actions: ["ecs:*"],
         resources: ["*"],
       })
@@ -37,6 +38,7 @@ export class IAMStack extends Stack {
 
     this.codebuildRole.addToPrincipalPolicy(
       new PolicyStatement({
+        effect: Effect.ALLOW,
         actions: ["iam:PassRole"],
         resources: ["*"],
         conditions: {
@@ -55,20 +57,20 @@ export class IAMStack extends Stack {
     this.databaseRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AmazonDynamoDBFullAccess"));
     this.databaseRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("CloudWatchFullAccess"));
 
-    this.lambdaRole = new Role(this, "LambdaRole", {
-      roleName: "BI_LambdaRole",
-      assumedBy: new CompositePrincipal(new ServicePrincipal("apigateway.amazonaws.com"), new ServicePrincipal("lambda.amazonaws.com")),
-      description: "Role for Lambdas to manage access.",
-    });
-    this.lambdaRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AmazonAPIGatewayAdministrator"));
-    this.lambdaRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AmazonDynamoDBFullAccess"));
-    this.lambdaRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("CloudWatchFullAccess"));
-    this.lambdaRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("SecretsManagerReadWrite"));
-    const lambdastatement = new PolicyStatement({
-      effect: Effect.ALLOW,
-      actions: ["lambda:*"],
-      resources: ["*"],
-    });
-    this.lambdaRole.addToPolicy(lambdastatement);
+    // this.lambdaRole = new Role(this, "LambdaRole", {
+    //   roleName: "BI_LambdaRole",
+    //   assumedBy: new CompositePrincipal(new ServicePrincipal("apigateway.amazonaws.com"), new ServicePrincipal("lambda.amazonaws.com")),
+    //   description: "Role for Lambdas to manage access.",
+    // });
+    // this.lambdaRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AmazonAPIGatewayAdministrator"));
+    // this.lambdaRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AmazonDynamoDBFullAccess"));
+    // this.lambdaRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("CloudWatchFullAccess"));
+    // this.lambdaRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("SecretsManagerReadWrite"));
+    // const lambdastatement = new PolicyStatement({
+    //   effect: Effect.ALLOW,
+    //   actions: ["lambda:*"],
+    //   resources: ["*"],
+    // });
+    // this.lambdaRole.addToPolicy(lambdastatement);
   }
 }

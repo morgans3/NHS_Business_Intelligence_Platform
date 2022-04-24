@@ -13,12 +13,12 @@ export class DynamoDBStack extends Stack {
   constructor(scope: any, id: string, props: DynamoDBStackProps) {
     super(scope, id, props);
 
-    const role = Role.fromRoleArn(this, "AuthorizerRole", props.lambdarole);
+    //    const role = Role.fromRoleArn(this, "AuthorizerRole", props.lambdarole);
 
-    const accessLambda = this.createLambda({ lambdarole: role }, id);
-    const authLambda = props.authLambda;
-    const publicAuthLambda = props.publicLambda;
-    const api: RestApi = props.apigateway;
+    // const accessLambda = this.createLambda({ lambdarole: role }, id);
+    // const authLambda = props.authLambda;
+    // const publicAuthLambda = props.publicLambda;
+    // const api: RestApi = props.apigateway;
 
     _RequiredTables.forEach((table) => {
       if (!table.customAuth) {
@@ -30,46 +30,52 @@ export class DynamoDBStack extends Stack {
       }
       // TODO: add all global-secondary index
 
-      if (table.functions.length > 0) {
-        const baseendpoint = api.root.addResource(table.baseendpoint);
-        let authorizer = authLambda;
-        if (table.customAuth) {
-          authorizer = publicAuthLambda;
-        }
-        if (props.addCors) {
-          baseendpoint.addCorsPreflight({
-            allowOrigins: Cors.ALL_ORIGINS,
-            allowHeaders: ["Content-Type", "X-Amz-Date", "Authorization", "X-Api-Key", "X-Amz-Security-Token", "X-Amz-User-Agent", "access-control-allow-origin", "Cache-Control", "Pragma"],
-          });
-        }
+      // if (table.functions.length > 0) {
+      //   const baseendpoint = api.root.addResource(table.baseendpoint);
+      //   let authorizer = authLambda;
+      //   if (table.customAuth) {
+      //     authorizer = publicAuthLambda;
+      //   }
+      //   if (props.addCors) {
+      //     baseendpoint.addCorsPreflight({
+      //       allowOrigins: Cors.ALL_ORIGINS,
+      //       allowHeaders: ["Content-Type", "X-Amz-Date", "Authorization", "X-Api-Key", "X-Amz-Security-Token", "X-Amz-User-Agent", "Access-Control-Allow-Origin", "Cache-Control", "Pragma"],
+      //     });
+      //   }
 
-        table.functions.forEach((func: any) => {
-          const thislambda = new LambdaIntegration(accessLambda, {
-            requestTemplates: { "application/json": '{ "statusCode": "200" }' },
-          });
-          const methodtype = selectMethodType(func);
-          const thisendpoint = baseendpoint.addResource(func.split("-").join(""));
-          thisendpoint.addMethod(methodtype, thislambda, { authorizationType: AuthorizationType.CUSTOM, authorizer: authorizer });
-        });
-      }
+      //   table.functions.forEach((func: any) => {
+      //     const thislambda = new LambdaIntegration(accessLambda, {
+      //       requestTemplates: { "application/json": '{ "statusCode": "200" }' },
+      //     });
+      //     const methodtype = selectMethodType(func);
+      //     const thisendpoint = baseendpoint.addResource(func.split("-").join(""));
+      //     thisendpoint.addMethod(methodtype, thislambda, { authorizationType: AuthorizationType.CUSTOM, authorizer: authorizer });
+      //     if (props.addCors) {
+      //       thisendpoint.addCorsPreflight({
+      //         allowOrigins: Cors.ALL_ORIGINS,
+      //         allowHeaders: ["Content-Type", "X-Amz-Date", "Authorization", "X-Api-Key", "X-Amz-Security-Token", "X-Amz-User-Agent", "access-control-allow-origin", "Cache-Control", "Pragma"],
+      //       });
+      //     }
+      //   });
+      // }
     });
   }
 
-  createLambda(props: DynamodbLambdaProps, id: string) {
-    return new Function(this, "DynamodbLambda-Handler-" + id, {
-      functionName: "DynamodbLambda",
-      runtime: Runtime.NODEJS_14_X,
-      code: Code.fromAsset("./src/dynamodb", {
-        exclude: ["cdk", "*.ts"],
-      }),
-      handler: "dynamodb.decision",
-      environment: {},
-      role: props.lambdarole,
-      timeout: Duration.seconds(30),
-      logRetentionRole: props.lambdarole,
-      logRetention: RetentionDays.TWO_MONTHS,
-    });
-  }
+  // createLambda(props: DynamodbLambdaProps, id: string) {
+  //   return new Function(this, "DynamodbLambda-Handler-" + id, {
+  //     functionName: "DynamodbLambda",
+  //     runtime: Runtime.NODEJS_14_X,
+  //     code: Code.fromAsset("./src/dynamodb", {
+  //       exclude: ["cdk", "*.ts"],
+  //     }),
+  //     handler: "dynamodb.decision",
+  //     environment: {},
+  //     role: props.lambdarole,
+  //     timeout: Duration.seconds(30),
+  //     logRetentionRole: props.lambdarole,
+  //     logRetention: RetentionDays.TWO_MONTHS,
+  //   });
+  // }
 
   createTable(props: DynamoDBTableStackProps) {
     const primarykey = props.primarykey;
@@ -95,9 +101,9 @@ function convertToAttribueType(input: string) {
   }
 }
 
-function selectMethodType(func: string) {
-  if (func.includes("get")) {
-    return "GET";
-  }
-  return "POST";
-}
+// function selectMethodType(func: string) {
+//   if (func.includes("get")) {
+//     return "GET";
+//   }
+//   return "POST";
+// }

@@ -69,12 +69,12 @@ export interface iApplication {
 }
 
 export interface DynamoDBStackProps extends StackProps {
-  lambdarole: string;
-  JWTSECRET: string;
-  authLambda: Authorizer;
-  publicLambda: Authorizer;
-  apigateway: RestApi;
-  addCors: boolean;
+  // lambdarole: string;
+  // JWTSECRET: string;
+  // authLambda: Authorizer;
+  // publicLambda: Authorizer;
+  // apigateway: RestApi;
+  // addCors: boolean;
 }
 
 export interface DynamoDBTableStackProps extends StackProps {

@@ -5,7 +5,7 @@ import { ApiProps, ContainerProps, ContainerStackProps, iServiceDetails, Observa
 import { InstanceType, ISubnet, Peer, Port, SecurityGroup, Subnet, SubnetSelection, SubnetType } from "aws-cdk-lib/aws-ec2";
 import { AutoScalingGroup, Schedule } from "aws-cdk-lib/aws-autoscaling";
 import { ARecord, HostedZone, RecordTarget } from "aws-cdk-lib/aws-route53";
-import { Certificate, DnsValidatedCertificate } from "aws-cdk-lib/aws-certificatemanager";
+import { Certificate, CertificateValidation, DnsValidatedCertificate } from "aws-cdk-lib/aws-certificatemanager";
 import { LoadBalancerTarget } from "aws-cdk-lib/aws-route53-targets";
 import { ApplicationListener, ApplicationLoadBalancer, ApplicationProtocol, ApplicationTargetGroup, ListenerAction, ListenerCondition, SslPolicy } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import { Repository } from "aws-cdk-lib/aws-ecr";
@@ -39,13 +39,24 @@ export class ContainerStack extends Stack {
     props.range.forEach((subnet: { ID: string; AZ: string }) => {
       subnetArray.push(Subnet.fromSubnetAttributes(this, subnet.ID, { subnetId: subnet.ID, availabilityZone: subnet.AZ }));
     });
-    const subnets = props.clusterVPC.selectSubnets({
-      subnets: subnetArray,
-    });
+
+    let privatesubnets: SubnetSelection = { subnets: subnetArray };
+    let privatesettings;
+    if (_SETTINGS.existingSubnetIDs && _SETTINGS.existingSubnetIDs.filter((x) => x.type === "PRIVATE").length > 0) {
+      const privateSubnets = _SETTINGS.existingSubnetIDs.filter((x) => x.type === "PRIVATE");
+      const output: ISubnet[] = [];
+      let index = 0;
+      privateSubnets.forEach((x) => {
+        output.push(Subnet.fromSubnetAttributes(this, "ecsprivatesubnet-" + index, { subnetId: x.ID, availabilityZone: x.AZ }));
+        index++;
+      });
+      privatesettings = { subnets: output };
+      privatesubnets = props.clusterVPC.selectSubnets(privatesettings);
+    }
 
     const autoScalingGroup = new AutoScalingGroup(this, "ASG", {
       vpc: props.clusterVPC,
-      vpcSubnets: subnets,
+      vpcSubnets: privatesubnets,
       instanceType: new InstanceType("c5.2xlarge"),
       machineImage: EcsOptimizedImage.amazonLinux2(),
       minCapacity: props.capacity.min,
@@ -131,7 +142,13 @@ export class ContainerStack extends Stack {
 
     let cert;
 
-    if (_SETTINGS.sslCertificateId) {
+    if (_SETTINGS.manageDNS) {
+      const zone = HostedZone.fromLookup(this, "LoadBalancer-Zone-Cert", { domainName: props.domainName });
+      cert = new Certificate(this, "SSLCertificate", {
+        domainName: "*." + props.domainName,
+        validation: CertificateValidation.fromDns(zone),
+      });
+    } else if (_SETTINGS.sslCertificateId) {
       const region = props.env!.region || "eu-west-2";
       const account = props.env!.account! || process.env.CDK_DEFAULT_ACCOUNT;
       cert = Certificate.fromCertificateArn(this, "BIPlatform-Certificate-" + props.name, `arn:aws:acm:${region}:${account}:certificate/` + _SETTINGS.sslCertificateId);
@@ -438,8 +455,8 @@ export class ContainerStack extends Stack {
   }
 
   albWAF(props: WAFProps, env: { account: string; region: string }) {
-    const waf = new CfnWebACL(this, "WebACLForAPIGateway", {
-      name: "BIPlatform-APIGateway-WAF",
+    const waf = new CfnWebACL(this, "WebACLForContainer", {
+      name: "BIPlatform-Container-WAF",
       description: "ACL for Internet facing entry points to the BI Platform",
       scope: props.scope || "REGIONAL",
       defaultAction: { allow: {} },

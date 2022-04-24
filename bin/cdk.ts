@@ -26,25 +26,25 @@ getSecret("jwt", (data: any) => {
   const infrastructure = new InfrastructureStack(app, "InfrastructureStack", { env });
   cdk.Tags.of(infrastructure).add("IAC.Module", "InfrastructureStack");
 
-  const lambdaAuthorizers = new LambdaAuthorizers(app, "LambdaAuthorizers", {
-    env,
-    name: "AuthStack",
-    JWTSECRET: jwtCredentials.secret,
-    domainName: _MYDOMAIN,
-    roleArn: iams.lambdaRole.roleArn,
-  });
-  cdk.Tags.of(lambdaAuthorizers).add("IAC.Module", "LambdaAuthorizers");
+  // const lambdaAuthorizers = new LambdaAuthorizers(app, "LambdaAuthorizers", {
+  //   env,
+  //   name: "AuthStack",
+  //   JWTSECRET: jwtCredentials.secret,
+  //   domainName: _MYDOMAIN,
+  //   roleArn: iams.lambdaRole.roleArn,
+  // });
+  // cdk.Tags.of(lambdaAuthorizers).add("IAC.Module", "LambdaAuthorizers");
 
-  const dynamodbStack = new DynamoDBStack(app, "DynamoDBStack", {
-    env,
-    JWTSECRET: jwtCredentials.secret,
-    lambdarole: iams.lambdaRole.roleArn,
-    authLambda: lambdaAuthorizers.authorizer,
-    publicLambda: lambdaAuthorizers.publicAuthorizer,
-    apigateway: lambdaAuthorizers.apigateway,
-    addCors: true,
-  });
-  cdk.Tags.of(dynamodbStack).add("IAC.Module", "DynamoDBStack");
+  // const dynamodbStack = new DynamoDBStack(app, "DynamoDBStack", {
+  //   env,
+  //   // JWTSECRET: jwtCredentials.secret,
+  //   // lambdarole: iams.lambdaRole.roleArn,
+  //   // authLambda: lambdaAuthorizers.authorizer,
+  //   // publicLambda: lambdaAuthorizers.publicAuthorizer,
+  //   // apigateway: lambdaAuthorizers.apigateway,
+  //   // addCors: true,
+  // });
+  // cdk.Tags.of(dynamodbStack).add("IAC.Module", "DynamoDBStack");
 
   const rdsStack = new SQLStack(app, "SQLStack", {
     env,
