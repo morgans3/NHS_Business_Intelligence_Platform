@@ -1,5 +1,13 @@
 import { Stack, StackProps } from "aws-cdk-lib";
-import { ArnPrincipal, CompositePrincipal, Effect, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
+import {
+  ArnPrincipal,
+  CompositePrincipal,
+  Effect,
+  ManagedPolicy,
+  PolicyStatement,
+  Role,
+  ServicePrincipal,
+} from "aws-cdk-lib/aws-iam";
 
 export class IAMStack extends Stack {
   public codebuildRole: Role;
@@ -11,16 +19,38 @@ export class IAMStack extends Stack {
 
     this.codebuildRole = new Role(this, "CodeBuildRole", {
       roleName: "BI_CodeBuildRole",
-      assumedBy: new CompositePrincipal(new ServicePrincipal("codebuild.amazonaws.com"), new ServicePrincipal("codepipeline.amazonaws.com"), new ArnPrincipal(`arn:aws:iam::${this.account}:role/BI_CodeBuildRole`)),
+      assumedBy: new CompositePrincipal(
+        new ServicePrincipal("ecs.amazonaws.com"),
+        new ServicePrincipal("ecs-tasks.amazonaws.com"),
+        new ServicePrincipal("codebuild.amazonaws.com"),
+        new ServicePrincipal("codepipeline.amazonaws.com"),
+        new ArnPrincipal(`arn:aws:iam::${this.account}:role/BI_CodeBuildRole`)
+      ),
       description: "Role for building code bases",
     });
-    this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AWSCodeBuildDeveloperAccess"));
-    this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AWSCodePipelineFullAccess"));
-    this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("CloudWatchFullAccess"));
-    this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AmazonS3FullAccess"));
-    this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("SecretsManagerReadWrite"));
-    this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AmazonEC2ContainerRegistryFullAccess"));
-    this.codebuildRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AWSCodeDeployRoleForECS"));
+    this.codebuildRole.addManagedPolicy(
+      ManagedPolicy.fromAwsManagedPolicyName("AWSCodeBuildDeveloperAccess")
+    );
+    this.codebuildRole.addManagedPolicy(
+      ManagedPolicy.fromAwsManagedPolicyName("AWSCodePipelineFullAccess")
+    );
+    this.codebuildRole.addManagedPolicy(
+      ManagedPolicy.fromAwsManagedPolicyName("CloudWatchFullAccess")
+    );
+    this.codebuildRole.addManagedPolicy(
+      ManagedPolicy.fromAwsManagedPolicyName("AmazonS3FullAccess")
+    );
+    this.codebuildRole.addManagedPolicy(
+      ManagedPolicy.fromAwsManagedPolicyName("SecretsManagerReadWrite")
+    );
+    this.codebuildRole.addManagedPolicy(
+      ManagedPolicy.fromAwsManagedPolicyName(
+        "AmazonEC2ContainerRegistryFullAccess"
+      )
+    );
+    this.codebuildRole.addManagedPolicy(
+      ManagedPolicy.fromAwsManagedPolicyName("AWSCodeDeployRoleForECS")
+    );
     const statement = new PolicyStatement({
       effect: Effect.ALLOW,
       actions: ["ssm:*"],
@@ -43,7 +73,10 @@ export class IAMStack extends Stack {
         resources: ["*"],
         conditions: {
           StringEqualsIfExists: {
-            "iam:PassedToService": ["ec2.amazonaws.com", "ecs-tasks.amazonaws.com"],
+            "iam:PassedToService": [
+              "ec2.amazonaws.com",
+              "ecs-tasks.amazonaws.com",
+            ],
           },
         },
       })
@@ -54,8 +87,12 @@ export class IAMStack extends Stack {
       assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
       description: "Role for Databases to manage access.",
     });
-    this.databaseRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("AmazonDynamoDBFullAccess"));
-    this.databaseRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName("CloudWatchFullAccess"));
+    this.databaseRole.addManagedPolicy(
+      ManagedPolicy.fromAwsManagedPolicyName("AmazonDynamoDBFullAccess")
+    );
+    this.databaseRole.addManagedPolicy(
+      ManagedPolicy.fromAwsManagedPolicyName("CloudWatchFullAccess")
+    );
 
     // this.lambdaRole = new Role(this, "LambdaRole", {
     //   roleName: "BI_LambdaRole",

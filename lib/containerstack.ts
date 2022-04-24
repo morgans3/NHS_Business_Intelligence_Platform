@@ -400,10 +400,11 @@ export class ContainerStack extends Stack {
       restartExecutionOnUpdate: true,
     });
     const inboundlogging = new AwsLogDriver({
-      streamPrefix: props.name,
+      streamPrefix: "ECS-" + props.name,
     });
     const taskDef = new Ec2TaskDefinition(this, props.name + "-TaskDef", {
       networkMode: NetworkMode.AWS_VPC,
+      taskRole: role,
     });
     Tags.of(taskDef).add("Component", "Task Definition");
     Tags.of(taskDef).add("Name", props.name + "-TaskDef");
@@ -426,17 +427,19 @@ export class ContainerStack extends Stack {
       cluster: props.cluster,
       taskDefinition: taskDef,
       assignPublicIp: false,
-      desiredCount: desiredCount,
+      desiredCount: desiredCount, // TODO: should be set to desiredCount however issue with order of task/pipeline creation. see issue https://github.com/morgans3/NHS_Business_Intelligence_Platform/issues/11
       minHealthyPercent: 50,
       securityGroups: [props.secGroup],
       serviceName: ecrRepoName,
     });
-    const inboundscaling = service.autoScaleTaskCount({ minCapacity: minCapacity, maxCapacity: maxCapacity });
-    inboundscaling.scaleOnCpuUtilization(props.name + "-CpuScaling", {
-      targetUtilizationPercent: 80,
-      scaleInCooldown: Duration.seconds(300),
-      scaleOutCooldown: Duration.seconds(300),
-    });
+
+    // TODO: add scaling group once issue 11 is resolved
+    // const inboundscaling = service.autoScaleTaskCount({ minCapacity: minCapacity, maxCapacity: maxCapacity });
+    // inboundscaling.scaleOnCpuUtilization(props.name + "-CpuScaling", {
+    //   targetUtilizationPercent: 80,
+    //   scaleInCooldown: Duration.seconds(300),
+    //   scaleOutCooldown: Duration.seconds(300),
+    // });
 
     Tags.of(service).add("Component", "ECS Service");
     Tags.of(service).add("Name", props.name + "-Service");
