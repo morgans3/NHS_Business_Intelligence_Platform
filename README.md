@@ -25,6 +25,10 @@ We will be actively maintaining these repositories, so if you identify an issue 
 - API Server: <https://github.com/morgans3/NHS_Business_Intelligence_Platform_Api>
 - Open Trip Planner Server: <https://github.com/morgans3/NHS_Business_Intelligence_Platform_Otp>
 - Cross-Filter Server: <https://github.com/morgans3/NHS_Business_Intelligence_Platform_CF-Api>
+- Shiny Server: <https://github.com/morgans3/NHS_Business_Intelligence_Platform_Shiny>
+- Covid Stats API: <https://github.com/morgans3/NHS_Business_Intelligence_Platform_Covid-Statistics>
+- GeoServer: <https://github.com/morgans3/NHS_Business_Intelligence_Platform_Geoserver>
+- Modelled Need API: <https://github.com/morgans3/NHS_Business_Intelligence_Platform_Modelled-Need>
 
 ## Pre-requisites
 
@@ -74,7 +78,7 @@ Once fully deployed, you will have the following AWS resources in your AWS accou
 - IAM roles and users with specific permissions in order to carry out service tasks for maintaining the platform
 - ECS service for deploying any created containers, including task definitions and services for those applications.
 - Elastic Load Balancer to flow traffic between the Internet and the deployed containers, routed through a WAF (Firewall)
-- DynamoDB tables containing transactional data, accessed via API Gateway using a Lambda to handle authorized requests
+- DynamoDB tables containing transactional data
 - RDS (PostgreSQL) database with multi-az failover
 - A WAF (Firewall) for the API Gateway endpoints
 - Authorizer Lambda for securing the API Gateway endpoints
