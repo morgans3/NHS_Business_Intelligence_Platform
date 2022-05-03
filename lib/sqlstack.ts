@@ -1,10 +1,20 @@
 import { CfnOutput, Duration, Stack } from "aws-cdk-lib";
-import { InstanceClass, InstanceSize, InstanceType, SubnetType } from "aws-cdk-lib/aws-ec2";
-import { Credentials, DatabaseInstance, DatabaseInstanceEngine, PostgresEngineVersion, SubnetGroup } from "aws-cdk-lib/aws-rds";
+import {
+  InstanceClass,
+  InstanceSize,
+  InstanceType,
+  SubnetType,
+} from "aws-cdk-lib/aws-ec2";
+import {
+  Credentials,
+  DatabaseInstance,
+  DatabaseInstanceEngine,
+  PostgresEngineVersion,
+  SubnetGroup,
+} from "aws-cdk-lib/aws-rds";
 import { PostgreSQLLambdaProps, RDSStackProps } from "./types/interfaces";
 import { _SETTINGS } from "./_config";
 import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
-import { _RequiredSQLTables } from "../datasets/postgresql/tables";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { StringParameter } from "aws-cdk-lib/aws-ssm";
 import { RDSCloudwatchDashboardStack } from "./dashboards/rds-dashboard";
@@ -48,7 +58,9 @@ export class SQLStack extends Stack {
         maxAllocatedStorage: 100,
         allocatedStorage: 20,
       });
-      new CfnOutput(this, "dbEndpoint", { value: this.dbInstance.dbInstanceEndpointAddress });
+      new CfnOutput(this, "dbEndpoint", {
+        value: this.dbInstance.dbInstanceEndpointAddress,
+      });
       new StringParameter(this, "RDSEndpointSSMParam", {
         parameterName: "RDS_DB_ENDPOINT",
         description: "The RDS endpoint for the PostgreSQL database",

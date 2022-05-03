@@ -1,12 +1,25 @@
 import { Duration, RemovalPolicy, Stack } from "aws-cdk-lib";
-import { AuthorizationType, Cors, LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
+import {
+  AuthorizationType,
+  Cors,
+  LambdaIntegration,
+  RestApi,
+} from "aws-cdk-lib/aws-apigateway";
 import { BackupPlan, BackupResource } from "aws-cdk-lib/aws-backup";
-import { AttributeType, BillingMode, Table, TableEncryption } from "aws-cdk-lib/aws-dynamodb";
+import {
+  AttributeType,
+  BillingMode,
+  Table,
+  TableEncryption,
+} from "aws-cdk-lib/aws-dynamodb";
 import { Role } from "aws-cdk-lib/aws-iam";
 import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
-import { _RequiredTables } from "../datasets/dynamodb/tables";
-import { DynamodbLambdaProps, DynamoDBStackProps, DynamoDBTableStackProps } from "./types/interfaces";
+import {
+  DynamodbLambdaProps,
+  DynamoDBStackProps,
+  DynamoDBTableStackProps,
+} from "./types/interfaces";
 import { _SETTINGS } from "./_config";
 
 export class DynamoDBStack extends Stack {
@@ -20,45 +33,45 @@ export class DynamoDBStack extends Stack {
     // const publicAuthLambda = props.publicLambda;
     // const api: RestApi = props.apigateway;
 
-    _RequiredTables.forEach((table) => {
-      if (!table.customAuth) {
-        this.createTable({
-          tablename: table.tablename,
-          primarykey: table.primarykey!,
-          secondarykey: table.secondarykey,
-        });
-      }
-      // TODO: add all global-secondary index
+    // _RequiredTables.forEach((table) => {
+    //   if (!table.customAuth) {
+    //     this.createTable({
+    //       tablename: table.tablename,
+    //       primarykey: table.primarykey!,
+    //       secondarykey: table.secondarykey,
+    //     });
+    //   }
+    // TODO: add all global-secondary index
 
-      // if (table.functions.length > 0) {
-      //   const baseendpoint = api.root.addResource(table.baseendpoint);
-      //   let authorizer = authLambda;
-      //   if (table.customAuth) {
-      //     authorizer = publicAuthLambda;
-      //   }
-      //   if (props.addCors) {
-      //     baseendpoint.addCorsPreflight({
-      //       allowOrigins: Cors.ALL_ORIGINS,
-      //       allowHeaders: ["Content-Type", "X-Amz-Date", "Authorization", "X-Api-Key", "X-Amz-Security-Token", "X-Amz-User-Agent", "Access-Control-Allow-Origin", "Cache-Control", "Pragma"],
-      //     });
-      //   }
+    // if (table.functions.length > 0) {
+    //   const baseendpoint = api.root.addResource(table.baseendpoint);
+    //   let authorizer = authLambda;
+    //   if (table.customAuth) {
+    //     authorizer = publicAuthLambda;
+    //   }
+    //   if (props.addCors) {
+    //     baseendpoint.addCorsPreflight({
+    //       allowOrigins: Cors.ALL_ORIGINS,
+    //       allowHeaders: ["Content-Type", "X-Amz-Date", "Authorization", "X-Api-Key", "X-Amz-Security-Token", "X-Amz-User-Agent", "Access-Control-Allow-Origin", "Cache-Control", "Pragma"],
+    //     });
+    //   }
 
-      //   table.functions.forEach((func: any) => {
-      //     const thislambda = new LambdaIntegration(accessLambda, {
-      //       requestTemplates: { "application/json": '{ "statusCode": "200" }' },
-      //     });
-      //     const methodtype = selectMethodType(func);
-      //     const thisendpoint = baseendpoint.addResource(func.split("-").join(""));
-      //     thisendpoint.addMethod(methodtype, thislambda, { authorizationType: AuthorizationType.CUSTOM, authorizer: authorizer });
-      //     if (props.addCors) {
-      //       thisendpoint.addCorsPreflight({
-      //         allowOrigins: Cors.ALL_ORIGINS,
-      //         allowHeaders: ["Content-Type", "X-Amz-Date", "Authorization", "X-Api-Key", "X-Amz-Security-Token", "X-Amz-User-Agent", "access-control-allow-origin", "Cache-Control", "Pragma"],
-      //       });
-      //     }
-      //   });
-      // }
-    });
+    //   table.functions.forEach((func: any) => {
+    //     const thislambda = new LambdaIntegration(accessLambda, {
+    //       requestTemplates: { "application/json": '{ "statusCode": "200" }' },
+    //     });
+    //     const methodtype = selectMethodType(func);
+    //     const thisendpoint = baseendpoint.addResource(func.split("-").join(""));
+    //     thisendpoint.addMethod(methodtype, thislambda, { authorizationType: AuthorizationType.CUSTOM, authorizer: authorizer });
+    //     if (props.addCors) {
+    //       thisendpoint.addCorsPreflight({
+    //         allowOrigins: Cors.ALL_ORIGINS,
+    //         allowHeaders: ["Content-Type", "X-Amz-Date", "Authorization", "X-Api-Key", "X-Amz-Security-Token", "X-Amz-User-Agent", "access-control-allow-origin", "Cache-Control", "Pragma"],
+    //       });
+    //     }
+    //   });
+    // }
+    // });
   }
 
   // createLambda(props: DynamodbLambdaProps, id: string) {
@@ -80,15 +93,34 @@ export class DynamoDBStack extends Stack {
   createTable(props: DynamoDBTableStackProps) {
     const primarykey = props.primarykey;
     const secondarykey = props.secondarykey;
-    const partitionKey = { name: primarykey.name, type: convertToAttribueType(primarykey.type) };
+    const partitionKey = {
+      name: primarykey.name,
+      type: convertToAttribueType(primarykey.type),
+    };
     let sortKey = undefined;
-    if (secondarykey) sortKey = { name: secondarykey.name, type: convertToAttribueType(secondarykey.type) };
-    let TableProps = { partitionKey: partitionKey, tableName: props.tablename, sortKey: sortKey, removalPolicy: RemovalPolicy.DESTROY, billingMode: BillingMode.PAY_PER_REQUEST, encryption: TableEncryption.AWS_MANAGED };
+    if (secondarykey)
+      sortKey = {
+        name: secondarykey.name,
+        type: convertToAttribueType(secondarykey.type),
+      };
+    let TableProps = {
+      partitionKey: partitionKey,
+      tableName: props.tablename,
+      sortKey: sortKey,
+      removalPolicy: RemovalPolicy.DESTROY,
+      billingMode: BillingMode.PAY_PER_REQUEST,
+      encryption: TableEncryption.AWS_MANAGED,
+    };
     const table = new Table(this, props.tablename + "-Table", TableProps);
 
     // Add backup plan
-    const plan = BackupPlan.daily35DayRetention(this, "BackupPlan-" + props.tablename);
-    plan.addSelection("BackupPlan-" + props.tablename + "-Selection", { resources: [BackupResource.fromDynamoDbTable(table)] });
+    const plan = BackupPlan.daily35DayRetention(
+      this,
+      "BackupPlan-" + props.tablename
+    );
+    plan.addSelection("BackupPlan-" + props.tablename + "-Selection", {
+      resources: [BackupResource.fromDynamoDbTable(table)],
+    });
     return table;
   }
 }
