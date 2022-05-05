@@ -1,0 +1,4 @@
+[
+  { "name": { "S": "Covid-19" }, "context": { "S": "global" } },
+  { "name": { "S": "PHM" }, "context": { "S": "global" } }
+]

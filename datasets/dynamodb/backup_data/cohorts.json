@@ -1,0 +1,25 @@
+[
+  {
+    "_id": { "S": "0" },
+    "cohorturl": { "S": "{}" },
+    "user": { "S": "Global" },
+    "isDeleted": { "BOOL": true },
+    "cohortName": { "S": "Fylde Coast" }
+  },
+  {
+    "cohorturl": { "S": "{\"AgeDimension\":[[70,100]]}" },
+    "_id": { "S": "2003201239459371" },
+    "user": { "S": "Global" },
+    "isDeleted": { "BOOL": false },
+    "cohortName": { "S": "CV19 - Vulnerable over 70" }
+  },
+  {
+    "cohorturl": {
+      "S": "{\"LTCs2Dimension\":[[\"Hypertension\"],[\"Asthma\"],[\"Diabetes\"],[\"Chronic Kidney Disease\"],[\"Coronary Artery Disease\"],[\"Cancer\"],[\"COPD\"],[\"Atrial Fibrillation\"],[\"Congestive Heart Failure\"]],\"AgeDimension\":[[0,69]]}"
+    },
+    "_id": { "S": "2003201238451572" },
+    "user": { "S": "Global" },
+    "isDeleted": { "BOOL": false },
+    "cohortName": { "S": "CV19 - Vulnerable below 70 with LTC" }
+  }
+]

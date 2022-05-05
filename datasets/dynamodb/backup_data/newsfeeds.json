@@ -1,0 +1,32 @@
+[
+  {
+    "priority": { "S": "6" },
+    "destination": { "S": "HealthierLSC" },
+    "isArchived": { "BOOL": false },
+    "type": { "S": "Twitter" }
+  },
+  {
+    "priority": { "N": "4" },
+    "destination": { "S": "NHSDigital" },
+    "isArchived": { "BOOL": false },
+    "type": { "S": "Twitter" }
+  },
+  {
+    "priority": { "N": "7" },
+    "destination": { "S": "BlackpoolHosp" },
+    "isArchived": { "BOOL": false },
+    "type": { "S": "Twitter" }
+  },
+  {
+    "priority": { "N": "8" },
+    "destination": { "S": "LancsHospitals" },
+    "isArchived": { "BOOL": false },
+    "type": { "S": "Twitter" }
+  },
+  {
+    "priority": { "N": "5" },
+    "destination": { "S": "NHSEngland" },
+    "isArchived": { "BOOL": false },
+    "type": { "S": "Twitter" }
+  }
+]

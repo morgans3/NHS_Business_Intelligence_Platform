@@ -1,0 +1,14 @@
+[
+  {
+    "code": { "S": "Admin" },
+    "name": { "S": "Admin" },
+    "authmethod": { "S": "Demo" },
+    "contact": { "S": "stewart.morgan@nhs.net" }
+  },
+  {
+    "code": { "S": "CPNI" },
+    "name": { "S": "Collaborative Partners" },
+    "authmethod": { "S": "Demo" },
+    "contact": { "S": "stewart.morgan@nhs.net" }
+  }
+]

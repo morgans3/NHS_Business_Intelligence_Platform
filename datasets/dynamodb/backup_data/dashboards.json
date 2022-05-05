@@ -1,0 +1,13 @@
+[
+  {
+    "ownerEmail": { "S": "stewart.morgan@nhs.net" },
+    "environment": { "S": "Shiny" },
+    "icon": { "S": "NexusX.png" },
+    "status": { "S": "Public" },
+    "images": { "L": [{ "S": "DIULogo.png" }] },
+    "description": { "S": "Virtual Ward overview" },
+    "url": { "S": "virtual_wardy/" },
+    "name": { "S": "Virtual_ward" },
+    "ownerName": { "S": "Morgans3" }
+  }
+]

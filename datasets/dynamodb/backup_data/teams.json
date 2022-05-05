@@ -1,0 +1,22 @@
+[
+  {
+    "responsiblepeople": { "L": [{ "S": "Morgans3" }] },
+    "code": { "S": "CSTWTG" },
+    "organisationcode": { "S": "GLOBAL" },
+    "_id": { "S": "202203281440509808" },
+    "description": {
+      "S": "Testing Group for the Workforce Dashboard in Covid-19 Information App"
+    },
+    "name": { "S": "COVID-19 Staff Testing Workforce Test Group" }
+  },
+  {
+    "responsiblepeople": { "L": [{ "S": "Morgans3" }, { "S": "CK1455" }] },
+    "code": { "S": "DIU" },
+    "organisationcode": { "S": "FC" },
+    "_id": { "S": "2002241232432351" },
+    "description": {
+      "S": "The Digital Intelligence Unit, based at Blackpool Football Stadium. Responsible for the creation and maintenance of Nexus Intelligence "
+    },
+    "name": { "S": "Digital Intelligence Unit" }
+  }
+]

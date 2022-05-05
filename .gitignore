@@ -12,6 +12,3 @@ cdk.out
 
 # local configuration
 lib/_local_config.json
-
-# awaiting review
-datasets/dynamodb/backup_Data/*
