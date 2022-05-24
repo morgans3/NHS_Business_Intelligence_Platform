@@ -96,7 +96,7 @@ export const _RequiredAppList: ApiProps[] = [
       },
       {
         key: "TABLENAME",
-        value: "public.covid_populations",
+        value: "covid_populations",
         type: BuildEnvironmentVariableType.PLAINTEXT,
       },
     ]),

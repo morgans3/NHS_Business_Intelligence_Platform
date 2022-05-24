@@ -1,10 +1,17 @@
 import { _SETTINGS } from "../lib/_config";
-import { checkSecretExists, generateSecrets, generatePassword } from "./_functions";
+import {
+  checkSecretExists,
+  generateSecrets,
+  generatePassword,
+} from "./_functions";
 
 if (_SETTINGS.dockerhub) {
   checkSecretExists("dockerhub", (res: any) => {
     if (res === false) {
-      const secretObject = { username: _SETTINGS.dockerhub.username, password: _SETTINGS.dockerhub.password };
+      const secretObject = {
+        username: _SETTINGS.dockerhub.username,
+        password: _SETTINGS.dockerhub.password,
+      };
       generateSecrets("dockerhub", secretObject, (result: any) => {
         console.log(result);
       });
@@ -16,8 +23,14 @@ if (_SETTINGS.dockerhub) {
 
 checkSecretExists("jwt", (res: any) => {
   if (res === false) {
-    const jwtsecret = generatePassword(20, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~!@-#$");
-    const jwtsecretkey = generatePassword(20, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~!@-#$");
+    const jwtsecret = generatePassword(
+      20,
+      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~!@-#$"
+    );
+    const jwtsecretkey = generatePassword(
+      20,
+      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~!@-#$"
+    );
     const secretObject = { jwtsecret: jwtsecret, jwtsecretkey: jwtsecretkey };
     generateSecrets("jwt", secretObject, (result: any) => {
       console.log(result);
@@ -30,8 +43,14 @@ checkSecretExists("jwt", (res: any) => {
 if (_SETTINGS.newRDSConfig) {
   checkSecretExists("postgres", (res: any) => {
     if (res === false) {
-      const password = generatePassword(20, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~!@-#$");
-      const secretObject = { POSTGRES_UN: _SETTINGS.newRDSConfig!.username, POSTGRES_PW: password };
+      const password = generatePassword(
+        20,
+        "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~!@-#$"
+      );
+      const secretObject = {
+        POSTGRES_UN: _SETTINGS.newRDSConfig!.username,
+        POSTGRES_PW: password,
+      };
       generateSecrets("postgres", secretObject, (result: any) => {
         console.log(result);
       });
@@ -50,6 +69,22 @@ checkSecretExists("github", (res: any) => {
     console.log("GitHub secret exists.");
   }
 });
+
+if (_SETTINGS.msTeamsWebhook) {
+  checkSecretExists("msTeamsWebhook", (res: any) => {
+    if (res === false) {
+      generateSecrets(
+        "msTeamsWebhook",
+        _SETTINGS.msTeamsWebhook,
+        (result: any) => {
+          console.log(result);
+        }
+      );
+    } else {
+      console.log("msTeamsWebhook secret exists.");
+    }
+  });
+}
 
 if (_SETTINGS.otherSecrets) {
   _SETTINGS.otherSecrets.forEach((secret: any) => {
