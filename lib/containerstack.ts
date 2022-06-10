@@ -1,22 +1,91 @@
 import { CfnOutput, Duration, Fn, SecretValue, Stack, Tags } from "aws-cdk-lib";
-import { AsgCapacityProvider, AwsLogDriver, Cluster, ContainerImage, Ec2Service, Ec2TaskDefinition, EcsOptimizedImage, NetworkMode, Protocol } from "aws-cdk-lib/aws-ecs";
+import {
+  AsgCapacityProvider,
+  AwsLogDriver,
+  Cluster,
+  ContainerImage,
+  Ec2Service,
+  Ec2TaskDefinition,
+  EcsOptimizedImage,
+  NetworkMode,
+  Protocol,
+} from "aws-cdk-lib/aws-ecs";
 import { _AccessListCountries, _RequiredAppList, _SETTINGS } from "./_config";
-import { ApiProps, ContainerProps, ContainerStackProps, iServiceDetails, ObservabilityProps, ServiceObservabilityProps, WAFProps } from "./types/interfaces";
-import { InstanceType, ISubnet, Peer, Port, SecurityGroup, Subnet, SubnetSelection, SubnetType } from "aws-cdk-lib/aws-ec2";
+import {
+  ApiProps,
+  ContainerProps,
+  ContainerStackProps,
+  iServiceDetails,
+  ObservabilityProps,
+  ServiceObservabilityProps,
+  WAFProps,
+} from "./types/interfaces";
+import {
+  InstanceType,
+  ISubnet,
+  Peer,
+  Port,
+  SecurityGroup,
+  Subnet,
+  SubnetSelection,
+  SubnetType,
+} from "aws-cdk-lib/aws-ec2";
 import { AutoScalingGroup, Schedule } from "aws-cdk-lib/aws-autoscaling";
 import { ARecord, HostedZone, RecordTarget } from "aws-cdk-lib/aws-route53";
-import { Certificate, CertificateValidation, DnsValidatedCertificate } from "aws-cdk-lib/aws-certificatemanager";
+import {
+  Certificate,
+  CertificateValidation,
+  DnsValidatedCertificate,
+} from "aws-cdk-lib/aws-certificatemanager";
 import { LoadBalancerTarget } from "aws-cdk-lib/aws-route53-targets";
-import { ApplicationListener, ApplicationLoadBalancer, ApplicationProtocol, ApplicationTargetGroup, ListenerAction, ListenerCondition, SslPolicy } from "aws-cdk-lib/aws-elasticloadbalancingv2";
+import {
+  ApplicationListener,
+  ApplicationLoadBalancer,
+  ApplicationProtocol,
+  ApplicationTargetGroup,
+  ListenerAction,
+  ListenerCondition,
+  SslPolicy,
+} from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import { Repository } from "aws-cdk-lib/aws-ecr";
-import { CfnLoggingConfiguration, CfnWebACL, CfnWebACLAssociation } from "aws-cdk-lib/aws-wafv2";
+import {
+  CfnLoggingConfiguration,
+  CfnWebACL,
+  CfnWebACLAssociation,
+} from "aws-cdk-lib/aws-wafv2";
 import { LogGroup, RetentionDays } from "aws-cdk-lib/aws-logs";
 import { cleanseBucketName } from "../authentication/_functions";
-import { ArnPrincipal, CompositePrincipal, Effect, PolicyStatement, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
-import { CodeBuildAction, EcsDeployAction, GitHubSourceAction, GitHubTrigger } from "aws-cdk-lib/aws-codepipeline-actions";
-import { BuildSpec, ComputeType, LinuxBuildImage, PipelineProject } from "aws-cdk-lib/aws-codebuild";
+import {
+  ArnPrincipal,
+  CompositePrincipal,
+  Effect,
+  PolicyStatement,
+  Role,
+  ServicePrincipal,
+} from "aws-cdk-lib/aws-iam";
+import {
+  CodeBuildAction,
+  EcsDeployAction,
+  GitHubSourceAction,
+  GitHubTrigger,
+} from "aws-cdk-lib/aws-codepipeline-actions";
+import {
+  BuildSpec,
+  ComputeType,
+  LinuxBuildImage,
+  PipelineProject,
+} from "aws-cdk-lib/aws-codebuild";
 import { Artifact, Pipeline } from "aws-cdk-lib/aws-codepipeline";
-import { Alarm, ComparisonOperator, Dashboard, GraphWidget, IMetric, Metric, TextWidget, TreatMissingData } from "aws-cdk-lib/aws-cloudwatch";
+import {
+  Alarm,
+  ComparisonOperator,
+  Dashboard,
+  GraphWidget,
+  IMetric,
+  Metric,
+  TextWidget,
+  TreatMissingData,
+} from "aws-cdk-lib/aws-cloudwatch";
 import { SnsAction } from "aws-cdk-lib/aws-cloudwatch-actions";
 import { CdkLambdaMsTeamsStack } from "./dashboards/lambdamsteams";
 import { WAFCloudwatchDashboardStack } from "./dashboards/waf-dashboard";
@@ -37,17 +106,32 @@ export class ContainerStack extends Stack {
 
     let subnetArray: ISubnet[] = [];
     props.range.forEach((subnet: { ID: string; AZ: string }) => {
-      subnetArray.push(Subnet.fromSubnetAttributes(this, subnet.ID, { subnetId: subnet.ID, availabilityZone: subnet.AZ }));
+      subnetArray.push(
+        Subnet.fromSubnetAttributes(this, subnet.ID, {
+          subnetId: subnet.ID,
+          availabilityZone: subnet.AZ,
+        })
+      );
     });
 
     let privatesubnets: SubnetSelection = { subnets: subnetArray };
     let privatesettings;
-    if (_SETTINGS.existingSubnetIDs && _SETTINGS.existingSubnetIDs.filter((x) => x.type === "PRIVATE").length > 0) {
-      const privateSubnets = _SETTINGS.existingSubnetIDs.filter((x) => x.type === "PRIVATE");
+    if (
+      _SETTINGS.existingSubnetIDs &&
+      _SETTINGS.existingSubnetIDs.filter((x) => x.type === "PRIVATE").length > 0
+    ) {
+      const privateSubnets = _SETTINGS.existingSubnetIDs.filter(
+        (x) => x.type === "PRIVATE"
+      );
       const output: ISubnet[] = [];
       let index = 0;
       privateSubnets.forEach((x) => {
-        output.push(Subnet.fromSubnetAttributes(this, "ecsprivatesubnet-" + index, { subnetId: x.ID, availabilityZone: x.AZ }));
+        output.push(
+          Subnet.fromSubnetAttributes(this, "ecsprivatesubnet-" + index, {
+            subnetId: x.ID,
+            availabilityZone: x.AZ,
+          })
+        );
         index++;
       });
       privatesettings = { subnets: output };
@@ -66,17 +150,30 @@ export class ContainerStack extends Stack {
       associatePublicIpAddress: false,
     });
 
-    const capacityProvider = new AsgCapacityProvider(this, "AsgCapacityProvider", {
-      autoScalingGroup,
-    });
+    const capacityProvider = new AsgCapacityProvider(
+      this,
+      "AsgCapacityProvider",
+      {
+        autoScalingGroup,
+      }
+    );
     this.cluster.addAsgCapacityProvider(capacityProvider);
 
     if (_SETTINGS.serversAlwaysOn === false) {
       const starthour = _SETTINGS.startHour || "8";
       const stophour = _SETTINGS.stopHour || "18";
-      Tags.of(this.cluster).add("Automation.Schedule", "Operates in Working Hours only");
-      Tags.of(this.cluster).add("Automation.Schedules.Shutdown", "Weekdays at " + stophour);
-      Tags.of(this.cluster).add("Automation.Schedules.Startup", "Weekdays at " + starthour);
+      Tags.of(this.cluster).add(
+        "Automation.Schedule",
+        "Operates in Working Hours only"
+      );
+      Tags.of(this.cluster).add(
+        "Automation.Schedules.Shutdown",
+        "Weekdays at " + stophour
+      );
+      Tags.of(this.cluster).add(
+        "Automation.Schedules.Startup",
+        "Weekdays at " + starthour
+      );
 
       autoScalingGroup.scaleOnSchedule(props.name + "-PowerOn", {
         minCapacity: props.capacity.min,
@@ -94,56 +191,88 @@ export class ContainerStack extends Stack {
         minCapacity: 0,
         maxCapacity: 0,
         desiredCapacity: 0,
-        schedule: Schedule.cron({ hour: starthour, minute: "15", weekDay: "Sat" }),
+        schedule: Schedule.cron({
+          hour: starthour,
+          minute: "15",
+          weekDay: "Sat",
+        }),
       });
       autoScalingGroup.scaleOnSchedule(props.name + "-PowerOff-Sunday", {
         minCapacity: 0,
         maxCapacity: 0,
         desiredCapacity: 0,
-        schedule: Schedule.cron({ hour: starthour, minute: "15", weekDay: "Sun" }),
+        schedule: Schedule.cron({
+          hour: starthour,
+          minute: "15",
+          weekDay: "Sun",
+        }),
       });
     }
 
-    const secGroup = new SecurityGroup(this, "ECSCluster-SecGroup-" + props.name, {
-      vpc: props.clusterVPC,
-      securityGroupName: "SG-BIPlatform-LB-" + props.name,
-      description: "HTTP/S Access to ECS",
-      allowAllOutbound: true,
-    });
-    secGroup.addIngressRule(Peer.anyIpv6(), Port.tcpRange(80, 8100), "Container Port Range");
+    const secGroup = new SecurityGroup(
+      this,
+      "ECSCluster-SecGroup-" + props.name,
+      {
+        vpc: props.clusterVPC,
+        securityGroupName: "SG-BIPlatform-LB-" + props.name,
+        description: "HTTP/S Access to ECS",
+        allowAllOutbound: true,
+      }
+    );
+    secGroup.addIngressRule(
+      Peer.anyIpv6(),
+      Port.tcpRange(80, 8100),
+      "Container Port Range"
+    );
     Tags.of(secGroup).add("Component", "Security Group");
     Tags.of(secGroup).add("Name", "SG-BIPlatform-LB-" + props.name);
 
     const vpc = props.clusterVPC;
     let settings: SubnetSelection = { subnetType: SubnetType.PUBLIC };
-    if (_SETTINGS.existingSubnetIDs && _SETTINGS.existingSubnetIDs.filter((x) => x.type === "PUBLIC").length > 0) {
-      const pubSubnets = _SETTINGS.existingSubnetIDs.filter((x) => x.type === "PUBLIC");
+    if (
+      _SETTINGS.existingSubnetIDs &&
+      _SETTINGS.existingSubnetIDs.filter((x) => x.type === "PUBLIC").length > 0
+    ) {
+      const pubSubnets = _SETTINGS.existingSubnetIDs.filter(
+        (x) => x.type === "PUBLIC"
+      );
       const output: ISubnet[] = [];
       let index = 0;
       pubSubnets.forEach((x) => {
-        output.push(Subnet.fromSubnetAttributes(this, "lbsubnet-" + index, { subnetId: x.ID, availabilityZone: x.AZ }));
+        output.push(
+          Subnet.fromSubnetAttributes(this, "lbsubnet-" + index, {
+            subnetId: x.ID,
+            availabilityZone: x.AZ,
+          })
+        );
         index++;
       });
       settings = { subnets: output };
     }
     const publicsubnets = vpc.selectSubnets(settings);
 
-    this.loadbalancer = new ApplicationLoadBalancer(this, "BIPlatform-ALB-" + props.name, {
-      vpc: vpc,
-      deletionProtection: true,
-      internetFacing: true,
-      loadBalancerName: "BIPlatform-alb-" + props.name,
-      securityGroup: secGroup,
-      vpcSubnets: publicsubnets,
-      idleTimeout: Duration.seconds(900),
-    });
+    this.loadbalancer = new ApplicationLoadBalancer(
+      this,
+      "BIPlatform-ALB-" + props.name,
+      {
+        vpc: vpc,
+        deletionProtection: true,
+        internetFacing: true,
+        loadBalancerName: "BIPlatform-alb-" + props.name,
+        securityGroup: secGroup,
+        vpcSubnets: publicsubnets,
+        idleTimeout: Duration.seconds(900),
+      }
+    );
     Tags.of(this.loadbalancer).add("Component", "Load Balancer");
     Tags.of(this.loadbalancer).add("Name", "BIPlatform-ALB" + props.name);
 
     let cert;
 
     if (_SETTINGS.manageDNS) {
-      const zone = HostedZone.fromLookup(this, "LoadBalancer-Zone-Cert", { domainName: props.domainName });
+      const zone = HostedZone.fromLookup(this, "LoadBalancer-Zone-Cert", {
+        domainName: props.domainName,
+      });
       cert = new Certificate(this, "SSLCertificate", {
         domainName: "*." + props.domainName,
         validation: CertificateValidation.fromDns(zone),
@@ -151,7 +280,12 @@ export class ContainerStack extends Stack {
     } else if (_SETTINGS.sslCertificateId) {
       const region = props.env!.region || "eu-west-2";
       const account = props.env!.account! || process.env.CDK_DEFAULT_ACCOUNT;
-      cert = Certificate.fromCertificateArn(this, "BIPlatform-Certificate-" + props.name, `arn:aws:acm:${region}:${account}:certificate/` + _SETTINGS.sslCertificateId);
+      cert = Certificate.fromCertificateArn(
+        this,
+        "BIPlatform-Certificate-" + props.name,
+        `arn:aws:acm:${region}:${account}:certificate/` +
+          _SETTINGS.sslCertificateId
+      );
     } else {
       cert = new Certificate(this, "SSLCertificate-LB", {
         domainName: props.domainName,
@@ -179,15 +313,22 @@ export class ContainerStack extends Stack {
       variables: baseContainer.variables,
     });
 
-    this.defaultTargetGroup = new ApplicationTargetGroup(this, "defaultTargetGroup", {
-      targetGroupName: baseContainer.siteSubDomain || "api",
-      vpc: vpc,
-      protocol: ApplicationProtocol.HTTP,
-      port: 80,
-      targets: [defaultContainerService],
-    });
+    this.defaultTargetGroup = new ApplicationTargetGroup(
+      this,
+      "defaultTargetGroup",
+      {
+        targetGroupName: baseContainer.siteSubDomain || "api",
+        vpc: vpc,
+        protocol: ApplicationProtocol.HTTP,
+        port: 80,
+        targets: [defaultContainerService],
+      }
+    );
     Tags.of(this.defaultTargetGroup).add("Component", "Default Target Group");
-    Tags.of(this.defaultTargetGroup).add("Name", "BIPlatform-ALB" + props.name + "- Default Target Group");
+    Tags.of(this.defaultTargetGroup).add(
+      "Name",
+      "BIPlatform-ALB" + props.name + "- Default Target Group"
+    );
     this.loadbalancer443 = this.loadbalancer.addListener("443-Listener", {
       protocol: ApplicationProtocol.HTTPS,
       port: 443,
@@ -230,21 +371,29 @@ export class ContainerStack extends Stack {
 
       const timeout = (container.leadInTime || 30) * 2;
 
-      const target = new ApplicationTargetGroup(this, container.apiname + "-TG", {
-        vpc: vpc,
-        targetGroupName: cleanseBucketName(container.apiname.replace("_", "-") + "-lbtarget").substring(0, 31),
-        protocol: ApplicationProtocol.HTTP,
-        port: 80,
-        targets: [containerService],
-        healthCheck: {
-          path: "/",
-          timeout: Duration.seconds(container.leadInTime || 30),
-          interval: Duration.seconds(timeout),
-        },
-      });
+      const target = new ApplicationTargetGroup(
+        this,
+        container.apiname + "-TG",
+        {
+          vpc: vpc,
+          targetGroupName: cleanseBucketName(
+            container.apiname.replace("_", "-") + "-lbtarget"
+          ).substring(0, 31),
+          protocol: ApplicationProtocol.HTTP,
+          port: 80,
+          targets: [containerService],
+          healthCheck: {
+            path: "/",
+            timeout: Duration.seconds(container.leadInTime || 30),
+            interval: Duration.seconds(timeout),
+          },
+        }
+      );
       this.loadbalancer443.addTargetGroups(container.apiname + "-Listener", {
         targetGroups: [target],
-        conditions: [ListenerCondition.hostHeaders(["*" + container.siteSubDomain + ".*"])],
+        conditions: [
+          ListenerCondition.hostHeaders(["*" + container.siteSubDomain + ".*"]),
+        ],
         priority: container.priority,
       });
 
@@ -263,21 +412,33 @@ export class ContainerStack extends Stack {
     );
 
     if (_SETTINGS.manageDNS) {
-      const zone = HostedZone.fromLookup(this, props.name + "-Zone", { domainName: props.domainName });
-      // TLS certificate
-      const cert = new DnsValidatedCertificate(this, props.name + "-SiteCertificate", {
-        domainName: "*." + props.domainName,
-        hostedZone: zone,
-        region: props.env?.region || "eu-west-2",
+      const zone = HostedZone.fromLookup(this, props.name + "-Zone", {
+        domainName: props.domainName,
       });
-      new CfnOutput(this, props.name + "-Certificate", { value: cert.certificateArn });
+      // TLS certificate
+      const cert = new DnsValidatedCertificate(
+        this,
+        props.name + "-SiteCertificate",
+        {
+          domainName: "*." + props.domainName,
+          hostedZone: zone,
+          region: props.env?.region || "eu-west-2",
+        }
+      );
+      new CfnOutput(this, props.name + "-Certificate", {
+        value: cert.certificateArn,
+      });
 
       _RequiredAppList.forEach((app: ApiProps) => {
         const siteDomain = app.siteSubDomain + "." + props.domainName;
-        new CfnOutput(this, app.apiname + "-Site", { value: "https://" + siteDomain });
+        new CfnOutput(this, app.apiname + "-Site", {
+          value: "https://" + siteDomain,
+        });
         new ARecord(this, app.apiname + "-SiteAliasRecord", {
           recordName: siteDomain,
-          target: RecordTarget.fromAlias(new LoadBalancerTarget(this.loadbalancer)),
+          target: RecordTarget.fromAlias(
+            new LoadBalancerTarget(this.loadbalancer)
+          ),
           zone: zone,
         });
       });
@@ -290,7 +451,14 @@ export class ContainerStack extends Stack {
 
     let teamsLambda;
     if (_SETTINGS.msTeamsWebhook) {
-      teamsLambda = new CdkLambdaMsTeamsStack(this, "MSTeamsLambdaStack-Services", { env: { account: this.account, region: this.region }, name: "Services" });
+      teamsLambda = new CdkLambdaMsTeamsStack(
+        this,
+        "MSTeamsLambdaStack-Services",
+        {
+          env: { account: this.account, region: this.region },
+          name: "Services",
+        }
+      );
     }
 
     this.addServiceObservability({
@@ -301,24 +469,77 @@ export class ContainerStack extends Stack {
   }
 
   newContainer(props: ContainerProps) {
-    const role = Role.fromRoleArn(this, "ApiStackRoleFromArn-" + props.subDomain, props.roleArn, { mutable: false });
-    const ecrRepoName = cleanseBucketName(props.name);
-    const repo = new Repository(this, "ECR-Repository-" + props.name, { repositoryName: ecrRepoName });
+    const role = Role.fromRoleArn(
+      this,
+      "ApiStackRoleFromArn-" + props.subDomain,
+      props.roleArn,
+      { mutable: false }
+    );
+    const ecrRepoName = cleanseBucketName(props.name + "-repo");
+    const repo = new Repository(this, "ECR-Repository-" + props.name, {
+      repositoryName: ecrRepoName,
+    });
     repo.addLifecycleRule({ tagPrefixList: ["main"], maxImageCount: 99 });
     repo.addLifecycleRule({ maxImageAge: Duration.days(30) });
     const statement = new PolicyStatement({
       effect: Effect.ALLOW,
       sid: "CDK Access",
-      principals: [new CompositePrincipal(new ServicePrincipal("codebuild.amazonaws.com"), new ArnPrincipal(role.roleArn))],
-      actions: ["ecr:BatchCheckLayerAvailability", "ecr:BatchGetImage", "ecr:DescribeImages", "ecr:DescribeRepositories", "ecr:GetDownloadUrlForLayer", "ecr:GetLifecyclePolicy", "ecr:GetLifecyclePolicyPreview", "ecr:GetRepositoryPolicy", "ecr:InitiateLayerUpload", "ecr:ListImages", "ecr:PutImage", "ecr:UploadLayerPart"],
+      principals: [
+        new CompositePrincipal(
+          new ServicePrincipal("codebuild.amazonaws.com"),
+          new ArnPrincipal(role.roleArn)
+        ),
+      ],
+      actions: [
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:BatchGetImage",
+        "ecr:DescribeImages",
+        "ecr:DescribeRepositories",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:GetLifecyclePolicy",
+        "ecr:GetLifecyclePolicyPreview",
+        "ecr:GetRepositoryPolicy",
+        "ecr:InitiateLayerUpload",
+        "ecr:ListImages",
+        "ecr:PutImage",
+        "ecr:UploadLayerPart",
+      ],
     });
     repo.addToResourcePolicy(statement);
     let commandlist = [];
     if (_SETTINGS.dockerhub) {
-      commandlist.push("docker login -u $dockerhub_username -p $dockerhub_password");
+      commandlist.push(
+        "docker login -u $dockerhub_username -p $dockerhub_password"
+      );
     }
-    commandlist.push("docker build " + getBuildArgs(props.buildArgs) + " -t " + ecrRepoName + ":main .");
-    const postbuildcommand = ["docker tag " + ecrRepoName + `:${props.branch} ` + this.account + ".dkr.ecr.eu-west-2.amazonaws.com/" + ecrRepoName + ":" + props.branch, "docker push " + this.account + ".dkr.ecr.eu-west-2.amazonaws.com/" + ecrRepoName + ":" + props.branch, `printf '[{"name":"` + ecrRepoName + `","imageUri":"${this.account}.dkr.ecr.eu-west-2.amazonaws.com/` + ecrRepoName + `:${props.branch}"}]' > imagedefinitions.json`];
+    commandlist.push(
+      "docker build " +
+        getBuildArgs(props.buildArgs) +
+        " -t " +
+        ecrRepoName +
+        ":main ."
+    );
+    const postbuildcommand = [
+      "docker tag " +
+        ecrRepoName +
+        `:${props.branch} ` +
+        this.account +
+        ".dkr.ecr.eu-west-2.amazonaws.com/" +
+        ecrRepoName +
+        ":" +
+        props.branch,
+      "docker push " +
+        this.account +
+        ".dkr.ecr.eu-west-2.amazonaws.com/" +
+        ecrRepoName +
+        ":" +
+        props.branch,
+      `printf '[{"name":"` +
+        ecrRepoName +
+        `","imageUri":"${this.account}.dkr.ecr.eu-west-2.amazonaws.com/` +
+        ecrRepoName +
+        `:${props.branch}"}]' > imagedefinitions.json`,
+    ];
 
     const buildSpecObject = {
       version: "0.2",
@@ -329,7 +550,11 @@ export class ContainerStack extends Stack {
           commands: "npm install",
         },
         pre_build: {
-          commands: ["eval $(aws ecr get-login --no-include-email --region eu-west-2 --registry-ids " + this.account + ")"],
+          commands: [
+            "eval $(aws ecr get-login --no-include-email --region eu-west-2 --registry-ids " +
+              this.account +
+              ")",
+          ],
         },
         build: {
           commands: commandlist,
@@ -418,7 +643,11 @@ export class ContainerStack extends Stack {
       memoryLimitMiB: props.memory,
       cpu: props.cpu,
     });
-    container.addPortMappings({ containerPort: props.port, hostPort: props.port, protocol: Protocol.TCP });
+    container.addPortMappings({
+      containerPort: props.port,
+      hostPort: props.port,
+      protocol: Protocol.TCP,
+    });
 
     const desiredCount = props.desired || 0;
     const minCapacity = props.minCapacity || 0;
@@ -431,6 +660,7 @@ export class ContainerStack extends Stack {
       minHealthyPercent: 50,
       securityGroups: [props.secGroup],
       serviceName: ecrRepoName,
+      healthCheckGracePeriod: Duration.minutes(2),
     });
 
     // TODO: add scaling group once issue 11 is resolved
@@ -519,23 +749,47 @@ export class ContainerStack extends Stack {
       });
     }
 
-    new LogGroup(this, "WebACLLogGroup-" + props.name, { logGroupName: "aws-waf-logs-biplatformmonitoring", retention: RetentionDays.TWO_MONTHS });
+    new LogGroup(this, "WebACLLogGroup-" + props.name, {
+      logGroupName: "aws-waf-logs-biplatformmonitoring",
+      retention: RetentionDays.TWO_MONTHS,
+    });
     new CfnLoggingConfiguration(this, "WebACLLogConfiguration-" + props.name, {
-      logDestinationConfigs: ["arn:aws:logs:" + env.region + ":" + env.account + ":log-group:aws-waf-logs-biplatformmonitoring"],
+      logDestinationConfigs: [
+        "arn:aws:logs:" +
+          env.region +
+          ":" +
+          env.account +
+          ":log-group:aws-waf-logs-biplatformmonitoring",
+      ],
       resourceArn: waf.attrArn,
     });
 
     new CfnOutput(this, "WAFArn", { value: attrId });
 
-    new WAFCloudwatchDashboardStack(this, "BIPlatform-APIGateway-WAF-Dashboard", {
-      env: env,
-      dashboardName: "BIPlatform-APIGateway-WAF-Dashboard",
-      WAFWebACL: [{ name: waf.attrId, region: env.region }],
-    });
+    new WAFCloudwatchDashboardStack(
+      this,
+      "BIPlatform-APIGateway-WAF-Dashboard",
+      {
+        env: env,
+        dashboardName: "BIPlatform-APIGateway-WAF-Dashboard",
+        WAFWebACL: [{ name: waf.attrId, region: env.region }],
+      }
+    );
   }
 
-  getResourceARNForEndpoint(region: string, restApiId: string, stageName: string): string {
-    let Arn: string = Fn.join("", ["arn:aws:apigateway:", region, "::/restapis/", restApiId, "/stages/", stageName]);
+  getResourceARNForEndpoint(
+    region: string,
+    restApiId: string,
+    stageName: string
+  ): string {
+    let Arn: string = Fn.join("", [
+      "arn:aws:apigateway:",
+      region,
+      "::/restapis/",
+      restApiId,
+      "/stages/",
+      stageName,
+    ]);
     return Arn;
   }
 
@@ -604,18 +858,50 @@ export class ContainerStack extends Stack {
     const arrECSEc2ServiceMemoryUtilization: IMetric[] = [];
     const arrECSEc2ServiceRunningTaskCount: IMetric[] = [];
     Ec2Servicelist.forEach((service) => {
-      arrECSEc2ServiceCPUUtilization.push(newServiceMetric(service.service, "CPUUtilization", service.cluster, "avg"));
-      arrECSEc2ServiceMemoryUtilization.push(newServiceMetric(service.service, "MemoryUtilization", service.cluster, "avg"));
-      arrECSEc2ServiceRunningTaskCount.push(newServiceMetric(service.service, "CPUUtilization", service.cluster, "n"));
-      const alarm = new Alarm(this, service.service + "ServiceRunningCountAlarm", {
-        alarmName: service.service + "ServiceRunningCountAlarm",
-        comparisonOperator: ComparisonOperator.LESS_THAN_OR_EQUAL_TO_THRESHOLD,
-        threshold: 0,
-        evaluationPeriods: 1,
-        treatMissingData: TreatMissingData.BREACHING,
-        metric: newServiceMetric(service.service, "CPUUtilization", service.cluster, "n"),
-        alarmDescription: "ECS Ec2Service alarm if the services running threshold equals (0) for 1 evaluation period",
-      });
+      arrECSEc2ServiceCPUUtilization.push(
+        newServiceMetric(
+          service.service,
+          "CPUUtilization",
+          service.cluster,
+          "avg"
+        )
+      );
+      arrECSEc2ServiceMemoryUtilization.push(
+        newServiceMetric(
+          service.service,
+          "MemoryUtilization",
+          service.cluster,
+          "avg"
+        )
+      );
+      arrECSEc2ServiceRunningTaskCount.push(
+        newServiceMetric(
+          service.service,
+          "CPUUtilization",
+          service.cluster,
+          "n"
+        )
+      );
+      const alarm = new Alarm(
+        this,
+        service.service + "ServiceRunningCountAlarm",
+        {
+          alarmName: service.service + "ServiceRunningCountAlarm",
+          comparisonOperator:
+            ComparisonOperator.LESS_THAN_OR_EQUAL_TO_THRESHOLD,
+          threshold: 0,
+          evaluationPeriods: 1,
+          treatMissingData: TreatMissingData.BREACHING,
+          metric: newServiceMetric(
+            service.service,
+            "CPUUtilization",
+            service.cluster,
+            "n"
+          ),
+          alarmDescription:
+            "ECS Ec2Service alarm if the services running threshold equals (0) for 1 evaluation period",
+        }
+      );
       if (props.topic) alarm.addAlarmAction(new SnsAction(props.topic));
     });
 
@@ -644,7 +930,12 @@ export class ContainerStack extends Stack {
     // Create CloudWatch Dashboard
     new Dashboard(this, "ECSDashboard-Service", {
       dashboardName: props.dashboardName,
-      widgets: [[titleWidget], [graphWidget], [graphWidgetMem], [graphWidgetCount]],
+      widgets: [
+        [titleWidget],
+        [graphWidget],
+        [graphWidgetMem],
+        [graphWidgetCount],
+      ],
     });
 
     // Generate Outputs
@@ -679,7 +970,12 @@ function newMetric(clustername: string, metricName: string) {
 }
 
 // Metric to show CPU Utilization, Memory Utilization
-function newServiceMetric(servicename: string, metricName: string, clustername: string, statistic: string) {
+function newServiceMetric(
+  servicename: string,
+  metricName: string,
+  clustername: string,
+  statistic: string
+) {
   return new Metric({
     metricName: metricName,
     namespace: "AWS/ECS",
