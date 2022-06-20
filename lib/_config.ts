@@ -67,7 +67,7 @@ export const _RequiredAppList: ApiProps[] = [
     variables: addAPI(containerSettings, "api-server", [
       {
         key: "SITE_URL",
-        value: "crossfilter." + _MYDOMAIN,
+        value: _MYDOMAIN,
         type: BuildEnvironmentVariableType.PLAINTEXT,
       },
     ]),
