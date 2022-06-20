@@ -1,0 +1,86 @@
+[
+  {
+    "ownerEmail": { "S": "stewart.morgan@nhs.net" },
+    "environment": { "S": "Development" },
+    "isArchived": { "BOOL": false },
+    "icon": { "S": "gsi.png" },
+    "status": { "S": "Global" },
+    "images": {
+      "L": [{ "S": "gsi_1.png" }, { "S": "gsi_2.png" }, { "S": "gsi_3.png" }]
+    },
+    "description": {
+      "S": "The Geo Segmentation Intelligence tool is designed for evaluating an area or segment of the population utilising different datasets which can be tied to individual properties or regions."
+    },
+    "url": { "S": "gsi" },
+    "name": { "S": "Geo_Segmentation_Intelligence" },
+    "ownerName": { "S": "Morgans3" }
+  },
+  {
+    "ownerEmail": { "S": "stewart.morgan@nhs.net" },
+    "environment": { "S": "Production" },
+    "isArchived": { "BOOL": false },
+    "icon": { "S": "cvi.png" },
+    "status": { "S": "Public" },
+    "images": {
+      "L": [{ "S": "cvi_1.png" }, { "S": "cvi_2.png" }, { "S": "cvi_3.png" }]
+    },
+    "description": {
+      "S": "Collated information on the COVID-19 Pandemic from international, national, regional and local levels."
+    },
+    "url": { "S": "cvi" },
+    "name": { "S": "COVID-19_Information" },
+    "ownerName": { "S": "Morgans3" }
+  },
+  {
+    "ownerEmail": { "S": "stewart.morgan@nhs.net" },
+    "environment": { "S": "Development" },
+    "isArchived": { "BOOL": false },
+    "icon": { "S": "population.png" },
+    "status": { "S": "Global" },
+    "images": {
+      "L": [{ "S": "phi_1.png" }, { "S": "phi_2.png" }, { "S": "phi_3.png" }]
+    },
+    "url": { "S": "phi" },
+    "description": {
+      "S": "Population Health Intelligence Application for identifying a cohort of your population based on relevant criteria."
+    },
+    "name": { "S": "Population_Health" },
+    "ownerName": { "S": "Morgans3" }
+  },
+  {
+    "ownerEmail": { "S": "stewart.morgan@nhs.net" },
+    "environment": { "S": "Production" },
+    "isArchived": { "BOOL": false },
+    "icon": { "S": "pophealth.png" },
+    "status": { "S": "Global" },
+    "images": { "L": [{ "S": "DIULogo.png" }] },
+    "description": { "S": "Tool for viewing Health Inequalities" },
+    "url": { "S": "hiq" },
+    "name": { "S": "Health_Inequalities" },
+    "ownerName": { "S": "Morgans3" }
+  },
+  {
+    "ownerEmail": { "S": "stewart.morgan@nhs.net" },
+    "environment": { "S": "Development" },
+    "icon": { "S": "template.png" },
+    "status": { "S": "Global" },
+    "description": { "S": "Suicide Prevention Intelligence Dashboards" },
+    "url": { "S": "spi" },
+    "name": { "S": "Suicide_Prevention_Intelligence" },
+    "ownerName": { "S": "Morgans3" }
+  },
+  {
+    "ownerEmail": { "S": "stewart.morgan@nhs.net" },
+    "environment": { "S": "Production" },
+    "isArchived": { "BOOL": false },
+    "icon": { "S": "template.png" },
+    "status": { "S": "Global" },
+    "images": { "L": [{ "S": "DIULogo.png" }] },
+    "description": {
+      "S": "Collection of open source visualisations and tools that have been created by the DIU which can be shared externally"
+    },
+    "url": { "S": "opensource" },
+    "name": { "S": "Open_Source_Tools" },
+    "ownerName": { "S": "Morgans3" }
+  }
+]

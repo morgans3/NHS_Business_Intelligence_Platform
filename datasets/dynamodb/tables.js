@@ -1,6 +1,0 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports._RequiredTables = void 0;
-const dynamodb_1 = require("../../src/dynamodb/dynamodb");
-exports._RequiredTables = dynamodb_1._Settings; // Table Map for DynamoDB is located in the Lambda function so that it can map HTTPS requests based on context.
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidGFibGVzLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsidGFibGVzLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7OztBQUNBLDBEQUF3RDtBQUUzQyxRQUFBLGVBQWUsR0FBaUIsb0JBQVMsQ0FBQyxDQUFDLCtHQUErRyIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IExhbWJkYUluZm8gfSBmcm9tIFwiLi4vLi4vbGliL3R5cGVzL2ludGVyZmFjZXNcIjtcclxuaW1wb3J0IHsgX1NldHRpbmdzIH0gZnJvbSBcIi4uLy4uL3NyYy9keW5hbW9kYi9keW5hbW9kYlwiO1xyXG5cclxuZXhwb3J0IGNvbnN0IF9SZXF1aXJlZFRhYmxlczogTGFtYmRhSW5mb1tdID0gX1NldHRpbmdzOyAvLyBUYWJsZSBNYXAgZm9yIER5bmFtb0RCIGlzIGxvY2F0ZWQgaW4gdGhlIExhbWJkYSBmdW5jdGlvbiBzbyB0aGF0IGl0IGNhbiBtYXAgSFRUUFMgcmVxdWVzdHMgYmFzZWQgb24gY29udGV4dC5cclxuIl19

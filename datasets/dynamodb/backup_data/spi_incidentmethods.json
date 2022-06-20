@@ -1,0 +1,1076 @@
+[
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.688Z" },
+    "method": { "S": "Wyre" },
+    "list": { "S": "csp_districts" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.806Z" },
+    "method": { "S": "Wyre" },
+    "list": { "S": "csp_resident" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.544Z" },
+    "method": { "S": "Both" },
+    "list": { "S": "vic_perp_both" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.638Z" },
+    "method": { "S": "Blackburn" },
+    "list": { "S": "coroner_areas" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.683Z" },
+    "method": { "S": "Blackburn" },
+    "list": { "S": "csp_districts" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:33.076Z" },
+    "method": { "S": "RTA" },
+    "list": { "S": "location_types" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.692Z" },
+    "method": { "S": "West Lancs" },
+    "list": { "S": "csp_districts" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:33.201Z" },
+    "method": { "S": "Aldingham" },
+    "list": { "S": "coroner_areas" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:33.202Z" },
+    "method": { "S": "Aldingham" },
+    "list": { "S": "csp_districts" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.731Z" },
+    "method": { "S": "Trainline" },
+    "list": { "S": "method" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.823Z" },
+    "method": { "S": "Blackburn with Darwen" },
+    "list": { "S": "csp_resident" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.769Z" },
+    "method": { "S": "Self-harm" },
+    "list": { "S": "method" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.670Z" },
+    "method": { "S": "Central" },
+    "list": { "S": "ics_values" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.720Z" },
+    "method": { "S": "Burnley" },
+    "list": { "S": "coroner_areas" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.721Z" },
+    "method": { "S": "Burnley" },
+    "list": { "S": "csp_districts" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.817Z" },
+    "method": { "S": "Burnley" },
+    "list": { "S": "csp_resident" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.689Z" },
+    "method": { "S": "Military" },
+    "list": { "S": "employment_values" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.700Z" },
+    "method": { "S": "South Cumbria" },
+    "list": { "S": "coroner_areas" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.701Z" },
+    "method": { "S": "South Lakeland" },
+    "list": { "S": "csp_districts" }
+  },
+  {
+    "priority": { "S": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.611Z" },
+    "method": { "S": "West" },
+    "list": { "S": "bcu_options" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.693Z" },
+    "method": { "S": "West" },
+    "list": { "S": "ics_values" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.707Z" },
+    "method": { "S": "House (other)" },
+    "list": { "S": "location_types" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.669Z" },
+    "method": { "S": "South Ribble" },
+    "list": { "S": "csp_districts" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.816Z" },
+    "method": { "S": "South Ribble" },
+    "list": { "S": "csp_resident" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.673Z" },
+    "method": { "S": "Yes - declined" },
+    "list": { "S": "bereavement_options" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.731Z" },
+    "method": { "S": "BTP" },
+    "list": { "S": "reporters" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.814Z" },
+    "method": { "S": "Heysham" },
+    "list": { "S": "coroner_areas" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:33.067Z" },
+    "method": { "S": "Barrow" },
+    "list": { "S": "coroner_areas" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.732Z" },
+    "method": { "S": "Pendle" },
+    "list": { "S": "csp_districts" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:33.047Z" },
+    "method": { "S": "Dalton-in-Furness" },
+    "list": { "S": "csp_districts" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.650Z" },
+    "method": { "S": "Blackpool CCG" },
+    "list": { "S": "ccg_values" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.653Z" },
+    "method": { "S": "Not stated" },
+    "list": { "S": "employment_values" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.686Z" },
+    "method": { "S": "Not stated" },
+    "list": { "S": "bereavement_options" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.514Z" },
+    "method": { "S": "Not stated" },
+    "list": { "S": "csp_resident" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.533Z" },
+    "method": { "S": "Not stated" },
+    "list": { "S": "vic_perp_both" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:28:14.747Z" },
+    "method": { "S": "Not stated" },
+    "list": { "S": "da" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.637Z" },
+    "method": { "S": "East Lancashire CCG" },
+    "list": { "S": "ccg_values" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.682Z" },
+    "method": { "S": "Blackburn with Darwen CCG" },
+    "list": { "S": "ccg_values" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.628Z" },
+    "method": { "S": "Known beyond 6 months" },
+    "list": { "S": "asc_lcc_update" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.738Z" },
+    "method": { "S": "Known beyond 6 months" },
+    "list": { "S": "cgl_update" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:28:14.712Z" },
+    "method": { "S": "Known beyond 6 months" },
+    "list": { "S": "mh_services_lscft_update" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.668Z" },
+    "method": { "S": "Chorley" },
+    "list": { "S": "coroner_areas" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.727Z" },
+    "method": { "S": "Chorley" },
+    "list": { "S": "csp_districts" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.801Z" },
+    "method": { "S": "Chorley" },
+    "list": { "S": "csp_resident" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.646Z" },
+    "method": { "S": "Known within 6 months" },
+    "list": { "S": "asc_lcc_update" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.742Z" },
+    "method": { "S": "Known within 6 months" },
+    "list": { "S": "cgl_update" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:28:14.727Z" },
+    "method": { "S": "Known within 6 months" },
+    "list": { "S": "mh_services_lscft_update" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.658Z" },
+    "method": { "S": "Lancaster" },
+    "list": { "S": "coroner_areas" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.660Z" },
+    "method": { "S": "Lancaster" },
+    "list": { "S": "csp_districts" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.791Z" },
+    "method": { "S": "Lancaster" },
+    "list": { "S": "csp_resident" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:33.210Z" },
+    "method": { "S": "Ingestion" },
+    "list": { "S": "method" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.810Z" },
+    "method": { "S": "Prison" },
+    "list": { "S": "location_types" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:33.230Z" },
+    "method": { "S": "Joiner" },
+    "list": { "S": "employment_values" }
+  },
+  {
+    "priority": { "S": "0" },
+    "dateCreated": { "S": "2022-02-10T14:56:44.653Z" },
+    "method": { "S": "y" },
+    "list": { "S": "da" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:33.188Z" },
+    "method": { "S": "Shot" },
+    "list": { "S": "method" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.256Z" },
+    "method": { "S": "Male" },
+    "list": { "S": "gender" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.703Z" },
+    "method": { "S": "Unknown" },
+    "list": { "S": "location_types" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.291Z" },
+    "method": { "S": "Unknown" },
+    "list": { "S": "csp_resident" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:33.094Z" },
+    "method": { "S": "Undetermined" },
+    "list": { "S": "inquest_conclusion" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.271Z" },
+    "method": { "S": "Female" },
+    "list": { "S": "gender" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.822Z" },
+    "method": { "S": "Other" },
+    "list": { "S": "reporters" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.849Z" },
+    "method": { "S": "Fire" },
+    "list": { "S": "method" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:28:14.757Z" },
+    "method": { "S": "OUT OF AREA" },
+    "list": { "S": "mh_services_lscft_update" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.661Z" },
+    "method": { "S": "Bay Health" },
+    "list": { "S": "ics_values" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.636Z" },
+    "method": { "S": "East" },
+    "list": { "S": "bcu_options" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.888Z" },
+    "method": { "S": "Intentional RTA" },
+    "list": { "S": "method" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.646Z" },
+    "method": { "S": "Yes - accepted" },
+    "list": { "S": "bereavement_options" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.643Z" },
+    "method": { "S": "Hanging" },
+    "list": { "S": "method" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.855Z" },
+    "method": { "S": "Windermere" },
+    "list": { "S": "csp_districts" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:33.080Z" },
+    "method": { "S": "Windermere" },
+    "list": { "S": "coroner_areas" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:33.051Z" },
+    "method": { "S": "Holker" },
+    "list": { "S": "csp_districts" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.529Z" },
+    "method": { "S": "Perpetrator" },
+    "list": { "S": "vic_perp_both" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.675Z" },
+    "method": { "S": "Greater Preston CCG" },
+    "list": { "S": "ccg_values" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.768Z" },
+    "method": { "S": "CMP" },
+    "list": { "S": "method" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:33.169Z" },
+    "method": { "S": "Yes" },
+    "list": { "S": "bereavement_options" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.251Z" },
+    "method": { "S": "Yes" },
+    "list": { "S": "csp_resident" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.529Z" },
+    "method": { "S": "Yes" },
+    "list": { "S": "da" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.535Z" },
+    "method": { "S": "Yes" },
+    "list": { "S": "cgl_update" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.871Z" },
+    "method": { "S": "Work" },
+    "list": { "S": "location_types" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.699Z" },
+    "method": { "S": "North" },
+    "list": { "S": "bcu_options" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.545Z" },
+    "method": { "S": "Awaiting update" },
+    "list": { "S": "cgl_update" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.666Z" },
+    "method": { "S": "Awaiting update" },
+    "list": { "S": "asc_lcc_update" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.754Z" },
+    "method": { "S": "Awaiting update" },
+    "list": { "S": "delphi_update" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.687Z" },
+    "method": { "S": "Hyndburn" },
+    "list": { "S": "csp_districts" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.810Z" },
+    "method": { "S": "Hyndburn" },
+    "list": { "S": "csp_resident" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.723Z" },
+    "method": { "S": "Rossendale" },
+    "list": { "S": "csp_districts" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.834Z" },
+    "method": { "S": "Rossendale" },
+    "list": { "S": "csp_resident" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.625Z" },
+    "method": { "S": "Fylde Coast" },
+    "list": { "S": "ics_values" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.623Z" },
+    "method": { "S": "Unemployed" },
+    "list": { "S": "employment_values" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.821Z" },
+    "method": { "S": "OOC" },
+    "list": { "S": "csp_districts" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.748Z" },
+    "method": { "S": "Open to service" },
+    "list": { "S": "cgl_update" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:28:14.709Z" },
+    "method": { "S": "Open to service" },
+    "list": { "S": "mh_services_lscft_update" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.711Z" },
+    "method": { "S": "Student" },
+    "list": { "S": "employment_values" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.629Z" },
+    "method": { "S": "Overdose" },
+    "list": { "S": "method" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.616Z" },
+    "method": { "S": "No" },
+    "list": { "S": "bereavement_options" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.297Z" },
+    "method": { "S": "No" },
+    "list": { "S": "csp_resident" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.528Z" },
+    "method": { "S": "No" },
+    "list": { "S": "cgl_update" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.530Z" },
+    "method": { "S": "No" },
+    "list": { "S": "da" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:33.041Z" },
+    "method": { "S": "Overdose/bleed" },
+    "list": { "S": "method" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.694Z" },
+    "method": { "S": "Outside" },
+    "list": { "S": "location_types" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.654Z" },
+    "method": { "S": "Blackpool Council (UA)" },
+    "list": { "S": "local_authorities" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.702Z" },
+    "method": { "S": "Cumbria Police" },
+    "list": { "S": "reporters" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.621Z" },
+    "method": { "S": "Not known to ASC LCC" },
+    "list": { "S": "asc_lcc_update" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.662Z" },
+    "method": { "S": "Drug Related Death" },
+    "list": { "S": "inquest_conclusion" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:33.003Z" },
+    "method": { "S": "Electrocution" },
+    "list": { "S": "method" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.540Z" },
+    "method": { "S": "Victim" },
+    "list": { "S": "vic_perp_both" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:33.062Z" },
+    "method": { "S": "Volunteer" },
+    "list": { "S": "employment_values" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.684Z" },
+    "method": { "S": "Blackburn & Darwen (UA)" },
+    "list": { "S": "local_authorities" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.639Z" },
+    "method": { "S": "Ribble Valley" },
+    "list": { "S": "csp_districts" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.838Z" },
+    "method": { "S": "Ribble Valley" },
+    "list": { "S": "csp_resident" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.694Z" },
+    "method": { "S": "Drowning" },
+    "list": { "S": "method" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.856Z" },
+    "method": { "S": "School" },
+    "list": { "S": "location_types" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.825Z" },
+    "method": { "S": "Asian" },
+    "list": { "S": "ethnicity" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.626Z" },
+    "method": { "S": "Awaiting coroner conclusion" },
+    "list": { "S": "inquest_conclusion" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.730Z" },
+    "method": { "S": "Not known to service" },
+    "list": { "S": "delphi_update" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.628Z" },
+    "method": { "S": "Lancashire County Council" },
+    "list": { "S": "local_authorities" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.740Z" },
+    "method": { "S": "Not known to services" },
+    "list": { "S": "cgl_update" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.737Z" },
+    "method": { "S": "Barrow-in-furness" },
+    "list": { "S": "csp_districts" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:33.081Z" },
+    "method": { "S": "Barrow-in-furness" },
+    "list": { "S": "coroner_areas" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.657Z" },
+    "method": { "S": "Morcambe Bay CCG" },
+    "list": { "S": "ccg_values" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:33.026Z" },
+    "method": { "S": "Misadventure" },
+    "list": { "S": "inquest_conclusion" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.701Z" },
+    "method": { "S": "Cumbria County Council" },
+    "list": { "S": "local_authorities" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.648Z" },
+    "method": { "S": "Employed" },
+    "list": { "S": "employment_values" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.968Z" },
+    "method": { "S": "Outdoors/Motorway" },
+    "list": { "S": "location_types" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.746Z" },
+    "method": { "S": "Asphyxiation" },
+    "list": { "S": "method" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.785Z" },
+    "method": { "S": "Motorway" },
+    "list": { "S": "location_types" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.818Z" },
+    "method": { "S": "Oldham" },
+    "list": { "S": "csp_resident" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.819Z" },
+    "method": { "S": "N/A" },
+    "list": { "S": "bcu_options" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.820Z" },
+    "method": { "S": "N/A" },
+    "list": { "S": "coroner_areas" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.821Z" },
+    "method": { "S": "N/A" },
+    "list": { "S": "ics_values" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.822Z" },
+    "method": { "S": "N/A" },
+    "list": { "S": "local_authorities" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.531Z" },
+    "method": { "S": "N/A" },
+    "list": { "S": "vic_perp_both" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.622Z" },
+    "method": { "S": "N/A" },
+    "list": { "S": "asc_lcc_update" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.697Z" },
+    "method": { "S": "N/A" },
+    "list": { "S": "delphi_update" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:28:14.734Z" },
+    "method": { "S": "N/A" },
+    "list": { "S": "mh_services_lscft_update" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.632Z" },
+    "method": { "S": "Home" },
+    "list": { "S": "location_types" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.943Z" },
+    "method": { "S": "Open verdict" },
+    "list": { "S": "inquest_conclusion" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:33.022Z" },
+    "method": { "S": "Swathmoor" },
+    "list": { "S": "coroner_areas" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.730Z" },
+    "method": { "S": "?" },
+    "list": { "S": "coroner_areas" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.898Z" },
+    "method": { "S": "Care Home" },
+    "list": { "S": "location_types" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.863Z" },
+    "method": { "S": "Weapon" },
+    "list": { "S": "method" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.824Z" },
+    "method": { "S": "Multi-Storey" },
+    "list": { "S": "location_types" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:28:14.703Z" },
+    "method": { "S": "Not known to MH services" },
+    "list": { "S": "mh_services_lscft_update" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.784Z" },
+    "method": { "S": "Perp" },
+    "list": { "S": "vic_perp_both" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.734Z" },
+    "method": { "S": "Hotel" },
+    "list": { "S": "location_types" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.693Z" },
+    "method": { "S": "Retired" },
+    "list": { "S": "employment_values" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.941Z" },
+    "method": { "S": "Outdoors" },
+    "list": { "S": "location_types" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.620Z" },
+    "method": { "S": "Blackpool" },
+    "list": { "S": "coroner_areas" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.652Z" },
+    "method": { "S": "Blackpool" },
+    "list": { "S": "csp_districts" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.797Z" },
+    "method": { "S": "Blackpool" },
+    "list": { "S": "csp_resident" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:33.009Z" },
+    "method": { "S": "Kendal" },
+    "list": { "S": "csp_districts" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:33.082Z" },
+    "method": { "S": "Kendal" },
+    "list": { "S": "coroner_areas" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.630Z" },
+    "method": { "S": "Lancs Police" },
+    "list": { "S": "reporters" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.797Z" },
+    "method": { "S": "White - North European" },
+    "list": { "S": "ethnicity" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.801Z" },
+    "method": { "S": "Residential Home" },
+    "list": { "S": "location_types" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.808Z" },
+    "method": { "S": "Bolton" },
+    "list": { "S": "csp_resident" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.618Z" },
+    "method": { "S": "Fylde & Wyre CCG" },
+    "list": { "S": "ccg_values" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.724Z" },
+    "method": { "S": "Hospital" },
+    "list": { "S": "location_types" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.665Z" },
+    "method": { "S": "South" },
+    "list": { "S": "bcu_options" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.667Z" },
+    "method": { "S": "Chorley and South Ribble CCG" },
+    "list": { "S": "ccg_values" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.970Z" },
+    "method": { "S": "Died due to methadone toxicity" },
+    "list": { "S": "inquest_conclusion" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.966Z" },
+    "method": { "S": "Ulverson" },
+    "list": { "S": "coroner_areas" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.967Z" },
+    "method": { "S": "Ulverson" },
+    "list": { "S": "csp_districts" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.819Z" },
+    "method": { "S": "[object Object]" },
+    "list": { "S": "ccg_values" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.692Z" },
+    "method": { "S": "West Lancashire CCG" },
+    "list": { "S": "ccg_values" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.702Z" },
+    "method": { "S": "Jump/Fall" },
+    "list": { "S": "method" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.642Z" },
+    "method": { "S": "Suicide" },
+    "list": { "S": "inquest_conclusion" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.263Z" },
+    "method": { "S": "Suicide" },
+    "list": { "S": "suicide_type" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.676Z" },
+    "method": { "S": "Preston" },
+    "list": { "S": "coroner_areas" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.677Z" },
+    "method": { "S": "Preston" },
+    "list": { "S": "csp_districts" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.799Z" },
+    "method": { "S": "Preston" },
+    "list": { "S": "csp_resident" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:28:14.719Z" },
+    "method": { "S": "Awaiting Update" },
+    "list": { "S": "mh_services_lscft_update" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.258Z" },
+    "method": { "S": "Drug Related" },
+    "list": { "S": "suicide_type" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:33.233Z" },
+    "method": { "S": "Blackpool Coroner" },
+    "list": { "S": "inquest_conclusion" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.829Z" },
+    "method": { "S": "ULVERSTON" },
+    "list": { "S": "csp_resident" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T13:13:25.827Z" },
+    "method": { "S": "West Lancashire" },
+    "list": { "S": "csp_resident" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.621Z" },
+    "method": { "S": "Fylde" },
+    "list": { "S": "csp_districts" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:33.231Z" },
+    "method": { "S": "Surveyor" },
+    "list": { "S": "employment_values" }
+  },
+  {
+    "priority": { "N": "0" },
+    "dateCreated": { "S": "2022-02-04T12:36:32.641Z" },
+    "method": { "S": "Pennine" },
+    "list": { "S": "ics_values" }
+  }
+]

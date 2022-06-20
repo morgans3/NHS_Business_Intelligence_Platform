@@ -1,0 +1,18 @@
+[
+  {
+    "cohorturl": {
+      "S": "{\"CCGDimension\":[\"02G\"],\"LTCs2Dimension\":[[\"Diabetes\"],[\"COPD\"]],\"GPDimension\":[\"P81201\"]}"
+    },
+    "username": { "S": "Global" },
+    "cohortName": { "S": "Ashurst - Diabetes + COPD" },
+    "createdDT": { "S": "2020-11-26T14:43:54.968Z" }
+  },
+  {
+    "cohorturl": {
+      "S": "{\"AgeDimension\":[[81,100]],\"CCGDimension\":[\"02G\"],\"LTCs2Dimension\":[[\"COPD\"],[\"Diabetes\"]]}"
+    },
+    "username": { "S": "Global" },
+    "cohortName": { "S": "West Lancs - 80+ - COPD/DIABETES" },
+    "createdDT": { "S": "2020-11-26T14:38:52.282Z" }
+  }
+]

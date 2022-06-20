@@ -1,0 +1,13 @@
+[
+  {
+    "enddate": { "S": "2021-07-09T17:30:00.452Z" },
+    "icon": { "S": "ti-alert" },
+    "status": { "S": "danger" },
+    "_id": { "S": "current_timestamp" },
+    "startdate": { "S": "2021-06-08T11:10:00.000Z" },
+    "message": { "S": "Test Disruption" },
+    "archive": { "BOOL": false },
+    "name": { "S": "Service Disruption" },
+    "author": { "S": "AlexS" }
+  }
+]

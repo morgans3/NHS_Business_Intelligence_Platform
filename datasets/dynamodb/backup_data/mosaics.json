@@ -1,0 +1,938 @@
+[
+  {
+    "Feat1": { "S": "Young singles and cohabitees" },
+    "Feat2": { "S": "Often privately rented, some owning" },
+    "code": { "S": "H32" },
+    "colour": { "S": "#57ABA3" },
+    "Feat5": { "S": "Laptops and iPods" },
+    "Feat6": { "S": "Spend long time surfing Internet" },
+    "name": { "S": "Flying Solo" },
+    "Feat3": { "S": "Entry-level salaries" },
+    "Feat4": { "S": "Good value suburban terraces and semis" },
+    "desc": {
+      "S": "Young singles on starter salaries choosing to rent homes in family suburbs"
+    }
+  },
+  {
+    "Feat1": { "S": "Own expensive urban homes" },
+    "Feat2": { "S": "Families with older or adult kids" },
+    "code": { "S": "C13" },
+    "colour": { "S": "#8C78B8" },
+    "Feat5": { "S": "Book entertainment online" },
+    "Feat6": { "S": "Pay more for environmentally friendly" },
+    "name": { "S": "Uptown Elite" },
+    "Feat3": { "S": "High status professionals" },
+    "Feat4": { "S": "Accessible inner suburbs" },
+    "desc": {
+      "S": "High status households owning elegant homes in accessible inner suburbs where they enjoy city life in comfort"
+    }
+  },
+  {
+    "Feat1": { "S": "Extended families" },
+    "Feat2": { "S": "Supporting adult & younger children" },
+    "code": { "S": "M53" },
+    "colour": { "S": "#C37038" },
+    "Feat5": { "S": "Price is important" },
+    "Feat6": { "S": "Likely to have a games console" },
+    "name": { "S": "Budget Generations" },
+    "Feat3": { "S": "Ex-council owners and social renters" },
+    "Feat4": { "S": "Bills can be a struggle" },
+    "desc": {
+      "S": "Families supporting both adult and younger children where expenditure can often exceed income"
+    }
+  },
+  {
+    "Feat1": { "S": "Well-off retirees" },
+    "Feat2": { "S": "Spacious detached homes" },
+    "code": { "S": "B09" },
+    "colour": { "S": "#4D4885" },
+    "Feat5": { "S": "Check stocks and shares online" },
+    "Feat6": { "S": "Often take short breaks and holidays" },
+    "name": { "S": "Diamond Days" },
+    "Feat3": { "S": "Comfortable retirement income" },
+    "Feat4": { "S": "Wide range of investments" },
+    "desc": {
+      "S": "Retired residents in sizeable homes whose finances are secured by significant assets and generous pensions"
+    }
+  },
+  {
+    "Feat1": { "S": "Late 20s and early 30s" },
+    "Feat2": { "S": "Singles and cohabitees without children" },
+    "code": { "S": "L51" },
+    "colour": { "S": "#99377F" },
+    "Feat5": { "S": "Search for jobs online" },
+    "Feat6": { "S": "High use of eBay for buying and selling" },
+    "name": { "S": "Make Do & Move On" },
+    "Feat3": { "S": "Low length of residence" },
+    "Feat4": { "S": "Rent low value properties" },
+    "desc": {
+      "S": "Yet to settle younger singles and couples making interim homes in low cost properties"
+    }
+  },
+  {
+    "Feat1": { "S": "Ageing singles" },
+    "Feat2": { "S": "Vulnerable to poor health" },
+    "code": { "S": "N60" },
+    "colour": { "S": "#775A45" },
+    "Feat5": { "S": "Low income" },
+    "Feat6": { "S": "City location" },
+    "name": { "S": "Dependent Greys" },
+    "Feat3": { "S": "1 bedroom socially rented units" },
+    "Feat4": { "S": "Disabled parking permits" },
+    "desc": {
+      "S": "Ageing social renters with high levels of need in centrally located developments of small units"
+    }
+  },
+  {
+    "Feat1": { "S": "Aged 46-65" },
+    "Feat2": { "S": "Singles living alone" },
+    "code": { "S": "K46" },
+    "colour": { "S": "#DB6B6B" },
+    "Feat5": { "S": "Still working" },
+    "Feat6": { "S": "Often terraces" },
+    "name": { "S": "Self Supporters" },
+    "Feat3": { "S": "Income typically �20-25k" },
+    "Feat4": { "S": "Own 2 or 3 bedroom small homes" },
+    "desc": {
+      "S": "Hard-working mature singles who own budget terraces manageable within their modest wage"
+    }
+  },
+  {
+    "Feat1": { "S": "Rural families" },
+    "Feat2": { "S": "Rent or own affordable homes" },
+    "code": { "S": "G28" },
+    "colour": { "S": "#71BF44" },
+    "Feat5": { "S": "Shop locally" },
+    "Feat6": { "S": "Online gaming" },
+    "name": { "S": "Local Focus" },
+    "Feat3": { "S": "Skilled trades" },
+    "Feat4": { "S": "Long distance from towns and cities" },
+    "desc": {
+      "S": "Rural families in affordable village homes who are reliant on the local economy for jobs"
+    }
+  },
+  {
+    "Feat1": { "S": "Elderly singles" },
+    "Feat2": { "S": "Small private pension" },
+    "code": { "S": "F23" },
+    "colour": { "S": "#8D8A82" },
+    "Feat5": { "S": "Keep bills down by turning things off" },
+    "Feat6": { "S": "Don't like new technology" },
+    "name": { "S": "Solo Retirees" },
+    "Feat3": { "S": "Long length of residence" },
+    "Feat4": { "S": "Own a suburban semi or terrace" },
+    "desc": {
+      "S": "Senior singles whose reduced incomes are satisfactory in their affordable but pleasant owned homes"
+    }
+  },
+  {
+    "Feat1": { "S": "Extensive detached homes" },
+    "Feat2": { "S": "Substantial income" },
+    "code": { "S": "B08" },
+    "colour": { "S": "#4D4885" },
+    "Feat5": { "S": "Directors and senior managers" },
+    "Feat6": { "S": "High mobile phone spend" },
+    "name": { "S": "Premium Fortunes" },
+    "Feat3": { "S": "Teenage kids & students" },
+    "Feat4": { "S": "Portfolio of investments" },
+    "desc": {
+      "S": "Influential families with substantial income established in large, distinctive homes in wealthy enclaves"
+    }
+  },
+  {
+    "Feat1": { "S": "Late 20s and 30s" },
+    "Feat2": { "S": "High priced 1 or 2 bed apartments" },
+    "code": { "S": "C12" },
+    "colour": { "S": "#8C78B8" },
+    "Feat5": { "S": "Easily commutable suburbs" },
+    "Feat6": { "S": "IT savvy" },
+    "name": { "S": "Metro High-Flyers" },
+    "Feat3": { "S": "Renting alone or sharing" },
+    "Feat4": { "S": "Highly educated professionals" },
+    "desc": {
+      "S": "Ambitious people in their 20s and 30s renting expensive apartments in highly commutable areas of major cities"
+    }
+  },
+  {
+    "Feat1": { "S": "Older households" },
+    "Feat2": { "S": "Own city terraces and semis" },
+    "code": { "S": "I37" },
+    "colour": { "S": "#CFBC3F" },
+    "Feat5": { "S": "Multicultural neighbourhoods" },
+    "Feat6": { "S": "Respond to direct mail charity appeals" },
+    "name": { "S": "Community Elders" },
+    "Feat3": { "S": "Have lived there 20 years" },
+    "Feat4": { "S": "Some adult children at home" },
+    "desc": {
+      "S": "Established older households owning city homes in diverse neighbourhoods"
+    }
+  },
+  {
+    "Feat1": { "S": "Cohabiting couples with children" },
+    "Feat2": { "S": "Aged 26-45" },
+    "code": { "S": "H35" },
+    "colour": { "S": "#57ABA3" },
+    "Feat5": { "S": "2 or 3 bedroom terraces or semis" },
+    "Feat6": { "S": "Family neighbourhoods" },
+    "name": { "S": "Primary Ambitions" },
+    "Feat3": { "S": "Good household incomes" },
+    "Feat4": { "S": "Own with a mortgage" },
+    "desc": {
+      "S": "Forward-thinking younger families who sought affordable homes in good suburbs which they may now be out-growing"
+    }
+  },
+  {
+    "Feat1": { "S": "Couples aged 56 and over" },
+    "Feat2": { "S": "Children have left home" },
+    "code": { "S": "B05" },
+    "colour": { "S": "#4D4885" },
+    "Feat5": { "S": "Comfortable detached homes" },
+    "Feat6": { "S": "Buy new cars" },
+    "name": { "S": "Empty-Nest Adventure" },
+    "Feat3": { "S": "Live in long-term family home" },
+    "Feat4": { "S": "Book holidays and tickets online" },
+    "desc": {
+      "S": "Mature couples in comfortable detached houses who have the means to enjoy their empty-nest status"
+    }
+  },
+  {
+    "Feat1": { "S": "Very elderly" },
+    "Feat2": { "S": "Most are living alone" },
+    "code": { "S": "N57" },
+    "colour": { "S": "#775A45" },
+    "Feat5": { "S": "Own mostly 2 or 3 bed terraces" },
+    "Feat6": { "S": "Retired from routine / semi-skilled jobs" },
+    "name": { "S": "Seasoned Survivors" },
+    "Feat3": { "S": "Longest length of residence (29 years)" },
+    "Feat4": { "S": "Modest income" },
+    "desc": {
+      "S": "Deep-rooted single elderly owners of low value properties whose modest home equity provides some security"
+    }
+  },
+  {
+    "Feat1": { "S": "Adult children living with parents" },
+    "Feat2": { "S": "Respectable incomes" },
+    "code": { "S": "E20" },
+    "colour": { "S": "#1D4E8C" },
+    "Feat5": { "S": "Search electricals online while in store" },
+    "Feat6": { "S": "Adult kids learning to drive" },
+    "name": { "S": "Boomerang Boarders" },
+    "Feat3": { "S": "Own mid-range semis or detached homes" },
+    "Feat4": { "S": "Older suburbs" },
+    "desc": {
+      "S": "Long-term couples with mid-range incomes whose adult children have returned to the shelter of the family home"
+    }
+  },
+  {
+    "Feat1": { "S": "Families with children" },
+    "Feat2": { "S": "Detached housing" },
+    "code": { "S": "A01" },
+    "colour": { "S": "#056746" },
+    "Feat5": { "S": "Travel to nearest school" },
+    "Feat6": { "S": "Highest pet ownership" },
+    "name": { "S": "Rural Vogue" },
+    "Feat3": { "S": "Village locations" },
+    "Feat4": { "S": "Good income" },
+    "desc": {
+      "S": "Country-loving families pursuing a rural idyll in comfortable village homes while commuting some distance to work"
+    }
+  },
+  {
+    "Feat1": { "S": "Extremely remote communities" },
+    "Feat2": { "S": "Wales and Scotland" },
+    "code": { "S": "G26" },
+    "colour": { "S": "#71BF44" },
+    "Feat5": { "S": "Arrange mortgage over the phone" },
+    "Feat6": { "S": "Most likely to own a boat" },
+    "name": { "S": "Far-Flung Outposts" },
+    "Feat3": { "S": "Long travel times to cities" },
+    "Feat4": { "S": "Poor broadband access" },
+    "desc": {
+      "S": "Inter-dependent households living in the most remote communities with long travel times to larger towns"
+    }
+  },
+  {
+    "Feat1": { "S": "Singles and homesharers" },
+    "Feat2": { "S": "Short term private renters" },
+    "code": { "S": "L50" },
+    "colour": { "S": "#99377F" },
+    "Feat5": { "S": "Most likely to get a lift to work" },
+    "Feat6": { "S": "Low wage occupations" },
+    "name": { "S": "Renting a Room" },
+    "Feat3": { "S": "Low rent accommodation" },
+    "Feat4": { "S": "Often Victorian terraces" },
+    "desc": {
+      "S": "Transient renters of low cost accommodation often within subdivided older properties"
+    }
+  },
+  {
+    "Feat1": { "S": "Large extended families" },
+    "Feat2": { "S": "Areas with high South Asian population" },
+    "code": { "S": "I38" },
+    "colour": { "S": "#CFBC3F" },
+    "Feat5": { "S": "Younger generation like new technology" },
+    "Feat6": { "S": "Mix of owning and renting" },
+    "name": { "S": "Asian Heritage" },
+    "Feat3": { "S": "Low cost, often Victorian, terraces" },
+    "Feat4": { "S": "Traditions are important" },
+    "desc": {
+      "S": "Large extended families in neighbourhoods with a strong South Asian tradition"
+    }
+  },
+  {
+    "Feat1": { "S": "Oldest average age of 78" },
+    "Feat2": { "S": "Mostly living alone" },
+    "code": { "S": "F22" },
+    "colour": { "S": "#8D8A82" },
+    "Feat5": { "S": "Low technology knowledge" },
+    "Feat6": { "S": "Broadsheet readers" },
+    "name": { "S": "Legacy Elders" },
+    "Feat3": { "S": "Own comfortable homes outright" },
+    "Feat4": { "S": "Final salary pensions" },
+    "desc": {
+      "S": "Elders now mostly living alone in comfortable suburban homes on final salary pensions"
+    }
+  },
+  {
+    "Feat1": { "S": "Students among local residents" },
+    "Feat2": { "S": "Close proximity to universities" },
+    "code": { "S": "J42" },
+    "colour": { "S": "#857819" },
+    "Feat5": { "S": "Two-thirds rent privately" },
+    "Feat6": { "S": "Watch videos online" },
+    "name": { "S": "Learners & Earners" },
+    "Feat3": { "S": "Cosmopolitan atmosphere" },
+    "Feat4": { "S": "Often terraces" },
+    "desc": {
+      "S": "Inhabitants of the university fringe where students and older residents mix in cosmopolitan locations"
+    }
+  },
+  {
+    "Feat1": { "S": "Younger couples and singles" },
+    "Feat2": { "S": "Own 2 or 3 bed semis and terraces" },
+    "code": { "S": "H31" },
+    "colour": { "S": "#57ABA3" },
+    "Feat5": { "S": "Buy and sell on eBay" },
+    "Feat6": { "S": "Photo messaging on mobiles" },
+    "name": { "S": "First-Rung Futures" },
+    "Feat3": { "S": "Affordable suburbs" },
+    "Feat4": { "S": "Have lived there under 4 years" },
+    "desc": {
+      "S": "Pre-family newcomers who have bought value homes with space to grow in affordable but pleasant areas"
+    }
+  },
+  {
+    "Feat1": { "S": "Unclassified" },
+    "Feat2": { "S": "Unclassified" },
+    "code": { "S": "U99" },
+    "colour": { "S": "#000000" },
+    "Feat5": { "S": "Unclassified" },
+    "Feat6": { "S": "Unclassified" },
+    "name": { "S": "Unclassified" },
+    "Feat3": { "S": "Unclassified" },
+    "Feat4": { "S": "Unclassified" },
+    "desc": { "S": "Unclassified" }
+  },
+  {
+    "Feat1": { "S": "Many children" },
+    "Feat2": { "S": "Non-nuclear household composition" },
+    "code": { "S": "O65" },
+    "colour": { "S": "#883236" },
+    "Feat5": { "S": "1 or 2 bed flats socially rented" },
+    "Feat6": { "S": "Read online electrical reviews" },
+    "name": { "S": "Crowded Kaleidoscope" },
+    "Feat3": { "S": "High diversity" },
+    "Feat4": { "S": "Commute by bus" },
+    "desc": {
+      "S": "Multi-cultural households with children renting social flats in over-crowded conditions"
+    }
+  },
+  {
+    "Feat1": { "S": "Singles and sharers" },
+    "Feat2": { "S": "Low cost social flats" },
+    "code": { "S": "O63" },
+    "colour": { "S": "#883236" },
+    "Feat5": { "S": "Routine occupations" },
+    "Feat6": { "S": "Shortage of opportunities" },
+    "name": { "S": "Streetwise Singles" },
+    "Feat3": { "S": "1 or 2 bedrooms" },
+    "Feat4": { "S": "Urban and fringe locations" },
+    "desc": {
+      "S": "Hard-pressed singles in low cost social flats searching for opportunities"
+    }
+  },
+  {
+    "Feat1": { "S": "Aged 25 to 40" },
+    "Feat2": { "S": "Living alone or sharing" },
+    "code": { "S": "J45" },
+    "colour": { "S": "#857819" },
+    "Feat5": { "S": "Further from central amenities" },
+    "Feat6": { "S": "Sourced mobile on Internet" },
+    "name": { "S": "Bus-Route Renters" },
+    "Feat3": { "S": "Rent lower value flats, often 1 bed" },
+    "Feat4": { "S": "Often live near main roads" },
+    "desc": {
+      "S": "Singles renting affordable private flats away from central amenities and often on main roads"
+    }
+  },
+  {
+    "Feat1": { "S": "Cohabiting couples & singles with kids" },
+    "Feat2": { "S": "Areas with high unemployment" },
+    "code": { "S": "M55" },
+    "colour": { "S": "#C37038" },
+    "Feat5": { "S": "Moves tend to be within local community" },
+    "Feat6": { "S": "Shop for computer games online" },
+    "name": { "S": "Families with Needs" },
+    "Feat3": { "S": "Low household income" },
+    "Feat4": { "S": "Small socially rented terraces and semis" },
+    "desc": {
+      "S": "Families with many children living in areas of high deprivation and who need support"
+    }
+  },
+  {
+    "Feat1": { "S": "Full-time students" },
+    "Feat2": { "S": "Halls of residence" },
+    "code": { "S": "J43" },
+    "colour": { "S": "#857819" },
+    "Feat5": { "S": "Most have smartphones" },
+    "Feat6": { "S": "Highest use of Facebook" },
+    "name": { "S": "Student Scene" },
+    "Feat3": { "S": "Homesharing private renters" },
+    "Feat4": { "S": "Frequent Internet usage" },
+    "desc": {
+      "S": "Students living in high density accommodation close to universities and educational centres"
+    }
+  },
+  {
+    "Feat1": { "S": "Mostly single adults" },
+    "Feat2": { "S": "Aged 56+" },
+    "code": { "S": "O66" },
+    "colour": { "S": "#883236" },
+    "Feat5": { "S": "Long-term residents" },
+    "Feat6": { "S": "Diverse neighbourhoods" },
+    "name": { "S": "Inner City Stalwarts" },
+    "Feat3": { "S": "Renting from social landlord" },
+    "Feat4": { "S": "Flats in inner city areas" },
+    "desc": {
+      "S": "Long-term renters of inner city social flats who have witnessed many changes"
+    }
+  },
+  {
+    "Feat1": { "S": "High value large detached homes" },
+    "Feat2": { "S": "Rural locations" },
+    "code": { "S": "A03" },
+    "colour": { "S": "#056746" },
+    "Feat5": { "S": "Mature married couples" },
+    "Feat6": { "S": "Own both PC and laptop" },
+    "name": { "S": "Wealthy Landowners" },
+    "Feat3": { "S": "Own several cars" },
+    "Feat4": { "S": "Most likely to own a horse" },
+    "desc": {
+      "S": "Prosperous owners of country houses including the rural upper class, successful farmers and second-home owners"
+    }
+  },
+  {
+    "Feat1": { "S": "Average age 63" },
+    "Feat2": { "S": "Often living alone" },
+    "code": { "S": "I39" },
+    "colour": { "S": "#CFBC3F" },
+    "Feat5": { "S": "1 or 2 bed flats and terraces" },
+    "Feat6": { "S": "Pleasant inner suburbs" },
+    "name": { "S": "Ageing Access" },
+    "Feat3": { "S": "Most are homeowners" },
+    "Feat4": { "S": "Modest income" },
+    "desc": {
+      "S": "Older residents owning small inner suburban properties with good access to amenities"
+    }
+  },
+  {
+    "Feat1": { "S": "Married couples aged 50-65" },
+    "Feat2": { "S": "Adult children at home" },
+    "code": { "S": "B06" },
+    "colour": { "S": "#4D4885" },
+    "Feat5": { "S": "Mortgage nearly paid off" },
+    "Feat6": { "S": "Use technology practically" },
+    "name": { "S": "Bank of Mum and Dad" },
+    "Feat3": { "S": "High salaries from senior positions" },
+    "Feat4": { "S": "Quality 4 bed detached homes" },
+    "desc": {
+      "S": "Well-off families in upmarket suburban homes where grown-up children benefit from continued financial support"
+    }
+  },
+  {
+    "Feat1": { "S": "Aged 60+" },
+    "Feat2": { "S": "Low cost housing" },
+    "code": { "S": "G27" },
+    "colour": { "S": "#71BF44" },
+    "Feat5": { "S": "Shop locally" },
+    "Feat6": { "S": "Dislike being contacted by marketers" },
+    "name": { "S": "Outlying Seniors" },
+    "Feat3": { "S": "Out of the way locations" },
+    "Feat4": { "S": "Low income" },
+    "desc": {
+      "S": "Pensioners living in inexpensive housing in out of the way locations"
+    }
+  },
+  {
+    "Feat1": { "S": "Families with children" },
+    "Feat2": { "S": "Good income" },
+    "code": { "S": "I36" },
+    "colour": { "S": "#CFBC3F" },
+    "Feat5": { "S": "Highest smart TV ownership" },
+    "Feat6": { "S": "Read online reviews for home and garden" },
+    "name": { "S": "Cultural Comfort" },
+    "Feat3": { "S": "Areas with high South Asian population" },
+    "Feat4": { "S": "Own high cost urban semis and terraces" },
+    "desc": {
+      "S": "Thriving families with good incomes in multi-cultural urban communities"
+    }
+  },
+  {
+    "Feat1": { "S": "Older married couples" },
+    "Feat2": { "S": "Children have left home" },
+    "code": { "S": "K48" },
+    "colour": { "S": "#DB6B6B" },
+    "Feat5": { "S": "Living within means" },
+    "Feat6": { "S": "Some still working, some retired" },
+    "name": { "S": "Down-to-Earth Owners" },
+    "Feat3": { "S": "Have lived in same house for 25 years" },
+    "Feat4": { "S": "Own affordable semis and terraces" },
+    "desc": {
+      "S": "Ageing couples who have owned their inexpensive home for many years while working in routine jobs"
+    }
+  },
+  {
+    "Feat1": { "S": "Married or cohabiting couples" },
+    "Feat2": { "S": "Likely to have pre-school children" },
+    "code": { "S": "M54" },
+    "colour": { "S": "#C37038" },
+    "Feat5": { "S": "Both parents working" },
+    "Feat6": { "S": "Unsecured personal loans" },
+    "name": { "S": "Childcare Squeeze" },
+    "Feat3": { "S": "Outgoings high in proportion to income" },
+    "Feat4": { "S": "Own low value homes" },
+    "desc": {
+      "S": "Younger families with children who own a budget home and are striving to cover all expenses"
+    }
+  },
+  {
+    "Feat1": { "S": "Extremely expensive city properties" },
+    "Feat2": { "S": "Greatest affluence" },
+    "code": { "S": "C10" },
+    "colour": { "S": "#8C78B8" },
+    "Feat5": { "S": "Well connected online and on the go" },
+    "Feat6": { "S": "International travel" },
+    "name": { "S": "World-Class Wealth" },
+    "Feat3": { "S": "Global investors" },
+    "Feat4": { "S": "Privileged lifestyles" },
+    "desc": {
+      "S": "Global high flyers and families of privilege living luxurious lifestyles in the most exclusive locations of the largest cities"
+    }
+  },
+  {
+    "Feat1": { "S": "Developments for the elderly" },
+    "Feat2": { "S": "Mostly purpose built flats" },
+    "code": { "S": "N58" },
+    "colour": { "S": "#775A45" },
+    "Feat5": { "S": "Have income additional to state pension" },
+    "Feat6": { "S": "Least likely to own a mobile phone" },
+    "name": { "S": "Aided Elderly" },
+    "Feat3": { "S": "Most own, others rent" },
+    "Feat4": { "S": "Majority are living alone" },
+    "desc": {
+      "S": "Supported elders in specialised accommodation including retirement homes and complexes of small homes"
+    }
+  },
+  {
+    "Feat1": { "S": "Mature singles" },
+    "Feat2": { "S": "Traditional suburbs" },
+    "code": { "S": "E18" },
+    "colour": { "S": "#1D4E8C" },
+    "Feat5": { "S": "Intermediate occupations" },
+    "Feat6": { "S": "Pay as you go mobiles" },
+    "name": { "S": "Dependable Me" },
+    "Feat3": { "S": "Own lower value semis" },
+    "Feat4": { "S": "Have lived in same house 15 years" },
+    "desc": {
+      "S": "Single mature owners settled in traditional suburban semis working in intermediate occupations"
+    }
+  },
+  {
+    "Feat1": { "S": "Older households" },
+    "Feat2": { "S": "Renting low cost semi and terraces" },
+    "code": { "S": "O62" },
+    "colour": { "S": "#883236" },
+    "Feat5": { "S": "Areas with low levels of employment" },
+    "Feat6": { "S": "2 or 3 bedrooms" },
+    "name": { "S": "Low Income Workers" },
+    "Feat3": { "S": "Social landlords" },
+    "Feat4": { "S": "Longer length of residence" },
+    "desc": {
+      "S": "Older social renters settled in low value homes in communities where employment is harder to find"
+    }
+  },
+  {
+    "Feat1": { "S": "Married couples" },
+    "Feat2": { "S": "Two professional careers" },
+    "code": { "S": "B07" },
+    "colour": { "S": "#4D4885" },
+    "Feat5": { "S": "Online shopping to save time" },
+    "Feat6": { "S": "Company cars and mobiles" },
+    "name": { "S": "Alpha Families" },
+    "Feat3": { "S": "School age children" },
+    "Feat4": { "S": "High salaries, large mortgage" },
+    "desc": {
+      "S": "High-achieving families living fast-track lives, advancing careers, finances and their school-age children's development"
+    }
+  },
+  {
+    "Feat1": { "S": "Homesharers and singles" },
+    "Feat2": { "S": "In employment" },
+    "code": { "S": "L52" },
+    "colour": { "S": "#99377F" },
+    "Feat5": { "S": "Privately renting affordable homes" },
+    "Feat6": { "S": "Mostly terraces" },
+    "name": { "S": "Midlife Stopgap" },
+    "Feat3": { "S": "Don't have children" },
+    "Feat4": { "S": "Average age 45" },
+    "desc": {
+      "S": "Maturing singles in employment who are renting short-term affordable homes"
+    }
+  },
+  {
+    "Feat1": { "S": "Singles and cohabitees 36+" },
+    "Feat2": { "S": "Family neighbourhoods" },
+    "code": { "S": "D17" },
+    "colour": { "S": "#2D616D" },
+    "Feat5": { "S": "Comfortable income" },
+    "Feat6": { "S": "Moderate use of Internet" },
+    "name": { "S": "Thriving Independence" },
+    "Feat3": { "S": "Middle managers" },
+    "Feat4": { "S": "Large outstanding mortgage" },
+    "desc": {
+      "S": "Well-qualified older singles with incomes from successful professional careers living in good quality housing"
+    }
+  },
+  {
+    "Feat1": { "S": "Married couples with kids" },
+    "Feat2": { "S": "Traditional suburbs" },
+    "code": { "S": "D16" },
+    "colour": { "S": "#2D616D" },
+    "Feat5": { "S": "High proportion with mortgage" },
+    "Feat6": { "S": "Online grocery shopping" },
+    "name": { "S": "Mid-Career Convention" },
+    "Feat3": { "S": "Professional jobs" },
+    "Feat4": { "S": "Likely to have life cover" },
+    "desc": {
+      "S": "Professional families with children in traditional mid-range suburbs where neighbours are often older"
+    }
+  },
+  {
+    "Feat1": { "S": "Cohabiting couples and singles" },
+    "Feat2": { "S": "Late 20s and 30s, some have young kids" },
+    "code": { "S": "H34" },
+    "colour": { "S": "#57ABA3" },
+    "Feat5": { "S": "Use eBay" },
+    "Feat6": { "S": "Use online banking" },
+    "name": { "S": "Contemporary Starts" },
+    "Feat3": { "S": "Modern housing, owned or rented" },
+    "Feat4": { "S": "Further away from centres" },
+    "desc": {
+      "S": "Young singles and partners setting up home in developments attractive to their peers"
+    }
+  },
+  {
+    "Feat1": { "S": "Married couples in 30s or 40s" },
+    "Feat2": { "S": "Have lived there 5 years or more" },
+    "code": { "S": "H30" },
+    "colour": { "S": "#57ABA3" },
+    "Feat5": { "S": "Many in receipt of Tax Credits" },
+    "Feat6": { "S": "Most likely to have small pets" },
+    "name": { "S": "Affordable Fringe" },
+    "Feat3": { "S": "Own semis in affordable suburbs" },
+    "Feat4": { "S": "School age children" },
+    "desc": {
+      "S": "Settled families with children owning modest, 3-bed semis in areas of more affordable housing"
+    }
+  },
+  {
+    "Feat1": { "S": "Retired couples and singles" },
+    "Feat2": { "S": "Larger village location" },
+    "code": { "S": "A04" },
+    "colour": { "S": "#056746" },
+    "Feat5": { "S": "Most likely to play cricket and golf" },
+    "Feat6": { "S": "Often prefer post for communications" },
+    "name": { "S": "Village Retirement" },
+    "Feat3": { "S": "Like to be self-sufficient" },
+    "Feat4": { "S": "Enjoy UK holidays" },
+    "desc": {
+      "S": "Retirees enjoying pleasant village locations with amenities to service their social and practical needs"
+    }
+  },
+  {
+    "Feat1": { "S": "Aged under 25, mostly living alone" },
+    "Feat2": { "S": "Have lived at address less than 3 years" },
+    "code": { "S": "L49" },
+    "colour": { "S": "#99377F" },
+    "Feat5": { "S": "Rely on mobiles for communication" },
+    "Feat6": { "S": "Play offline games" },
+    "name": { "S": "Disconnected Youth" },
+    "Feat3": { "S": "Limited employment options" },
+    "Feat4": { "S": "Low access to mainstream credit" },
+    "desc": {
+      "S": "Young people endeavouring to gain employment footholds while renting cheap flats and terraces"
+    }
+  },
+  {
+    "Feat1": { "S": "Older married couples" },
+    "Feat2": { "S": "Children have left home" },
+    "code": { "S": "E19" },
+    "colour": { "S": "#1D4E8C" },
+    "Feat5": { "S": "One partner often not working full-time" },
+    "Feat6": { "S": "Average time at address 18 years" },
+    "name": { "S": "Fledgling Free" },
+    "Feat3": { "S": "Respectable incomes" },
+    "Feat4": { "S": "Own suburban 3 bed semis" },
+    "desc": {
+      "S": "Pre-retirement couples with respectable incomes enjoying greater space and spare cash since children left home"
+    }
+  },
+  {
+    "Feat1": { "S": "Singles and sharers" },
+    "Feat2": { "S": "High rise social flats" },
+    "code": { "S": "O64" },
+    "colour": { "S": "#883236" },
+    "Feat5": { "S": "Shop around to find cheapest price" },
+    "Feat6": { "S": "Low use of insurance" },
+    "name": { "S": "High Rise Residents" },
+    "Feat3": { "S": "Urban locations" },
+    "Feat4": { "S": "Least likely to own a car" },
+    "desc": {
+      "S": "Renters of social flats in high rise blocks where levels of need are significant"
+    }
+  },
+  {
+    "Feat1": { "S": "Aged under 35" },
+    "Feat2": { "S": "City centre regeneration" },
+    "code": { "S": "J41" },
+    "colour": { "S": "#857819" },
+    "Feat5": { "S": "Most frequent cinema goers" },
+    "Feat6": { "S": "Love modern technology" },
+    "name": { "S": "Central Pulse" },
+    "Feat3": { "S": "Rent small new build and converted flats" },
+    "Feat4": { "S": "Graduate starter salaries" },
+    "desc": {
+      "S": "Youngsters renting city centre flats in vibrant locations close to jobs and night life"
+    }
+  },
+  {
+    "Feat1": { "S": "Likely to be 26-35" },
+    "Feat2": { "S": "Singles and multiple sharers" },
+    "code": { "S": "J44" },
+    "colour": { "S": "#857819" },
+    "Feat5": { "S": "Decent incomes from service sector jobs" },
+    "Feat6": { "S": "High use of mobiles" },
+    "name": { "S": "Flexible Workforce" },
+    "Feat3": { "S": "Many ethnicities" },
+    "Feat4": { "S": "Highly transient areas" },
+    "desc": {
+      "S": "Young renters ready to move to follow worthwhile incomes from service sector jobs"
+    }
+  },
+  {
+    "Feat1": { "S": "Families with school age children" },
+    "Feat2": { "S": "Modern housing" },
+    "code": { "S": "D15" },
+    "colour": { "S": "#2D616D" },
+    "Feat5": { "S": "Own tablets" },
+    "Feat6": { "S": "Search using online aggregators" },
+    "name": { "S": "Modern Parents" },
+    "Feat3": { "S": "Good quality detached homes" },
+    "Feat4": { "S": "Double income families" },
+    "desc": {
+      "S": "Busy couples in modern detached homes balancing the demands of school-age children and careers"
+    }
+  },
+  {
+    "Feat1": { "S": "Professional couples with kids" },
+    "Feat2": { "S": "Good income" },
+    "code": { "S": "D14" },
+    "colour": { "S": "#2D616D" },
+    "Feat5": { "S": "Proximity to jobs and entertainment" },
+    "Feat6": { "S": "Most likely to have children 12-17" },
+    "name": { "S": "Cafes and Catchments" },
+    "Feat3": { "S": "Pleasant family homes" },
+    "Feat4": { "S": "Attractive city suburbs" },
+    "desc": {
+      "S": "Affluent families with growing children living in upmarket housing in city environs"
+    }
+  },
+  {
+    "Feat1": { "S": "Elderly couples and singles" },
+    "Feat2": { "S": "Own their bungalow outright" },
+    "code": { "S": "F24" },
+    "colour": { "S": "#8D8A82" },
+    "Feat5": { "S": "Like buying in store" },
+    "Feat6": { "S": "Pre-pay mobiles, low spend" },
+    "name": { "S": "Bungalow Haven" },
+    "Feat3": { "S": "Neighbourhoods of elderly people" },
+    "Feat4": { "S": "May research online" },
+    "desc": {
+      "S": "Seniors appreciating the calm of bungalow estates designed for the elderly"
+    }
+  },
+  {
+    "Feat1": { "S": "Married couples aged 50+" },
+    "Feat2": { "S": "Most isolated housing" },
+    "code": { "S": "A02" },
+    "colour": { "S": "#056746" },
+    "Feat5": { "S": "Reuse and recycle" },
+    "Feat6": { "S": "Lower use of Internet" },
+    "name": { "S": "Scattered Homesteads" },
+    "Feat3": { "S": "Highest levels of working at home" },
+    "Feat4": { "S": "Often oil central heating" },
+    "desc": {
+      "S": "Older households appreciating rural calm in stand-alone houses within agricultural landscapes"
+    }
+  },
+  {
+    "Feat1": { "S": "Expensive apartments in city centre" },
+    "Feat2": { "S": "Aged under 35 and often living alone" },
+    "code": { "S": "C11" },
+    "colour": { "S": "#8C78B8" },
+    "Feat5": { "S": "Very high Internet use everyday" },
+    "Feat6": { "S": "Highest champagne drinkers" },
+    "name": { "S": "Penthouse Chic" },
+    "Feat3": { "S": "High rewards from city based jobs" },
+    "Feat4": { "S": "Extensive use of smartphones" },
+    "desc": {
+      "S": "City workers renting premium-priced flats in prestige central locations, living life with intensity"
+    }
+  },
+  {
+    "Feat1": { "S": "Average age 75" },
+    "Feat2": { "S": "Often living alone" },
+    "code": { "S": "N61" },
+    "colour": { "S": "#775A45" },
+    "Feat5": { "S": "Low income" },
+    "Feat6": { "S": "Can get left behind by technology" },
+    "name": { "S": "Estate Veterans" },
+    "Feat3": { "S": "Long term social renters of current home" },
+    "Feat4": { "S": "Living on estates with some deprivation" },
+    "desc": {
+      "S": "Longstanding elderly renters of social homes who have seen neighbours change to a mix of owners and renters"
+    }
+  },
+  {
+    "Feat1": { "S": "Pre-retirement" },
+    "Feat2": { "S": "Families with adult children" },
+    "code": { "S": "K47" },
+    "colour": { "S": "#DB6B6B" },
+    "Feat5": { "S": "Own 3 bed semis and terraces" },
+    "Feat6": { "S": "Bills can become a struggle" },
+    "name": { "S": "Offspring Overspill" },
+    "Feat3": { "S": "Individual incomes not high" },
+    "Feat4": { "S": "Better off if children are contributing" },
+    "desc": {
+      "S": "Lower income owners whose adult children are still striving to gain independence meaning space is limited"
+    }
+  },
+  {
+    "Feat1": { "S": "Recently built homes" },
+    "Feat2": { "S": "Singles and cohabiting couples" },
+    "code": { "S": "H33" },
+    "colour": { "S": "#57ABA3" },
+    "Feat5": { "S": "All have recently moved in" },
+    "Feat6": { "S": "Half own and half rent" },
+    "name": { "S": "New Foundations" },
+    "Feat3": { "S": "Flats and other mixed housing" },
+    "Feat4": { "S": "Often aged under 35" },
+    "desc": {
+      "S": "Occupants of brand new homes who are often younger singles and couples with children"
+    }
+  },
+  {
+    "Feat1": { "S": "Mature households" },
+    "Feat2": { "S": "Live in larger villages" },
+    "code": { "S": "G29" },
+    "colour": { "S": "#71BF44" },
+    "Feat5": { "S": "Online groceries" },
+    "Feat6": { "S": "Try to reduce water used in home" },
+    "name": { "S": "Satellite Settlers" },
+    "Feat3": { "S": "Close to transport links" },
+    "Feat4": { "S": "Own pleasant homes" },
+    "desc": {
+      "S": "Mature households living in expanding developments around larger villages with good transport links"
+    }
+  },
+  {
+    "Feat1": { "S": "Parents aged 41-55" },
+    "Feat2": { "S": "Adult children at home, often students" },
+    "code": { "S": "E21" },
+    "colour": { "S": "#1D4E8C" },
+    "Feat5": { "S": "Supporting kids can cause money strains" },
+    "Feat6": { "S": "Technology for entertainment" },
+    "name": { "S": "Family Ties" },
+    "Feat3": { "S": "Also have a child under 18" },
+    "Feat4": { "S": "Own semi or detached homes" },
+    "desc": {
+      "S": "Active families with teenage and adult children whose prolonged support is eating up household resources"
+    }
+  },
+  {
+    "Feat1": { "S": "Elderly couples" },
+    "Feat2": { "S": "Traditional views" },
+    "code": { "S": "F25" },
+    "colour": { "S": "#8D8A82" },
+    "Feat5": { "S": "Long length of residence" },
+    "Feat6": { "S": "Own value suburban semis and terraces" },
+    "name": { "S": "Classic Grandparents" },
+    "Feat3": { "S": "Not good with new technology" },
+    "Feat4": { "S": "Most likely to have a basic mobile" },
+    "desc": {
+      "S": "Lifelong couples in standard suburban homes enjoying retirement through grandchildren and gardening"
+    }
+  },
+  {
+    "Feat1": { "S": "Families with children" },
+    "Feat2": { "S": "Renting from social landlord" },
+    "code": { "S": "M56" },
+    "colour": { "S": "#C37038" },
+    "Feat5": { "S": "Relatively stable finances" },
+    "Feat6": { "S": "Small bills can be a struggle" },
+    "name": { "S": "Solid Economy" },
+    "Feat3": { "S": "Pockets of social housing" },
+    "Feat4": { "S": "Lower wage service roles" },
+    "desc": {
+      "S": "Stable families with children renting better quality homes from social landlords"
+    }
+  },
+  {
+    "Feat1": { "S": "Most aged 26-35" },
+    "Feat2": { "S": "Singles and cohabiting couples" },
+    "code": { "S": "J40" },
+    "colour": { "S": "#857819" },
+    "Feat5": { "S": "Pleasant neighbourhoods" },
+    "Feat6": { "S": "High use of email" },
+    "name": { "S": "Career Builders" },
+    "Feat3": { "S": "Good incomes from career jobs" },
+    "Feat4": { "S": "Rent /own nice apartments" },
+    "desc": {
+      "S": "Singles and couples in their 20s and 30s progressing in their field of work from commutable properties"
+    }
+  },
+  {
+    "Feat1": { "S": "Retired and mostly living alone" },
+    "Feat2": { "S": "1 or 2 bedroom small homes" },
+    "code": { "S": "N59" },
+    "colour": { "S": "#775A45" },
+    "Feat5": { "S": "Prefer contact by landline phone" },
+    "Feat6": { "S": "Visit bank branch" },
+    "name": { "S": "Pocket Pensions" },
+    "Feat3": { "S": "Rented from social landlords" },
+    "Feat4": { "S": "Low incomes" },
+    "desc": {
+      "S": "Elderly singles of limited means renting in developments of compact social homes"
+    }
+  }
+]

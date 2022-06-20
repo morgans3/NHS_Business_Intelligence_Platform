@@ -67,7 +67,7 @@ export const _RequiredAppList: ApiProps[] = [
     variables: addAPI(containerSettings, "api-server", [
       {
         key: "SITE_URL",
-        value: "crossfilter." + _MYDOMAIN,
+        value: _MYDOMAIN,
         type: BuildEnvironmentVariableType.PLAINTEXT,
       },
     ]),
@@ -96,7 +96,7 @@ export const _RequiredAppList: ApiProps[] = [
       },
       {
         key: "TABLENAME",
-        value: "public.covid_populations",
+        value: "covid_populations",
         type: BuildEnvironmentVariableType.PLAINTEXT,
       },
     ]),
@@ -106,8 +106,8 @@ export const _RequiredAppList: ApiProps[] = [
     minCapacity: 1,
     maxCapacity: 1,
     desired: 1,
-    cpu: 2048,
-    memory: 4096,
+    cpu: 4096,
+    memory: 8192,
     priority: 2,
   },
   {
@@ -333,5 +333,37 @@ export const _RequiredAppList: ApiProps[] = [
     cpu: 1024,
     memory: 4096,
     priority: 10,
+  },
+  {
+    apiname: "BI_Platform_CF-Api-Outbreak",
+    application: {
+      repo: "NHS_Business_Intelligence_Platform_CF-Api",
+      name: "BI_Platform_CF-Api",
+      owner: "morgans3",
+      branch: "main",
+    },
+    domainName: _MYDOMAIN,
+    siteSubDomain: "outbreak",
+    variables: addAPI(containerSettings, "cf-api-server", [
+      {
+        key: "SITE_URL",
+        value: "outbreak." + _MYDOMAIN,
+        type: BuildEnvironmentVariableType.PLAINTEXT,
+      },
+      {
+        key: "TABLENAME",
+        value: "outbreakmap",
+        type: BuildEnvironmentVariableType.PLAINTEXT,
+      },
+    ]),
+    buildArgs: minAPI.concat(["SITE_URL", "TABLENAME"]),
+    leadInTime: 120,
+    port: 8079,
+    minCapacity: 1,
+    maxCapacity: 1,
+    desired: 1,
+    cpu: 1024,
+    memory: 1024,
+    priority: 11,
   },
 ];

@@ -10,7 +10,11 @@
     "test": "jest",
     "cdk": "cdk",
     "generate-secrets": "cd authentication && node generate-secrets.js && cd..",
-    "deploy-data": "cd datasets && node deploy-data.js && cd..",
+    "deploy-data": " cross-env PROCESSTOSTART=restoredatabases node ./datasets/deploy-data",
+    "deploy-data-dynamodb": " cross-env PROCESSTOSTART=restoredynamodb node ./datasets/deploy-data",
+    "deploy-data-postgresql": " cross-env PROCESSTOSTART=restorepostgresql node ./datasets/deploy-data",
+    "remove-data": " cross-env PROCESSTOSTART=removedata node ./datasets/deploy-data",
+    "remove-tables": " cross-env PROCESSTOSTART=removetables node ./datasets/deploy-data",
     "test-deployment": "cd testing && npm i && node cypressrun.js && cypress open && cd.."
   },
   "devDependencies": {
@@ -26,6 +30,7 @@
     "aws-cdk-lib": "2.17.0",
     "aws-sdk": "^2.1096.0",
     "constructs": "^10.0.0",
+    "cross-env": "^7.0.3",
     "crypto": "^1.0.1",
     "source-map-support": "^0.5.16"
   }
